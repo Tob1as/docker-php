@@ -72,6 +72,9 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	docker-php-ext-enable memcached && \
 	docker-php-ext-enable imagick && \
 	rm -rf /tmp/*
-	
+
+VOLUME /var/www/html /usr/local/etc/php/ /etc/ssl/ /etc/apache2/sites-enabled /etc/apache2/conf-enabled /etc/apache2/mods-enabled
+
 EXPOSE 80 443
-	
+
+ENTRYPOINT ["/entrypoint.sh"]
