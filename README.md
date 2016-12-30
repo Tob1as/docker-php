@@ -14,6 +14,7 @@ This image based on the offical PHP image https://hub.docker.com/_/php/ and for 
 
 or build it yourself
 * ``` $ git clone https://github.com/TobiasH87Docker/php.git && cd php/ ```
+* Optional: ``` $ mkdir -p /srv/html ```
 * ``` $ docker build -t tobi312/php:5.6-apache ./5.6-apache/ ``` 
 * ``` $ docker run --name php5apache -d -p 80:80 -p 443:443 --link some-container:alias -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -e ENABLE_SSL=1 -e ENABLE_REWRITE=1 tobi312/php:5.6-apache ``` 
 * http://localhost or https://localhost
