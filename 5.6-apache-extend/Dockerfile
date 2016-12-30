@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
 	curl \
 	openssl \
 	imagemagick \
+	# imagemagick-dev \
+	libmagickwand-dev \
 	libpq-dev \
 	libxslt-dev \
 	libldap2-dev \
@@ -32,8 +34,7 @@ RUN apt-get update && apt-get install -y \
 	
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ && \
-	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-	docker-php-ext-install -j$(nproc) \
+	docker-php-ext-install \
 	xsl \
 	pdo_mysql \
 	mysqli \
@@ -53,8 +54,9 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	sockets \
 	bcmath \
 	mbstring \
-	pcntl \
-	gd \
+	pcntl && \
+	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
+	docker-php-ext-install gd && \
 	#pecl install xdebug-2.5.0 && \
 	#pecl install mongo-1.6.14 && \
 	#pecl install redis-3.1.0 && \
