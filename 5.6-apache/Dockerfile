@@ -12,9 +12,9 @@ RUN apt-get update && apt-get install -y \
 	zip unzip \
 	wget \
 	curl \
+	patch \
 	openssl \
-	imagemagick \
-	# imagemagick-dev \
+	#imagemagick \
 	libmagickwand-dev \
 	libpq-dev \
 	libxslt-dev \

@@ -24,9 +24,13 @@ or build it yourself
 ### Environment Variables
 * `TZ` (Default: Europe/Berlin)
 * `PHP_ERRORS` (set 1 to enable)
+* `PHP_MEM_LIMIT` (Value in MB)
+* `PHP_POST_MAX_SIZE` (Value in MB)
 * `PHP_UPLOAD_MAX_FILESIZE` (Value in MB)
+* `PHP_MAX_FILE_UPLOADS` (number)
 * `ENABLE_REWRITE` (set 1 to enable)
 * `ENABLE_SSL` (set 1 to enable)
+* `ALLOWOVERRIDE` (set 1 to enable)
 
 ### This Image on
 * [DockerHub](https://hub.docker.com/r/tobi312/php/)
