@@ -2,11 +2,15 @@ FROM php:5.6-apache
 
 MAINTAINER Tobias Hargesheimer <docker@ison.ws>
 
+ENV TERM=xterm
+
 RUN apt-get update && apt-get install -y \
 	git \
 	nano \
-	zip \
+	zip unzip \
 	wget \
+	curl \
+	openssl \
 	imagemagick \
 	libpq-dev \
 	libxslt-dev \
@@ -18,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 	libgmp-dev \
 	libicu-dev \
 	libmemcached-dev \
-	libssh2-1-dev \
+	#libssh2-1-dev \
 	libyaml-dev \
 	zlib1g-dev \
 	libbz2-dev \
@@ -28,7 +32,8 @@ RUN apt-get update && apt-get install -y \
 	
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ && \
-	docker-php-ext-install \
+	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+	docker-php-ext-install -j$(nproc) \
 	xsl \
 	pdo_mysql \
 	mysqli \
@@ -49,8 +54,28 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	bcmath \
 	mbstring \
 	pcntl \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install gd
+	gd \
+	#pecl install xdebug-2.5.0 && \
+	#pecl install mongo-1.6.14 && \
+	#pecl install redis-3.1.0 && \
+	#pecl install amqp-1.7.1 && \
+	#pecl install varnish-1.2.2 && \
+	#pecl install ssh2-0.13 && \
+	pecl install yaml-1.3.0 && \
+	pecl install memcached-2.2.0 && \
+	pecl install imagick-3.4.1 && \
+	docker-php-ext-enable yaml && \
+	docker-php-ext-enable memcached && \
+	docker-php-ext-enable imagick && \
+	rm -rf /tmp/* && \
+	a2enmod rewrite && \
+	a2enmod ssl
 
 RUN echo Europe/Berlin >/etc/timezone && dpkg-reconfigure -f noninteractive tzdata && \
-	echo "date.timezone=Europe/Berlin" > /usr/local/etc/php/php.ini && echo "display_errors = On" >> /usr/local/etc/php/php.ini
+	echo "date.timezone=Europe/Berlin" > /usr/local/etc/php/php.ini && echo "display_errors = On" >> /usr/local/etc/php/php.ini && echo "upload_max_filesize = 250M" >> /usr/local/etc/php/php.ini
+
+RUN openssl req -x509 -newkey rsa:4086 -subj "/C=/ST=/L=/O=/CN=localhost" -keyout "/etc/ssl/private/ssl-cert-snakeoil.key" -out "/etc/ssl/certs/ssl-cert-snakeoil.pem" -days 3650 -nodes -sha256 && \
+	a2ensite default-ssl
+	
+EXPOSE 80 443
+	
