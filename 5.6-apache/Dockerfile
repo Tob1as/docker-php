@@ -81,3 +81,4 @@ VOLUME /var/www/html /usr/local/etc/php/ /etc/ssl/ /etc/apache2/sites-enabled /e
 EXPOSE 80 443
 
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["apache2-foreground"]
