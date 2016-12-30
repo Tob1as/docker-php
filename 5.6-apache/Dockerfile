@@ -2,6 +2,8 @@ FROM php:5.6-apache
 
 MAINTAINER Tobias Hargesheimer <docker@ison.ws>
 
+ENV LANG C.UTF-8
+ENV TZ Europe/Berlin
 ENV TERM=xterm
 
 RUN apt-get update && apt-get install -y \
@@ -69,15 +71,7 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	docker-php-ext-enable yaml && \
 	docker-php-ext-enable memcached && \
 	docker-php-ext-enable imagick && \
-	rm -rf /tmp/* && \
-	a2enmod rewrite && \
-	a2enmod ssl
-
-RUN echo Europe/Berlin >/etc/timezone && dpkg-reconfigure -f noninteractive tzdata && \
-	echo "date.timezone=Europe/Berlin" > /usr/local/etc/php/php.ini && echo "display_errors = On" >> /usr/local/etc/php/php.ini && echo "upload_max_filesize = 250M" >> /usr/local/etc/php/php.ini
-
-RUN openssl req -x509 -newkey rsa:4086 -subj "/C=/ST=/L=/O=/CN=localhost" -keyout "/etc/ssl/private/ssl-cert-snakeoil.key" -out "/etc/ssl/certs/ssl-cert-snakeoil.pem" -days 3650 -nodes -sha256 && \
-	a2ensite default-ssl
+	rm -rf /tmp/*
 	
 EXPOSE 80 443
 	
