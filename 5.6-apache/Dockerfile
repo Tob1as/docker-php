@@ -76,7 +76,7 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 	
-VOLUME /var/www/html /usr/local/etc/php/ /etc/ssl/ /etc/apache2/sites-enabled /etc/apache2/conf-enabled /etc/apache2/mods-enabled
+#VOLUME /var/www/html /usr/local/etc/php/ /etc/ssl/ /etc/apache2/sites-enabled /etc/apache2/conf-enabled /etc/apache2/mods-enabled
 
 EXPOSE 80 443
 
