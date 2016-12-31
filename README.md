@@ -7,7 +7,7 @@
 -	[`5.6-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-apache/Dockerfile)
 
 ### Information:
-This image based on the offical PHP image https://hub.docker.com/_/php/ and for more information about PHP see here: https://php.net , https://packages.debian.org/en/jessie/php/ and https://pecl.php.net/
+This image with PHP extension for MySQL, PostgreSQL, GD, imagick and more based on the offical PHP image https://hub.docker.com/_/php/ and for more information about PHP see here: https://php.net , https://packages.debian.org/en/jessie/php/ and https://pecl.php.net/
 
 ### How to use this image
 * ``` $ docker pull tobi312/php:5.6-apache ```
