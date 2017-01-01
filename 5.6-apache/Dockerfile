@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 	curl \
 	patch \
 	openssl \
-	#imagemagick \
+	#libapache2-mod-rpaf \
 	libmagickwand-dev \
 	libpq-dev \
 	libxslt-dev \

@@ -28,9 +28,12 @@ or build it yourself
 * `PHP_POST_MAX_SIZE` (Value in MB)
 * `PHP_UPLOAD_MAX_FILESIZE` (Value in MB)
 * `PHP_MAX_FILE_UPLOADS` (number)
-* `ENABLE_REWRITE` (set 1 to enable)
-* `ENABLE_SSL` (set 1 to enable)
-* `ALLOWOVERRIDE` (set 1 to enable)
+* Apache2:
+	* `ENABLE_REWRITE` (set 1 to enable)
+	* `ENABLE_SSL` (set 1 to enable)
+	* `ALLOWOVERRIDE` (set 1 to enable)
+	* `REMOTEIP` (set 1 to enable, use this only behind a proxy!)
+
 
 ### This Image on
 * [DockerHub](https://hub.docker.com/r/tobi312/php/)

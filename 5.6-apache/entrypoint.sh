@@ -83,6 +83,22 @@ EOF
 	patch /etc/apache2/apache2.conf < /etc/apache2/apache2.conf.diff
 fi
 
+if [ "$REMOTEIP" == "1" ]; then
+	echo ">> enabling remoteip support, use this only behind a proxy!"
+	
+	cat > /etc/apache2/mods-available/remoteip.conf <<EOF
+<IfModule mod_remoteip.c>
+    RemoteIPHeader X-Forwarded-For
+</IfModule>
+
+EOF
+	
+	/usr/sbin/a2enmod remoteip
+	
+	sed -i -e 's/LogFormat "%h /LogFormat "%a /g' /etc/apache2/apache2.conf
+	
+fi
+
 # exec CMD
 echo ">> exec docker CMD"
 echo "$@"
