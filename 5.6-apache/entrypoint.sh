@@ -59,29 +59,29 @@ if [ "$ENABLE_SSL" == "1" ]; then
 	fi
 fi
 
-if [ "$ALLOWOVERRIDE" == "1" ]; then
-	echo ">> set AllowOverride form none to all"
-	# diff -uNr /etc/apache2/apache2.conf /etc/apache2/apache2.conf.txt > /etc/apache2/apache2.conf.diff
-	
-	cat > /etc/apache2/apache2.conf.diff <<EOF
---- /etc/apache2/apache2.conf	2016-12-06 17:12:19.000000000 +0100
-+++ /etc/apache2/apache2.conf.txt	2016-12-06 18:28:08.000000000 +0100
-@@ -162,8 +162,8 @@
- </Directory>
- 
- <Directory /var/www/>
--	Options Indexes FollowSymLinks
--	AllowOverride None
-+	Options FollowSymLinks
-+	AllowOverride All
- 	Require all granted
- </Directory>
- 
-
-EOF
-	
-	patch /etc/apache2/apache2.conf < /etc/apache2/apache2.conf.diff
-fi
+#if [ "$ALLOWOVERRIDE" == "1" ]; then
+#	echo ">> set AllowOverride form none to all"
+#	# diff -uNr /etc/apache2/apache2.conf /etc/apache2/apache2.conf.txt > /etc/apache2/apache2.conf.diff
+#	
+#	cat > /etc/apache2/apache2.conf.diff <<EOF
+#--- /etc/apache2/apache2.conf	2016-12-06 17:12:19.000000000 +0100
+#+++ /etc/apache2/apache2.conf.txt	2016-12-06 18:28:08.000000000 +0100
+#@@ -162,8 +162,8 @@
+# </Directory>
+# 
+# <Directory /var/www/>
+#-	Options Indexes FollowSymLinks
+#-	AllowOverride None
+#+	Options FollowSymLinks
+#+	AllowOverride All
+# 	Require all granted
+# </Directory>
+# 
+#
+#EOF
+#	
+#	patch /etc/apache2/apache2.conf < /etc/apache2/apache2.conf.diff
+#fi
 
 if [ "$REMOTEIP" == "1" ]; then
 	echo ">> enabling remoteip support, use this only behind a proxy!"

@@ -31,7 +31,6 @@ or build it yourself
 * Apache2:
 	* `ENABLE_REWRITE` (set 1 to enable)
 	* `ENABLE_SSL` (set 1 to enable)
-	* `ALLOWOVERRIDE` (set 1 to enable)
 	* `REMOTEIP` (set 1 to enable, use this only behind a proxy!)
 
 
