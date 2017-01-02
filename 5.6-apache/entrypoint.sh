@@ -95,7 +95,7 @@ EOF
 	
 	/usr/sbin/a2enmod remoteip
 	
-	sed -i -e 's/LogFormat "%h /LogFormat "%a /g' /etc/apache2/apache2.conf
+	sed -i -e 's/LogFormat "%h /LogFormat "%a (%{X-Forwarded-For}i) /g' /etc/apache2/apache2.conf
 	
 fi
 
