@@ -10,16 +10,15 @@
 This image with PHP extension for MySQL, PostgreSQL, GD, imagick and more based on the offical PHP image https://hub.docker.com/_/php/ . For information about PHP see here: https://php.net , https://packages.debian.org/en/jessie/php/ and https://pecl.php.net/
 
 ### How to use this image
-* ``` $ docker pull tobi312/php:5.6-apache ```
+* ``` $ docker pull tobi312/php:TAG ```
 * Optional: ``` $ mkdir -p /srv/html ```
-* ``` $ docker run --name php5apache -d -p 80:80 -p 443:443 --link some-container:alias -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -e ENABLE_SSL=1 -e ENABLE_REWRITE=1 tobi312/php:5.6-apache ``` 
+* ``` $ docker run --name php -d -p PORT:PORT --link some-container:alias -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 tobi312/php:TAG ``` 
 
 or build it yourself
 * ``` $ git clone https://github.com/TobiasH87Docker/php.git && cd php/ ```
 * Optional: ``` $ mkdir -p /srv/html ```
-* ``` $ docker build -t tobi312/php:5.6-apache ./5.6-apache/ ``` 
-* ``` $ docker run --name php5apache -d -p 80:80 -p 443:443 --link some-container:alias -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -e ENABLE_SSL=1 -e ENABLE_REWRITE=1 tobi312/php:5.6-apache ``` 
-* http://localhost or https://localhost
+* ``` $ docker build -t tobi312/php:TAG ./TAG/ ``` 
+* ``` $ docker run --name php -d -p PORT:PORT --link some-container:alias -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 tobi312/php:TAG ``` 
 
 ### Environment Variables
 * `TZ` (Default: Europe/Berlin)
@@ -31,7 +30,7 @@ or build it yourself
 * Apache2:
 	* `ENABLE_REWRITE` (set 1 to enable)
 	* `ENABLE_SSL` (set 1 to enable)
-	* `REMOTEIP` (set 1 to enable, use this only behind a proxy!)
+	* `REMOTEIP` (set 1 to enable, use this only behind a proxy/loadbalancer!)
 
 
 ### This Image on
