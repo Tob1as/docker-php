@@ -3,7 +3,7 @@
 ### Supported tags and respective `Dockerfile` links
 -	`7.*-apache` *Coming soon*
 -	`7.*-fpm` *Coming soon*
--	`5.6-fpm` *Coming soon*
+-	[`5.6-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-fpm/Dockerfile)
 -	[`5.6-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-apache/Dockerfile)
 
 ### Information:
