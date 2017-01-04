@@ -1,0 +1,17 @@
+[Unit]
+Description=php5apache
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+RestartSec=10
+Restart=always
+User=root
+
+ExecStartPre=/usr/bin/docker pull tobi312/php:5.6-apache
+ExecStartPre=-/usr/bin/docker kill php5apache
+ExecStartPre=-/usr/bin/docker rm php5apache
+ExecStart=/usr/bin/docker run --rm --name php5apache -p 80:80 -p 443:443 -v /srv/html:/var/www/html -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -e ENABLE_REWRITE=1 -e ENABLE_SSL=1 -e REMOTEIP=1 tobi312/php:5.6-apache
+
+[Install]
+WantedBy=docker.service
