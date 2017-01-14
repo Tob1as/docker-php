@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
 	zlib1g-dev \
 	libbz2-dev \
 	libsqlite3-dev \
+	libexif-dev \
 	--no-install-recommends && \
 	rm -rf /var/lib/apt/lists/*
 	
@@ -57,19 +58,22 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	bcmath \
 	mbstring \
 	pcntl && \
+	exif && \
+	fileinfo && \
 	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
 	docker-php-ext-install gd && \
 	#pecl install xdebug-2.5.0 && \
 	#pecl install mongo-1.6.14 && \
-	#pecl install redis-3.1.0 && \
 	#pecl install amqp-1.7.1 && \
 	#pecl install varnish-1.2.2 && \
 	#pecl install ssh2-0.13 && \
 	pecl install yaml-1.3.0 && \
 	pecl install memcached-2.2.0 && \
+	pecl install redis-3.1.0 && \
 	pecl install imagick-3.4.1 && \
 	docker-php-ext-enable yaml && \
 	docker-php-ext-enable memcached && \
+	docker-php-ext-enable redis && \
 	docker-php-ext-enable imagick && \
 	rm -rf /tmp/*
 
