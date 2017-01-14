@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
 	libbz2-dev \
 	libsqlite3-dev \
 	libexif-dev \
+	file \
 	--no-install-recommends && \
 	rm -rf /var/lib/apt/lists/*
 	
@@ -55,10 +56,10 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	sockets \
 	bcmath \
 	mbstring \
-	pcntl && \
-	exif && \
-	fileinfo && \
-	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
+	pcntl \
+	exif \
+	fileinfo \
+	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
 	docker-php-ext-install gd && \
 	#pecl install xdebug-2.5.0 && \
 	#pecl install mongo-1.6.14 && \
