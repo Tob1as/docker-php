@@ -1,10 +1,12 @@
 # PHP (with Apache2) on x86_64
 
 ### Supported tags and respective `Dockerfile` links
--	`7.*-apache` *Coming soon*
--	`7.*-fpm` *Coming soon*
--	[`5.6-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-fpm/Dockerfile)
+-	`7.1-apache` *Coming soon*
+-	`7.1-fpm` *Coming soon*
+-	[`7.0-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/7.0-apache/Dockerfile)
+-	[`7.0-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/7.0-fpm/Dockerfile)
 -	[`5.6-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-apache/Dockerfile)
+-	[`5.6-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-fpm/Dockerfile)
 
 ### Information:
 This image with PHP extension for MySQL, PostgreSQL, GD, imagick and more based on the offical PHP image https://hub.docker.com/_/php/ . For information about PHP see here: https://php.net , https://packages.debian.org/en/jessie/php/ and https://pecl.php.net/
@@ -30,7 +32,7 @@ or build it yourself
 * Apache2:
 	* `ENABLE_REWRITE` (set 1 to enable)
 	* `ENABLE_SSL` (set 1 to enable)
-	* `REMOTEIP` (set 1 to enable, use this only behind a proxy/loadbalancer!)
+	* `REMOTEIP` (set 1 to enable (X-Forwarded-For), use this only behind a proxy/loadbalancer!)
 
 
 ### This Image on
