@@ -1,8 +1,6 @@
 # PHP (with Apache2) on x86_64
 
 ### Supported tags and respective `Dockerfile` links
--	`7.1-apache` *Coming soon*
--	`7.1-fpm` *Coming soon*
 -	[`7.0-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/7.0-apache/Dockerfile)
 -	[`7.0-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/7.0-fpm/Dockerfile)
 -	[`5.6-apache` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-apache/Dockerfile)
