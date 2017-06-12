@@ -66,12 +66,12 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	#pecl install amqp-1.7.1 && \
 	#pecl install varnish-1.2.2 && \
 	#pecl install ssh2-0.13 && \
-	#pecl install yaml-1.3.0 && \
-	#pecl install memcached-2.2.0 && \
-	pecl install redis-3.1.0 && \
-	pecl install imagick-3.4.1 && \
-	#docker-php-ext-enable yaml && \
-	#docker-php-ext-enable memcached && \
+	pecl install yaml-2.0.0 && \
+	pecl install memcached-3.0.3 && \
+	pecl install redis-3.1.2 && \
+	pecl install imagick-3.4.3 && \
+	docker-php-ext-enable yaml && \
+	docker-php-ext-enable memcached && \
 	docker-php-ext-enable redis && \
 	docker-php-ext-enable imagick && \
 	rm -rf /tmp/*

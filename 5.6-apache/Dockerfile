@@ -70,8 +70,8 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	#pecl install ssh2-0.13 && \
 	pecl install yaml-1.3.0 && \
 	pecl install memcached-2.2.0 && \
-	pecl install redis-3.1.0 && \
-	pecl install imagick-3.4.1 && \
+	pecl install redis-3.1.2 && \
+	pecl install imagick-3.4.3 && \
 	docker-php-ext-enable yaml && \
 	docker-php-ext-enable memcached && \
 	docker-php-ext-enable redis && \
