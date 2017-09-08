@@ -66,7 +66,7 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	#pecl install xdebug-2.5.5 && \
 	#pecl install mongodb-1.2.9 && \
 	#pecl install ssh2-0.13 && \
-	pecl install yaml-2.0.2 && \
+	pecl install yaml-1.3.1 && \
 	pecl install memcached-3.0.3 && \
 	pecl install redis-3.1.3 && \
 	pecl install imagick-3.4.3 && \
