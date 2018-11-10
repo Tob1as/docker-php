@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
 	curl \
 	patch \
 	openssl \
+	libssl-dev \
 	#libapache2-mod-rpaf \
 	libmagickwand-dev \
 	libpq-dev \

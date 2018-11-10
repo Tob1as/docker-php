@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
 	wget \
 	curl \
 	openssl \
+	libssl-dev \
 	libmagickwand-dev \
 	libpq-dev \
 	libxslt-dev \
