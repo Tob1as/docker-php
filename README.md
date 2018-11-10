@@ -9,7 +9,7 @@
 -	[`5.6-fpm` (*Dockerfile*)](https://github.com/TobiasH87Docker/php/blob/master/5.6-fpm/Dockerfile)
 
 ### Information:
-This image with PHP extension for MySQL, PostgreSQL, GD, imagick and more based on the offical PHP image https://hub.docker.com/_/php/ . For information about PHP see here: https://php.net , https://packages.debian.org/en/jessie/php/ and https://pecl.php.net/
+This image with PHP extension for MySQL, PostgreSQL, GD, imagick and more based on the offical PHP image https://hub.docker.com/_/php/ . For information about PHP see here: https://php.net , https://packages.debian.org/en/stretch/php/ and https://pecl.php.net/
 
 ### How to use this image
 * ``` $ docker pull tobi312/php:TAG ```
