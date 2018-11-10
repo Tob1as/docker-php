@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 	libfreetype6-dev \
 	libjpeg62-turbo-dev \
 	libmcrypt-dev \
-	libpng12-dev \
+	libpng-dev \
 	libgmp-dev \
 	libicu-dev \
 	libmemcached-dev \
@@ -61,13 +61,14 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
 	fileinfo \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
 	docker-php-ext-install gd && \
-	#pecl install xdebug-2.5.5 && \
-	#pecl install mongodb-1.2.9 && \
+	#pecl install xdebug-2.6.1 && \
+	pecl install mongodb-1.5.3 && \
 	#pecl install ssh2-0.13 && \
 	pecl install yaml-2.0.2 && \
-	pecl install memcached-3.0.3 && \
-	pecl install redis-3.1.3 && \
+	pecl install memcached-3.0.4 && \
+	pecl install redis-4.1.1 && \
 	pecl install imagick-3.4.3 && \
+	docker-php-ext-enable mongodb && \
 	docker-php-ext-enable yaml && \
 	docker-php-ext-enable memcached && \
 	docker-php-ext-enable redis && \
