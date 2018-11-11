@@ -59,6 +59,16 @@ RUN docker-php-ext-install \
 	fileinfo \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
 	docker-php-ext-install gd && \
+	apk add --no-cache --virtual .phpize-deps2 \
+	autoconf \
+	dpkg-dev dpkg \
+	#file \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	re2c && \
 	#pecl install xdebug-2.6.1 && \
 	pecl install mongodb-1.5.3 && \
 	#pecl install ssh2-0.13 && \
@@ -71,8 +81,9 @@ RUN docker-php-ext-install \
 	docker-php-ext-enable memcached && \
 	docker-php-ext-enable redis && \
 	docker-php-ext-enable imagick && \
-	rm -rf /tmp/*
-
+	rm -rf /tmp/* && \
+	apk del .phpize-deps2
+	
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 	
