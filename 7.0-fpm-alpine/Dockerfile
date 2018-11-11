@@ -33,9 +33,8 @@ RUN apk --no-cache add \
 	libexif-dev \
 	file
 	
-RUN ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ && \
-	#ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
-	docker-php-ext-install \
+#RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/
+RUN docker-php-ext-install \
 	xsl \
 	pdo_mysql \
 	mysqli \
@@ -43,7 +42,7 @@ RUN ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ && \
 	pdo_pgsql \
 	pgsql \
 	pdo_sqlite \
-	ldap \
+	#ldap \
 	iconv \
 	soap \
 	intl \
