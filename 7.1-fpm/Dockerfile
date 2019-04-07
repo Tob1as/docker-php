@@ -1,6 +1,11 @@
 FROM php:7.1-fpm
 
-MAINTAINER Tobias Hargesheimer <docker@ison.ws>
+LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
+	org.opencontainers.image.title="PHP-FPM" \
+	org.opencontainers.image.description="Debian 9 Stretch with PHP7.1-FPM on x86_64 arch" \
+	org.opencontainers.image.licenses="Apache-2.0" \
+	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
+	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
 
 ENV LANG C.UTF-8
 ENV TZ Europe/Berlin
