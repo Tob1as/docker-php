@@ -1,0 +1,47 @@
+version: "2.4"
+
+services:
+  
+  php:
+    build:
+      context: ./
+      dockerfile: debian.x86_64.7_4_apache.Dockerfile
+    image: phpapache:latest
+    container_name: apachetest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./html:/var/www/html:rw
+      #- ./entrypoint.sh:/usr/local/bin/entrypoint.sh:rw
+      #- ./entrypoint.d:/entrypoint.d:ro
+    environment:
+      TZ: "Europe/Berlin"
+      PHP_ERRORS: 1
+      PHP_MEM_LIMIT: 128
+      PHP_POST_MAX_SIZE: 250
+      PHP_UPLOAD_MAX_FILESIZE: 250
+      PHP_MAX_FILE_UPLOADS: 20
+      ENABLE_REWRITE: 1
+      ENABLE_APACHE_ALLOWOVERRIDE: 1
+      CREATE_PHPINFO_FILE: 1
+      #ENABLE_SSL: 0
+      #REMOTEIP: 0
+    networks:
+      php:
+
+# use for ipv6: https://github.com/robbertkl/docker-ipv6nat
+networks:
+  php:
+    name: php
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+        - subnet: fd00:dead:beef::/48
+
+  
+#volumes:
+#  apache-data:
