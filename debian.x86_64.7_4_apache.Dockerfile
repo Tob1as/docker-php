@@ -66,8 +66,7 @@ RUN apt-get update; \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
-RUN dpkgArch="$(uname -m)-linux-gnu" && echo "dpkgArch=${dpkgArch}"; \
-	#dpkgArch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" && echo "dpkgArch=${dpkgArch}"; \
+RUN dpkgArch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" && echo "dpkgArch=${dpkgArch}"; \
 	ln -s /usr/include/${dpkgArch}/gmp.h /usr/include/gmp.h; \
 	#ln -fs /usr/lib/${dpkgArch}/libldap.so /usr/lib/; \
 	ln -s /usr/lib/${dpkgArch}/libsybdb.a /usr/lib/; \
@@ -162,6 +161,7 @@ RUN dpkgArch="$(uname -m)-linux-gnu" && echo "dpkgArch=${dpkgArch}"; \
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh ; \
+	#sed -i -e 's/\r$//' /usr/local/bin/entrypoint.sh ; \
 	mkdir /entrypoint.d
 
 #WORKDIR /var/www/html

@@ -6,8 +6,9 @@ services:
     build:
       context: ./
       dockerfile: debian.x86_64.7_4_apache.Dockerfile
-    image: phpapache:latest
-    container_name: apachetest
+    image: tobi312/php:7.4-apache
+    container_name: phpcontainer
+    #restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -22,18 +23,20 @@ services:
       PHP_POST_MAX_SIZE: 250
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
-      ENABLE_REWRITE: 1
+      CREATE_PHPINFO_FILE: 0
+      ENABLE_APACHE_REWRITE: 1
+      ENABLE_APACHE_ACTIONS: 0
+      ENABLE_APACHE_SSL: 0
+      ENABLE_APACHE_HEADERS: 0
       ENABLE_APACHE_ALLOWOVERRIDE: 1
-      CREATE_PHPINFO_FILE: 1
-      #ENABLE_SSL: 0
-      #REMOTEIP: 0
+      ENABLE_APACHE_REMOTEIP: 0
     networks:
-      php:
+      net-php:
 
 # use for ipv6: https://github.com/robbertkl/docker-ipv6nat
 networks:
-  php:
-    name: php
+  net-php:
+    name: net-php
     driver: bridge
     enable_ipv6: true
     ipam:

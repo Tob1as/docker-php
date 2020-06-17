@@ -1,5 +1,5 @@
 ARG PHP_VERSION=7.4
-FROM php:${PHP_VERSION}-fpm
+FROM arm32v7/php:${PHP_VERSION}-apache
 ARG PHP_VERSION
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -7,8 +7,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
-	org.opencontainers.image.title="PHP+FPM" \
-	org.opencontainers.image.description="Debian with PHP7.4 with FPM on x86_64 arch" \
+	org.opencontainers.image.title="PHP+Apache2" \
+	org.opencontainers.image.description="Debian with PHP7.4 and Apache2 on arm arch" \
 	org.opencontainers.image.licenses="Apache-2.0" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
@@ -43,6 +43,7 @@ RUN apt-get update; \
 		libicu-dev \
 		libgd-dev \
 		libmemcached-dev \
+		#libapache2-mod-rpaf \
 		#libssh2-1-dev \
 		libyaml-dev \
 		libxml2-dev \
@@ -166,7 +167,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh ; \
 #WORKDIR /var/www/html
 VOLUME /var/www/html
 
-EXPOSE 9000
+EXPOSE 80 443
 
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["php-fpm"]
+CMD ["apache2-foreground"]

@@ -27,22 +27,14 @@ echo "; 50-php.ini create by container image" > /usr/local/etc/php/conf.d/50-php
 
 ## set TimeZone
 if [ -n "$TZ" ]; then
-	
 	echo ">> set timezone ..."
-	
-	case "$lsb_dist" in
-		debian)
-			echo ${TZ} >/etc/timezone && dpkg-reconfigure -f noninteractive tzdata
-			echo "date.timezone=${TZ}" >> /usr/local/etc/php/conf.d/50-php.ini
-		;;
-		alpine)
-			cp /usr/share/zoneinfo/${TZ} /etc/localtime
-			echo ${TZ} >  /etc/timezone
-			echo "date.timezone=${TZ}" >> /usr/local/etc/php/conf.d/50-php.ini
-			date
-		;;
-		*)  echo ">> error: timezone could't be set!" ;;
-	esac
+	if [ "$lsb_dist" = "alpine" ]; then apk add --no-cache --virtual .fetch-tmp tzdata; fi
+	#ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+	cp /usr/share/zoneinfo/${TZ} /etc/localtime
+	echo ${TZ} >  /etc/timezone
+	echo "date.timezone=${TZ}" >> /usr/local/etc/php/conf.d/50-php.ini
+	if [ "$lsb_dist" = "alpine" ]; then apk del --no-network .fetch-tmp; fi
+	date
 fi
 
 ## display PHP error's
@@ -108,7 +100,7 @@ if [ "$APACHE_IS_EXISTS" -eq "1" -a "$ENABLE_APACHE_SSL" -eq "1" ]; then
 	
 	if [ ! -e "/etc/ssl/private/ssl-cert-snakeoil.key" ] || [ ! -e "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
 		echo ">> generating self signed cert ; later you can mount a own certs in docker container"
-		openssl req -x509 -newkey rsa:4086 -subj "/C=none/ST=none/L=none/O=none/CN=none" -keyout "/etc/ssl/private/ssl-cert-snakeoil.key" -out "/etc/ssl/certs/ssl-cert-snakeoil.pem" -days 3650 -nodes -sha256
+		openssl req -x509 -newkey rsa:4086 -subj "/C=no/ST=none/L=none/O=none/CN=none" -keyout "/etc/ssl/private/ssl-cert-snakeoil.key" -out "/etc/ssl/certs/ssl-cert-snakeoil.pem" -days 3650 -nodes -sha256
 	fi
 fi
 
