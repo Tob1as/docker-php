@@ -6,7 +6,7 @@
 -	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
 -	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
 - `7.4-fpm-alpine` (*Coming soon ...*)
-- `7.4-fpm-arm` (*Coming soon ...*)
+- `7.4-fpm-alpine-arm` (*Coming soon ...*)
 - *for older versions see unsupported ["old"](https://github.com/Tob1asDocker/php/tree/old)-branch*
 
 ### What is PHP?
