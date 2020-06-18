@@ -3,19 +3,27 @@ version: "2.4"
 services:
   
   php:
-    build:
-      context: ./
-      dockerfile: debian.x86_64.7_4_apache.Dockerfile
+    #build:
+    #  context: ./
+    #  dockerfile: debian.x86_64.7_4_apache.Dockerfile
     image: tobi312/php:7.4-apache
+    #image: tobi312/php:7.4-fpm
     container_name: phpcontainer
     #restart: unless-stopped
     ports:
+      ## only with apache:
       - "80:80"
       - "443:443"
+      ## only with fpm (optional)
+      #- "9000"
     volumes:
+      #- apache-data:/var/www/html:rw
       - ./html:/var/www/html:rw
-      #- ./entrypoint.sh:/usr/local/bin/entrypoint.sh:rw
+      ## optional: folder with own entrypoint-file(s) mount:
       #- ./entrypoint.d:/entrypoint.d:ro
+      ## optional: own ssl-cert and -key:
+      #- ./ssl/mySSL.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem:ro
+      #- ./ssl/mySSL.key:/etc/ssl/private/ssl-cert-snakeoil.key:ro
     environment:
       TZ: "Europe/Berlin"
       PHP_ERRORS: 1
@@ -24,12 +32,19 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
       CREATE_PHPINFO_FILE: 0
+      ## next env only with apache
       ENABLE_APACHE_REWRITE: 1
       ENABLE_APACHE_ACTIONS: 0
       ENABLE_APACHE_SSL: 0
       ENABLE_APACHE_HEADERS: 0
       ENABLE_APACHE_ALLOWOVERRIDE: 1
       ENABLE_APACHE_REMOTEIP: 0
+    #healthcheck:
+    #  test:  wget --quiet --tries=1 --spider http://localhost:80/ || exit 1
+    #  #test:  wget --quiet --tries=1 --spider --no-check-certificate  https://localhost:443/ || exit 1
+    #  interval: 60s
+    #  timeout: 10s
+    #  retries: 3
     networks:
       net-php:
 

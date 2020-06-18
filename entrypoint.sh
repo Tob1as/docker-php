@@ -11,7 +11,7 @@ set -eu
 : "${PHP_MEM_LIMIT:=""}"                      # set Value in MB, example: 128
 : "${PHP_POST_MAX_SIZE:=""}"                  # set Value in MB, example: 250
 : "${PHP_UPLOAD_MAX_FILESIZE:=""}"            # set Value in MB, example: 250
-: "${PHP_MAX_FILE_UPLOADS:=""}"               # set Value in MB, example: 20
+: "${PHP_MAX_FILE_UPLOADS:=""}"               # set number, example: 20
 : "${CREATE_PHPINFO_FILE:="0"}"               # set 1 to enable
 : "${ENABLE_APACHE_REWRITE:="0"}"             # set 1 to enable
 : "${ENABLE_APACHE_ACTIONS:="0"}"             # set 1 to enable
