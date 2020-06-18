@@ -35,7 +35,6 @@ PHP is a server-side scripting language designed for web development, but which 
   * Apache2 (only):
     * `ENABLE_APACHE_REWRITE` (set 1 to enable)
     * `ENABLE_APACHE_ACTIONS` (set 1 to enable)
-    * `ENABLE_APACHE_ACTIONS` (set 1 to enable)
     * `ENABLE_APACHE_SSL` (set 1 to enable)
     * `ENABLE_APACHE_HEADERS` (set 1 to enable)
     * `ENABLE_APACHE_ALLOWOVERRIDE` (set 1 to enable)
