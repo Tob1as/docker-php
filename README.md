@@ -39,10 +39,16 @@ PHP is a server-side scripting language designed for web development, but which 
     * `ENABLE_APACHE_HEADERS` (set 1 to enable)
     * `ENABLE_APACHE_ALLOWOVERRIDE` (set 1 to enable)
     * `ENABLE_APACHE_REMOTEIP` (set 1 to enable (X-Forwarded-For), use this only behind a proxy/loadbalancer!)
+    * `ENABLE_APACHE_STATUS` (set 1 to enable)
+    * `ENABLE_APACHE_SSL_REDIRECT` (set 1 to enable, required enable ssl and rewrite)
+    * `APACHE_SERVER_NAME` (set server name, example: example.com)
+    * `APACHE_SERVER_ALIAS` (set server name, example: 'www.example.com *.example.com')
+    * `APACHE_SERVER_ADMIN` (set server admin, example: admin@example.com)
+    * `DISABLE_APACHE_DEFAULTSITES` (set 1 to disable default sites, then add or mount your own conf in /etc/apache2/sites-enabled)
 
 * Ports:
-  * php with apache: 80 (http), optional: 443 (https)
-  * php with fpm: 9000
+  * php with apache: `80` (http), optional: `443` (https)
+  * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
   ``` $ echo -e "FROM tobi312/7.4-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
@@ -85,6 +91,12 @@ services:
       ENABLE_APACHE_HEADERS: 0
       ENABLE_APACHE_ALLOWOVERRIDE: 1
       ENABLE_APACHE_REMOTEIP: 0
+      ENABLE_APACHE_STATUS: 1
+      #ENABLE_APACHE_SSL_REDIRECT: 0
+      #APACHE_SERVER_NAME: ""
+      #APACHE_SERVER_ALIAS: ""
+      #APACHE_SERVER_ADMIN: ""
+      #DISABLE_APACHE_DEFAULTSITES: 0
 ```
 
 ### This Image on
