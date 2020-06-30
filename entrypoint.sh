@@ -201,7 +201,7 @@ EOF
 	sed -i "/#Include conf-available/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Include docker/status.conf" /etc/apache2/sites-available/default-ssl.conf
 fi
 
-if [ "$APACHE_IS_EXISTS" -eq "1" -a "$ENABLE_APACHE_SSL_REDIRECT" -eq "1" -a -n "$APACHE_SERVER_NAME" ]; then
+if [ "$APACHE_IS_EXISTS" -eq "1" -a "$ENABLE_APACHE_SSL_REDIRECT" -eq "1" ]; then
 	echo ">> enabling ssl redirect! (required enable ssl and rewrite)"
 	
 	[ -d "/etc/apache2/docker" ] || mkdir /etc/apache2/docker
