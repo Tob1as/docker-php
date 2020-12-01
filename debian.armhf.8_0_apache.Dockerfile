@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.0.0
-FROM php:${PHP_VERSION}-apache
+FROM arm32v7/php:${PHP_VERSION}-apache
 ARG PHP_VERSION
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.title="PHP+Apache2" \
-	org.opencontainers.image.description="Debian with PHP 8.0 and Apache2 on x86_64 arch" \
+	org.opencontainers.image.description="Debian with PHP 8.0 and Apache2 on arm arch" \
 	org.opencontainers.image.licenses="Apache-2.0" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"

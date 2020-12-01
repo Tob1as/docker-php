@@ -1,13 +1,18 @@
 # PHP (with Apache2 or FPM) on x86_64 and arm
 
 ### Supported tags and respective `Dockerfile` links
+-	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile)
+-	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile)
+-	[`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
+-	[`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
+- `8.0-fpm-alpine` (*Coming soon ...*)
+- `8.0-fpm-alpine-arm` (*Coming soon ...*)
 -	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile)
 -	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
 -	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
 -	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
 - `7.4-fpm-alpine` (*Coming soon ...*)
 - `7.4-fpm-alpine-arm` (*Coming soon ...*)
-- *for older versions see unsupported ["old"](https://github.com/Tob1asDocker/php/tree/old)-branch*
 
 ### What is PHP?
 
