@@ -141,7 +141,6 @@ RUN dpkgArch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" && echo "dpkgArc
 	pecl install yaml; \
 	pecl install memcached; \
 	pecl install redis; \
-	# imagick php8 issue: https://github.com/Imagick/imagick/issues/358
 	#pecl install imagick; \
 	pecl install APCu; \
 	docker-php-ext-enable \
@@ -157,6 +156,18 @@ RUN dpkgArch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" && echo "dpkgArc
 	rm -rf /tmp/*; \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; chmod +x /usr/local/bin/composer; \
 	cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+# imagick php8 issue: https://github.com/Imagick/imagick/issues/358
+RUN git clone https://github.com/Imagick/imagick ; \
+	cd imagick ; \
+	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
+	phpize ; \
+	./configure ; \
+	make ; \
+	make install ; \
+	docker-php-ext-enable imagick ; \
+	cd .. ; \
+	rm -r imagick
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh ; \
