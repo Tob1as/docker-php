@@ -259,6 +259,41 @@ if [ "$APACHE_IS_EXISTS" -eq "1" -a "$DISABLE_APACHE_DEFAULTSITES" -eq "1" ]; th
 	fi
 fi
 
+## check if nginx in this container image exists
+if [ -d "/etc/nginx" -a -f "/etc/nginx/nginx.conf" ]; then
+	NGINX_IS_EXISTS="1"
+else 
+	NGINX_IS_EXISTS="0"
+fi
+
+## create index file (for dev and testing)
+if [ "$NGINX_IS_EXISTS" -eq "1" -a "$CREATE_INDEX_FILE" -eq "1" -a ! -e "/var/www/html/index.php" ]; then
+	echo ">> create index file"
+
+	cat > /var/www/html/index.php <<EOF
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="generator" content="Docker Image: tobi312/php">
+		<title>Site</title>
+		<!--<link rel="stylesheet" href="style.css">-->
+	</head>
+	<body>
+		<h1>Hello!</h1>
+		<p>
+			This is a simple website. Time:<br>
+			<?php
+				echo date("Y-m-d H:i:s");
+			?>
+		</p>
+	</body>
+</html>
+
+EOF
+
+fi
+
 # more entrypoint-files
 for f in /entrypoint.d/*; do
 	case "$f" in

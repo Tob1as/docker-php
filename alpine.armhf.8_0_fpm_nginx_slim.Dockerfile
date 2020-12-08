@@ -1,12 +1,12 @@
 ARG PHP_VERSION=8.0.0
-FROM php:${PHP_VERSION}-fpm-alpine
+FROM arm32v7/php:${PHP_VERSION}-fpm-alpine
 ARG PHP_VERSION
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.title="PHP+FPM+NGINX" \
-	org.opencontainers.image.description="Alpine with PHP-FPM 8.0 and NGINX on x86_64 arch" \
+	org.opencontainers.image.description="Alpine with PHP-FPM 8.0 and NGINX on ARM arch" \
 	org.opencontainers.image.licenses="Apache-2.0" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"

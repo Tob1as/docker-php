@@ -2,17 +2,25 @@
 
 ### Supported tags and respective `Dockerfile` links
 -	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile)
--	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile)
 -	[`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
+-	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile)
 -	[`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
 - `8.0-fpm-alpine` (*Coming soon ...*)
 - `8.0-fpm-alpine-arm` (*Coming soon ...*)
+- [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile)
+- [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile)
+- `8.0-fpm-nginx-alpine` (*Coming soon ...*)
+- `8.0-fpm-nginx-alpine-arm` (*Coming soon ...*)
 -	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile)
--	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
 -	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
+-	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
 -	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
 - `7.4-fpm-alpine` (*Coming soon ...*)
 - `7.4-fpm-alpine-arm` (*Coming soon ...*)
+- `7.4-fpm-nginx-alpine-slim` (*Coming soon ...*)
+- `7.4-fpm-nginx-alpine-arm-slim` (*Coming soon ...*)
+- `7.4-fpm-nginx-alpine` (*Coming soon ...*)
+- `7.4-fpm-nginx-alpine-arm` (*Coming soon ...*)
 
 ### What is PHP?
 
@@ -50,6 +58,8 @@ PHP is a server-side scripting language designed for web development, but which 
     * `APACHE_SERVER_ALIAS` (set server name, example: 'www.example.com *.example.com')
     * `APACHE_SERVER_ADMIN` (set server admin, example: admin@example.com)
     * `DISABLE_APACHE_DEFAULTSITES` (set 1 to disable default sites, then add or mount your own conf in /etc/apache2/sites-enabled)
+  * NGINX (only):
+    * `CREATE_INDEX_FILE`  (set 1 to enable)
 
 * Ports:
   * php with apache: `80` (http), optional: `443` (https)
@@ -64,23 +74,22 @@ PHP is a server-side scripting language designed for web development, but which 
 version: "2.4"
 services:
   php:
-    image: tobi312/php:7.4-apache
-    #image: tobi312/php:7.4-fpm
+    image: tobi312/php:8.0-apache
     container_name: phpcontainer
     restart: unless-stopped
+    ## ports ONLY with apache/nginx:
     ports:
-      ## only with apache:
       - "80:80"
       - "443:443"
-      ## only with fpm (optional)
-      #- "9000"
     volumes:
       - ./html:/var/www/html:rw
       ## optional: folder with own entrypoint-file(s) mount:
       #- ./entrypoint.d:/entrypoint.d:ro
-      ## optional: own ssl-cert and -key:
+      ## optional for apache: own ssl-cert and -key:
       #- ./ssl/mySSL.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem:ro
       #- ./ssl/mySSL.key:/etc/ssl/private/ssl-cert-snakeoil.key:ro
+      ## optional for nginx: own nginx default.conf:
+      #- ./nginx_default.conf:/etc/nginx/conf.d/default.conf:ro
     environment:
       TZ: "Europe/Berlin"
       PHP_ERRORS: 1
