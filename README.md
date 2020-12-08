@@ -18,7 +18,7 @@
 - `7.4-fpm-alpine` (*Coming soon ...*)
 - `7.4-fpm-alpine-arm` (*Coming soon ...*)
 - `7.4-fpm-nginx-alpine-slim` (*Coming soon ...*)
-- `7.4-fpm-nginx-alpine-arm-slim` (*Coming soon ...*)
+- `7.4-fpm-nginx-alpine-slim-arm` (*Coming soon ...*)
 - `7.4-fpm-nginx-alpine` (*Coming soon ...*)
 - `7.4-fpm-nginx-alpine-arm` (*Coming soon ...*)
 
