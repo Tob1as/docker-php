@@ -25,6 +25,7 @@ set -eu
 : "${APACHE_SERVER_ALIAS:=""}"                # set server name, example: 'www.example.com *.example.com'
 : "${APACHE_SERVER_ADMIN:=""}"                # set server admin, example: admin@example.com
 : "${DISABLE_APACHE_DEFAULTSITES:="0"}"       # set 1 to disable default sites (add or mount your own conf in /etc/apache2/sites-enabled)
+: "${CREATE_INDEX_FILE:="0"}"               # set 1 to enable
 
 PHP_INI_FILE_NAME="50-php.ini"
 lsb_dist="$(. /etc/os-release && echo "$ID")" # get os (example: debian or alpine) - do not change!

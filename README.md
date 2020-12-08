@@ -1,4 +1,4 @@
-# PHP (with Apache2 or FPM) on x86_64 and arm
+# PHP (with Apache2 or FPM or NGINX) on x86_64 and ARM
 
 ### Supported tags and respective `Dockerfile` links
 -	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile)
