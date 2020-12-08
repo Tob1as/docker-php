@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.title="PHP+Apache2" \
-	org.opencontainers.image.description="Debian with PHP7.4 and Apache2 on arm arch" \
+	org.opencontainers.image.description="Debian with PHP7.4 and Apache2 on ARM arch" \
 	org.opencontainers.image.licenses="Apache-2.0" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
