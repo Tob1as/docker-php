@@ -41,7 +41,7 @@ if [ -n "$TZ" ]; then
 	cp /usr/share/zoneinfo/${TZ} /etc/localtime
 	echo ${TZ} >  /etc/timezone
 	echo "date.timezone=${TZ}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
-	if [ "$lsb_dist" = "alpine" ]; then apk del --no-network .fetch-tmp; fi
+	#if [ "$lsb_dist" = "alpine" ]; then apk del --no-network .fetch-tmp; fi
 	date
 fi
 
