@@ -13,6 +13,7 @@ set -eu
 : "${PHP_UPLOAD_MAX_FILESIZE:=""}"            # set Value in MB, example: 250
 : "${PHP_MAX_FILE_UPLOADS:=""}"               # set number, example: 20
 : "${CREATE_PHPINFO_FILE:="0"}"               # set 1 to enable
+: "${CREATE_INDEX_FILE:="0"}"                 # set 1 to enable
 : "${ENABLE_APACHE_REWRITE:="0"}"             # set 1 to enable
 : "${ENABLE_APACHE_ACTIONS:="0"}"             # set 1 to enable
 : "${ENABLE_APACHE_SSL:="0"}"                 # set 1 to enable
@@ -25,12 +26,31 @@ set -eu
 : "${APACHE_SERVER_ALIAS:=""}"                # set server name, example: 'www.example.com *.example.com'
 : "${APACHE_SERVER_ADMIN:=""}"                # set server admin, example: admin@example.com
 : "${DISABLE_APACHE_DEFAULTSITES:="0"}"       # set 1 to disable default sites (add or mount your own conf in /etc/apache2/sites-enabled)
-: "${CREATE_INDEX_FILE:="0"}"               # set 1 to enable
+: "${ENABLE_NGINX_REMOTEIP:="0"}"            # set 1 to enable (use this only behind a proxy/loadbalancer)
+: "${ENABLE_NGINX_STATUS:="0"}"              # set 1 to enable
 
 PHP_INI_FILE_NAME="50-php.ini"
 lsb_dist="$(. /etc/os-release && echo "$ID")" # get os (example: debian or alpine) - do not change!
 
-## create 50-php.ini file with comment
+## check if apache in this container image exists
+if [ -d "/etc/apache2" -a -f "/etc/apache2/apache2.conf" ]; then
+	APACHE_IS_EXISTS="1"
+else 
+	APACHE_IS_EXISTS="0"
+fi
+
+## check if nginx in this container image exists
+if [ -d "/etc/nginx" -a -f "/etc/nginx/nginx.conf" ]; then
+	NGINX_IS_EXISTS="1"
+else 
+	NGINX_IS_EXISTS="0"
+fi
+
+####################################################
+##################### PHP ##########################
+####################################################
+
+## create php ini file with comment
 echo "; ${PHP_INI_FILE_NAME} create by entrypoint.sh in container image" > /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 
 ## set TimeZone
@@ -75,18 +95,48 @@ if [ -n "$PHP_MAX_FILE_UPLOADS" ]; then
 	echo "max_file_uploads = ${PHP_MAX_FILE_UPLOADS}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 fi
 
-## create phpinfo-file (for dev and testing)
+####################################################
+############ for dev and testing ###################
+####################################################
+
+## create phpinfo-file
 if [ "$CREATE_PHPINFO_FILE" -eq "1" -a ! -e "/var/www/html/phpinfo.php" ]; then
 	echo ">> create phpinfo-file"
 	echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 fi
 
-## check if apache in this container image exists
-if [ -d "/etc/apache2" -a -f "/etc/apache2/apache2.conf" ]; then
-	APACHE_IS_EXISTS="1"
-else 
-	APACHE_IS_EXISTS="0"
+## create index file
+#if [ \( "$NGINX_IS_EXISTS" -eq "1" -o "$APACHE_IS_EXISTS" -eq "1" \) -a "$CREATE_INDEX_FILE" -eq "1" -a ! -e "/var/www/html/index.php" ]; then
+if [ "$CREATE_INDEX_FILE" -eq "1" -a ! -e "/var/www/html/index.php" ]; then
+	echo ">> create index file"
+
+	cat > /var/www/html/index.php <<EOF
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="generator" content="Docker Image: tobi312/php">
+		<title>Site</title>
+		<!--<link rel="stylesheet" href="style.css">-->
+	</head>
+	<body>
+		<h1>Hello!</h1>
+		<p>
+			This is a simple website. Time:<br>
+			<?php
+				echo date("Y-m-d H:i:s");
+			?>
+		</p>
+	</body>
+</html>
+
+EOF
+
 fi
+
+####################################################
+#################### APACHE2 #######################
+####################################################
 
 ## enable apache2 rewrite
 if [ "$APACHE_IS_EXISTS" -eq "1" -a "$ENABLE_APACHE_REWRITE" -eq "1" ]; then
@@ -260,49 +310,36 @@ if [ "$APACHE_IS_EXISTS" -eq "1" -a "$DISABLE_APACHE_DEFAULTSITES" -eq "1" ]; th
 	fi
 fi
 
-## check if nginx in this container image exists
-if [ -d "/etc/nginx" -a -f "/etc/nginx/nginx.conf" ]; then
-	NGINX_IS_EXISTS="1"
-else 
-	NGINX_IS_EXISTS="0"
+####################################################
+##################### NGINX ########################
+####################################################
+
+NGINX_CONF_FILE="/etc/nginx/conf.d/default.conf"
+
+if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_STATUS" -eq "1" ]; then
+	echo ">> enabling nginx status!"
+	nginx_status_string="location /nginx_status {\n    stub_status on;\n    access_log off;\n    allow 127.0.0.1;\n    allow ::1;\n    allow 10.0.0.0/8;\n    allow 172.16.0.0/12;\n    allow 192.168.0.0/16;\n    deny all;\n  }"
+	sed -i "s|##REPLACE_WITH_NGINXSTATUS_CONFIG##|${nginx_status_string}|g" ${NGINX_CONF_FILE}
 fi
 
-## create index file (for dev and testing)
-if [ "$NGINX_IS_EXISTS" -eq "1" -a "$CREATE_INDEX_FILE" -eq "1" -a ! -e "/var/www/html/index.php" ]; then
-	echo ">> create index file"
-
-	cat > /var/www/html/index.php <<EOF
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="generator" content="Docker Image: tobi312/php">
-		<title>Site</title>
-		<!--<link rel="stylesheet" href="style.css">-->
-	</head>
-	<body>
-		<h1>Hello!</h1>
-		<p>
-			This is a simple website. Time:<br>
-			<?php
-				echo date("Y-m-d H:i:s");
-			?>
-		</p>
-	</body>
-</html>
-
-EOF
-
+if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_REMOTEIP" -eq "1" ]; then
+	# https://nginx.org/en/docs/http/ngx_http_realip_module.html
+	echo ">> enabling remoteip support, use this only behind a proxy!"
+	nginx_remoteip_string="set_real_ip_from 172.16.0.0/12;\n  set_real_ip_from fd00:dead:beef::/48;\n  set_real_ip_from fd00:dead:cafe::/48;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
+	sed -i "s|##REPLACE_WITH_REMOTEIP_CONFIG##|${nginx_remoteip_string}|g" ${NGINX_CONF_FILE}
 fi
 
-# more entrypoint-files
-for f in /entrypoint.d/*; do
+####################################################
+
+## more entrypoint-files
+find "/entrypoint.d/" -follow -type f -print | sort -n | while read -r f; do
 	case "$f" in
 		*.sh)
 			if [ ! -x "$f" ] ; then 
+				echo ">> $f is not executable! Set +x ..."
 				chmod +x $f
 			fi
-			echo ">> execute $f"
+			echo ">> $f is executed!"
 			/bin/sh $f
 			;;
 		*)  echo ">> $f is no *.sh-file!" ;;

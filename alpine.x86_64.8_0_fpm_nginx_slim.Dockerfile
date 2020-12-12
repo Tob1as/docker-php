@@ -69,18 +69,21 @@ RUN apk --no-cache add \
 		echo '  listen [::]:80 default_server;'; \
 		echo '  #server_name _;'; \
 		echo ' '; \
+		echo '  ##REPLACE_WITH_REMOTEIP_CONFIG##'; \
+		echo ' '; \
 		echo '  #client_max_body_size 64M;'; \
 		echo ' '; \
-		echo '  location /nginx_status {'; \
-		echo '    stub_status on;'; \
-		echo '    access_log off;'; \
-		echo '    allow 127.0.0.1;'; \
-		echo '    allow ::1;'; \
-		echo '    allow 10.0.0.0/8;'; \
-		echo '    allow 172.16.0.0/12;'; \
-		echo '    allow 192.168.0.0/16;'; \
-		echo '    deny all;'; \
-		echo '  }'; \
+		#echo '  location /nginx_status {'; \
+		#echo '    stub_status on;'; \
+		#echo '    access_log off;'; \
+		#echo '    allow 127.0.0.1;'; \
+		#echo '    allow ::1;'; \
+		#echo '    allow 10.0.0.0/8;'; \
+		#echo '    allow 172.16.0.0/12;'; \
+		#echo '    allow 192.168.0.0/16;'; \
+		#echo '    deny all;'; \
+		#echo '  }'; \
+		echo '  ##REPLACE_WITH_NGINXSTATUS_CONFIG##'; \
 		echo ' '; \
 		echo '  root /var/www/html;'; \
 		echo '  index index.html index.htm index.php;'; \
@@ -97,6 +100,7 @@ RUN apk --no-cache add \
 		echo '    fastcgi_index index.php;'; \
 		echo '    fastcgi_param SCRIPT_NAME $fastcgi_script_name;'; \
 		echo '    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;'; \
+		echo '    #fastcgi_param REMOTE_ADDR $http_x_forwarded_for;'; \
 		echo '    include fastcgi_params;'; \
 		echo '  }'; \
 		echo ' '; \
@@ -107,9 +111,22 @@ RUN apk --no-cache add \
 		echo '}'; \
 	} > /etc/nginx/conf.d/default.conf
 
+# COMPOSER
+#RUN \
+#	curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
+#	chmod +x /usr/local/bin/composer
+
+# PHP-EXTENSION-INSTALLER
+RUN \
+	PHP_EXTENSION_INSTALLER_VERSION=$(curl -s https://api.github.com/repos/mlocati/docker-php-extension-installer/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
+	echo "install-php-extensions Version: ${PHP_EXTENSION_INSTALLER_VERSION}" ; \
+	curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases/download/${PHP_EXTENSION_INSTALLER_VERSION}/install-php-extensions -o /usr/local/bin/install-php-extensions ; \
+	chmod +x /usr/local/bin/install-php-extensions
+
 # PHP
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
+# ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh ; \
 	#sed -i -e 's/\r$//' /usr/local/bin/entrypoint.sh ; \

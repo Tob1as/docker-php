@@ -112,9 +112,9 @@ RUN apk --no-cache add \
 	} > /etc/nginx/conf.d/default.conf
 
 # COMPOSER
-#RUN \
-#	curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
-#	chmod +x /usr/local/bin/composer
+RUN \
+	curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
+	chmod +x /usr/local/bin/composer
 
 # PHP-EXTENSION-INSTALLER
 RUN \
@@ -124,7 +124,80 @@ RUN \
 	chmod +x /usr/local/bin/install-php-extensions
 
 # PHP
-RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
+	install-php-extensions \
+	apcu \
+	bcmath \
+	bz2 \
+	calendar \
+	dba \
+	enchant \
+	exif \
+	ffi \
+	gd \
+	gettext \
+	gmp \
+	#grpc \
+	#igbinary \
+	#imagick \
+	imap \
+	intl \
+	ldap \
+	#mailparse \
+	#maxminddb \
+	#mcrypt \
+	memcached \
+	mongodb \
+	#msgpack \
+	mysqli \
+	#oauth \
+	#oci8 \
+	#odbc \
+	opcache \
+	#pcntl \
+	#pcov \
+	pdo_dblib \
+	#pdo_firebird \
+	pdo_mysql \
+	##pdo_oci \
+	#pdo_odbc \
+	pdo_pgsql \
+	pgsql \
+	#protobuf \
+	pspell \
+	#raphf \
+	redis \
+	shmop \
+	snmp \
+	#soap \
+	#sockets \
+	#solr \
+	##ssh2 \
+	#sysvmsg \
+	#sysvsem \
+	#sysvshm \
+	tidy \
+	#timezonedb \
+	#uuid \
+	#xdebug \
+	xsl \
+	yaml \
+	zip
+
+# imagick php8 issue: https://github.com/Imagick/imagick/issues/358
+RUN apk add --no-cache imagemagick ; \
+	apk add --no-cache --virtual .fetch-deps-build-imagick git autoconf gcc g++ make imagemagick-dev ; \
+	git clone https://github.com/Imagick/imagick ; \
+	cd imagick ; \
+	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
+	phpize ; \
+	./configure ; \
+	make ; \
+	make install ; \
+	docker-php-ext-enable imagick ; \
+	cd .. ; \
+	rm -r imagick ; \
+	apk del --no-network .fetch-deps-build-imagick
 
 # ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

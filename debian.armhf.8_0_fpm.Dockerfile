@@ -17,148 +17,105 @@ ENV LANG C.UTF-8
 ENV TERM=xterm
 ENV CFLAGS="-I/usr/src/php"
 
-RUN apt-get update; \
-	apt-get install -y --no-install-recommends \
-		git \
-		gnupg2 \
-		nano \
-		zip unzip \
-		wget \
-		curl \
-		patch \
-		openssl \
-		libssl-dev \
-		libcurl4-openssl-dev \
-		libevent-dev \
-		libmagickwand-dev \
-		libpq-dev \
-		libxslt-dev \
-		libldap2-dev \
-		libfreetype6-dev \
-		libjpeg62-turbo-dev \
-		libmcrypt-dev \
-		libpng-dev \
-		libjpeg-dev \
-		libgmp-dev \
-		libicu-dev \
-		libgd-dev \
-		libmemcached-dev \
-		#libssh2-1-dev \
-		libyaml-dev \
-		libxml2-dev \
-		zlib1g-dev \
-		libbz2-dev \
-		libsqlite3-dev \
-		libexif-dev \
-		libzip-dev \
-		libonig-dev \
-		libmhash-dev \
-		libenchant-dev \
-		libc-client-dev \
-		libkrb5-dev \
-		freetds-dev \
-		firebird-dev \
-		libpspell-dev aspell-en aspell-de \
-		libsnmp-dev \
-		libtidy-dev \
-		file \
-	; \
-	rm -rf /var/lib/apt/lists/*
+# TOOLS
+#RUN apt-get update; \
+#	apt-get install -y --no-install-recommends \
+#		curl \
+#		wget \
+#		#git \
+#		#zip unzip \
+#		#patch \
+#	; \
+#	rm -rf /var/lib/apt/lists/*
 
-RUN dpkgArch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" && echo "dpkgArch=${dpkgArch}"; \
-	ln -s /usr/include/${dpkgArch}/gmp.h /usr/include/gmp.h; \
-	#ln -fs /usr/lib/${dpkgArch}/libldap.so /usr/lib/; \
-	ln -s /usr/lib/${dpkgArch}/libsybdb.a /usr/lib/; \
-    docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    docker-php-ext-configure ldap --with-libdir="lib/${dpkgArch}"; \
-	docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
-	docker-php-ext-install \
-		bcmath \
-		bz2 \
-		calendar \
-		##ctype \
-		##curl \
-		dba \
-		##dom \
-		enchant \
-		exif \
-		ffi \
-		##fileinfo \
-		##filter \
-		##ftp \
-		gd \
-		gettext \
-		gmp \
-		##hash \
-		##iconv \
-		imap \
-		intl \
-		##json \
-		ldap \
-		##mbstring \
-		mysqli \
-		#oci8 \
-		#odbc \
-		opcache \
-		#pcntl \
-		##pdo \
-		pdo_dblib \
-		pdo_firebird \
-		pdo_mysql \
-		#pdo_oci \
-		#pdo_odbc \
-		pdo_pgsql \
-		##pdo_sqlite \
-		pgsql \
-		##phar \
-		##posix \
-		pspell \
-		##readline \
-		##reflection \
-		##session \
-		shmop \
-		##simplexml \
-		snmp \
-		#soap \
-		#sockets \
-		##sodium \
-		##spl \
-		##standard \
-		#sysvmsg \
-		#sysvsem \
-		#sysvshm \
-		tidy \
-		##tokenizer \
-		##xml \
-		##xmlreader \
-		##xmlwriter \
-		xsl \
-		#zend_test \
-		zip \
-	; \
-	#pecl install ssh2; \
-	pecl install mongodb; \
-	pecl install yaml; \
-	pecl install memcached; \
-	pecl install redis; \
-	#pecl install imagick; \
-	pecl install APCu; \
-	docker-php-ext-enable \
-		#ssh2
-		mongodb \
-		yaml \
-		memcached \
-		redis \
-		#imagick \
-		apcu \
-	; \
-	docker-php-source delete; \
-	rm -rf /tmp/*; \
-	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; chmod +x /usr/local/bin/composer; \
-	cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+# COMPOSER
+RUN \
+	curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
+	chmod +x /usr/local/bin/composer
+
+# PHP-EXTENSION-INSTALLER
+RUN \
+	PHP_EXTENSION_INSTALLER_VERSION=$(curl -s https://api.github.com/repos/mlocati/docker-php-extension-installer/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
+	echo "install-php-extensions Version: ${PHP_EXTENSION_INSTALLER_VERSION}" ; \
+	curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases/download/${PHP_EXTENSION_INSTALLER_VERSION}/install-php-extensions -o /usr/local/bin/install-php-extensions ; \
+	chmod +x /usr/local/bin/install-php-extensions
+
+# PHP
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
+	install-php-extensions \
+	apcu \
+	bcmath \
+	bz2 \
+	calendar \
+	dba \
+	enchant \
+	exif \
+	ffi \
+	gd \
+	gettext \
+	gmp \
+	#grpc \
+	#igbinary \
+	#imagick \
+	imap \
+	intl \
+	ldap \
+	#mailparse \
+	#maxminddb \
+	#mcrypt \
+	memcached \
+	mongodb \
+	#msgpack \
+	mysqli \
+	#oauth \
+	#oci8 \
+	#odbc \
+	opcache \
+	#pcntl \
+	#pcov \
+	pdo_dblib \
+	#pdo_firebird \
+	pdo_mysql \
+	##pdo_oci \
+	#pdo_odbc \
+	pdo_pgsql \
+	pgsql \
+	#protobuf \
+	pspell \
+	#raphf \
+	redis \
+	shmop \
+	snmp \
+	#soap \
+	#sockets \
+	#solr \
+	##ssh2 \
+	#sysvmsg \
+	#sysvsem \
+	#sysvshm \
+	tidy \
+	#timezonedb \
+	#uuid \
+	#xdebug \
+	xsl \
+	yaml \
+	zip
+
 
 # imagick php8 issue: https://github.com/Imagick/imagick/issues/358
-RUN git clone https://github.com/Imagick/imagick ; \
+RUN apt-get update ; \
+	apt-get install -y --no-install-recommends \
+		libmagickwand-6.q16-[0-9]+ \
+		libmagickcore-6.q16-[0-9]+-extra$ \
+	; \
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		git \
+		libmagickwand-dev \
+	; \
+	rm -rf /var/lib/apt/lists/* ; \
+	git clone https://github.com/Imagick/imagick ; \
 	cd imagick ; \
 	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
 	phpize ; \
@@ -167,8 +124,12 @@ RUN git clone https://github.com/Imagick/imagick ; \
 	make install ; \
 	docker-php-ext-enable imagick ; \
 	cd .. ; \
-	rm -r imagick
+	rm -r imagick ; \
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
+# ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh ; \
 	#sed -i -e 's/\r$//' /usr/local/bin/entrypoint.sh ; \

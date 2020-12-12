@@ -1,14 +1,12 @@
 ARG PHP_VERSION=8.0.0
-FROM php:${PHP_VERSION}-fpm
+FROM php:${PHP_VERSION}-fpm-alpine
 ARG PHP_VERSION
 
-ARG DEBIAN_FRONTEND=noninteractive
-
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
-	org.opencontainers.image.title="PHP+FPM" \
-	org.opencontainers.image.description="Debian with PHP 8.0 with FPM on x86_64 arch" \
+	org.opencontainers.image.title="PHP+FPM+NGINX" \
+	org.opencontainers.image.description="Alpine with PHP-FPM 8.0 on x86_64 arch" \
 	org.opencontainers.image.licenses="Apache-2.0" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
@@ -16,17 +14,6 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 ENV LANG C.UTF-8
 ENV TERM=xterm
 ENV CFLAGS="-I/usr/src/php"
-
-# TOOLS
-#RUN apt-get update; \
-#	apt-get install -y --no-install-recommends \
-#		curl \
-#		wget \
-#		#git \
-#		#zip unzip \
-#		#patch \
-#	; \
-#	rm -rf /var/lib/apt/lists/*
 
 # COMPOSER
 RUN \
@@ -101,20 +88,9 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
 	yaml \
 	zip
 
-
 # imagick php8 issue: https://github.com/Imagick/imagick/issues/358
-RUN apt-get update ; \
-	apt-get install -y --no-install-recommends \
-		libmagickwand-6.q16-[0-9]+ \
-		libmagickcore-6.q16-[0-9]+-extra$ \
-	; \
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		git \
-		libmagickwand-dev \
-	; \
-	rm -rf /var/lib/apt/lists/* ; \
+RUN apk add --no-cache imagemagick ; \
+	apk add --no-cache --virtual .fetch-deps-build-imagick git autoconf gcc g++ make imagemagick-dev ; \
 	git clone https://github.com/Imagick/imagick ; \
 	cd imagick ; \
 	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
@@ -125,9 +101,7 @@ RUN apt-get update ; \
 	docker-php-ext-enable imagick ; \
 	cd .. ; \
 	rm -r imagick ; \
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+	apk del --no-network .fetch-deps-build-imagick
 
 # ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

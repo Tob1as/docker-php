@@ -5,22 +5,22 @@
 -	[`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
 -	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile)
 -	[`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
-- `8.0-fpm-alpine` (*Coming soon ...*)
-- `8.0-fpm-alpine-arm` (*Coming soon ...*)
+- [`8.0-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm.Dockerfile)
+- [`8.0-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm.Dockerfile)
 - [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile)
 - [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile)
-- `8.0-fpm-nginx-alpine` (*Coming soon ...*)
-- `8.0-fpm-nginx-alpine-arm` (*Coming soon ...*)
+- [`8.0-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx.Dockerfile)
+- [`8.0-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx.Dockerfile)
 -	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile)
 -	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
 -	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
 -	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
-- `7.4-fpm-alpine` (*Coming soon ...*)
-- `7.4-fpm-alpine-arm` (*Coming soon ...*)
-- `7.4-fpm-nginx-alpine-slim` (*Coming soon ...*)
-- `7.4-fpm-nginx-alpine-slim-arm` (*Coming soon ...*)
-- `7.4-fpm-nginx-alpine` (*Coming soon ...*)
-- `7.4-fpm-nginx-alpine-arm` (*Coming soon ...*)
+- `7.4-fpm-alpine` (*Coming soon ...?*)
+- `7.4-fpm-alpine-arm` (*Coming soon ...?*)
+- `7.4-fpm-nginx-alpine-slim` (*Coming soon ...?*)
+- `7.4-fpm-nginx-alpine-slim-arm` (*Coming soon ...?*)
+- `7.4-fpm-nginx-alpine` (*Coming soon ...?*)
+- `7.4-fpm-nginx-alpine-arm` (*Coming soon ...?*)
 
 ### What is PHP?
 
@@ -31,11 +31,14 @@ PHP is a server-side scripting language designed for web development, but which 
 ![logo](https://raw.githubusercontent.com/docker-library/docs/master/php/logo.png)
 
 ### About these images:
-* based on official Images: [https://hub.docker.com/_/php/](https://hub.docker.com/_/php/) / [https://github.com/docker-library/php](https://github.com/docker-library/php)
-* This image extends the base image with many php extensions, for example: SQL-Databases, GD, imagick, ldap and more. For information about PHP and extensions see here: https://php.net and https://pecl.php.net/
+* based on official images: [https://hub.docker.com/_/php/](https://hub.docker.com/_/php/) / [https://github.com/docker-library/php](https://github.com/docker-library/php)
+* The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter ftp hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter zlib```
+* These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.
+* For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
+* For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
 ### How to use these images:
-* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:PORT -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:TAG```
+* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.0-apache```
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
@@ -44,7 +47,8 @@ PHP is a server-side scripting language designed for web development, but which 
   * `PHP_POST_MAX_SIZE` (set Value in MB, example: 250)
   * `PHP_UPLOAD_MAX_FILESIZE` (set Value in MB, example: 250)
   * `PHP_MAX_FILE_UPLOADS` (set number, example: 20)
-  * `CREATE_PHPINFO_FILE` (set 1 to enable)
+  * `CREATE_PHPINFO_FILE` (set 1 to enable, for dev and testing)
+  * `CREATE_INDEX_FILE` (set 1 to enable, for dev and testing)
   * Apache2 (only):
     * `ENABLE_APACHE_REWRITE` (set 1 to enable)
     * `ENABLE_APACHE_ACTIONS` (set 1 to enable)
@@ -59,14 +63,16 @@ PHP is a server-side scripting language designed for web development, but which 
     * `APACHE_SERVER_ADMIN` (set server admin, example: admin@example.com)
     * `DISABLE_APACHE_DEFAULTSITES` (set 1 to disable default sites, then add or mount your own conf in /etc/apache2/sites-enabled)
   * NGINX (only):
-    * `CREATE_INDEX_FILE`  (set 1 to enable)
+    * `ENABLE_NGINX_REMOTEIP` (set 1 to enable (X-Forwarded-For), use this only behind a proxy/loadbalancer!)
+    * `ENABLE_NGINX_STATUS` (set 1 to enable)
+    * or mount own config to `/etc/nginx/conf.d/default.conf`
 
 * Ports:
   * php with apache: `80` (http), optional: `443` (https)
   * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
-  ``` $ echo -e "FROM tobi312/7.4-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
+  ``` $ echo -e "FROM tobi312/php:8.0-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
 
 #### Docker-Compose
 
@@ -98,6 +104,7 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
       CREATE_PHPINFO_FILE: 0
+      CREATE_INDEX_FILE: 0
       ## next env only with apache
       ENABLE_APACHE_REWRITE: 1
       ENABLE_APACHE_ACTIONS: 0
@@ -105,12 +112,15 @@ services:
       ENABLE_APACHE_HEADERS: 0
       ENABLE_APACHE_ALLOWOVERRIDE: 1
       ENABLE_APACHE_REMOTEIP: 0
-      ENABLE_APACHE_STATUS: 1
+      ENABLE_APACHE_STATUS: 0
       #ENABLE_APACHE_SSL_REDIRECT: 0
       #APACHE_SERVER_NAME: ""
       #APACHE_SERVER_ALIAS: ""
       #APACHE_SERVER_ADMIN: ""
       #DISABLE_APACHE_DEFAULTSITES: 0
+      ## next env only with nginx
+      #ENABLE_NGINX_REMOTEIP: 0
+      #ENABLE_NGINX_STATUS: 0
 ```
 
 ### This Image on

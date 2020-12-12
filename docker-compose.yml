@@ -7,6 +7,7 @@ services:
     #  context: ./
     #  dockerfile: debian.x86_64.8_0_apache.Dockerfile
     image: tobi312/php:8.0-apache
+    #image: tobi312/php:8.0-fpm-nginx-alpine
     #image: tobi312/php:8.0-fpm
     container_name: phpcontainer
     #restart: unless-stopped
@@ -32,6 +33,7 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
       CREATE_PHPINFO_FILE: 0
+      CREATE_INDEX_FILE: 0
       ## next env only with apache
       ENABLE_APACHE_REWRITE: 1
       ENABLE_APACHE_ACTIONS: 0
@@ -45,9 +47,19 @@ services:
       APACHE_SERVER_ALIAS: ""
       APACHE_SERVER_ADMIN: ""
       DISABLE_APACHE_DEFAULTSITES: 0
+      ## next env only with nginx
+      #ENABLE_NGINX_REMOTEIP: 0
+      #ENABLE_NGINX_STATUS: 1
     healthcheck:
-      test:  wget --quiet --tries=1 --spider http://localhost:80/server-status || exit 1
+      test:  curl --fail http://localhost:80/server-status || exit 1  
+      #test:  curl --fail --insecure https://localhost:443/server-status || exit 1
+      #test:  curl --fail http://localhost:80/nginx_status || exit 1  
+      #test:  curl --fail --insecure https://localhost:443/nginx_status || exit 1
+      # need installed "wget":
+      #test:  wget --quiet --tries=1 --spider http://localhost:80/server-status || exit 1
       #test:  wget --quiet --tries=1 --spider --no-check-certificate  https://localhost:443/server-status || exit 1
+      #test:  wget --quiet --tries=1 --spider http://localhost:80/nginx_status || exit 1
+      #test:  wget --quiet --tries=1 --spider --no-check-certificate  https://localhost:443/nginx_status || exit 1
       interval: 60s
       timeout: 10s
       retries: 3
@@ -59,13 +71,13 @@ services:
 networks:
   net-php:
     name: net-php
-    driver: bridge
-    enable_ipv6: true
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/24
-        - subnet: fd00:dead:beef::/48
+#    driver: bridge
+#    enable_ipv6: true
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 172.20.0.0/24
+#        - subnet: fd00:dead:beef::/48
 
   
 #volumes:
