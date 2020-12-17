@@ -43,7 +43,7 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
 	gmp \
 	#grpc \
 	#igbinary \
-	#imagick \
+	imagick \
 	imap \
 	intl \
 	ldap \
@@ -87,21 +87,6 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
 	xsl \
 	yaml \
 	zip
-
-# imagick php8 issue: https://github.com/Imagick/imagick/issues/358
-RUN apk add --no-cache imagemagick ; \
-	apk add --no-cache --virtual .fetch-deps-build-imagick git autoconf gcc g++ make imagemagick-dev ; \
-	git clone https://github.com/Imagick/imagick ; \
-	cd imagick ; \
-	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
-	phpize ; \
-	./configure ; \
-	make ; \
-	make install ; \
-	docker-php-ext-enable imagick ; \
-	cd .. ; \
-	rm -r imagick ; \
-	apk del --no-network .fetch-deps-build-imagick
 
 # ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

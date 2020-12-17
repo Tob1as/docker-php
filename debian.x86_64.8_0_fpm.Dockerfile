@@ -56,7 +56,7 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
 	gmp \
 	#grpc \
 	#igbinary \
-	#imagick \
+	imagick \
 	imap \
 	intl \
 	ldap \
@@ -100,34 +100,6 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini ; \
 	xsl \
 	yaml \
 	zip
-
-
-# imagick php8 issue: https://github.com/Imagick/imagick/issues/358
-RUN apt-get update ; \
-	apt-get install -y --no-install-recommends \
-		libmagickwand-6.q16-[0-9]+ \
-		libmagickcore-6.q16-[0-9]+-extra$ \
-	; \
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		git \
-		libmagickwand-dev \
-	; \
-	rm -rf /var/lib/apt/lists/* ; \
-	git clone https://github.com/Imagick/imagick ; \
-	cd imagick ; \
-	sed -i "s/#define PHP_IMAGICK_VERSION .*/#define PHP_IMAGICK_VERSION \"git-master-$(git rev-parse --short HEAD)\"/" php_imagick.h ; \
-	phpize ; \
-	./configure ; \
-	make ; \
-	make install ; \
-	docker-php-ext-enable imagick ; \
-	cd .. ; \
-	rm -r imagick ; \
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 # ENTRYPOINT
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
