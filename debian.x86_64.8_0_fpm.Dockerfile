@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.title="PHP+FPM" \
 	org.opencontainers.image.description="Debian with PHP 8.0 with FPM on x86_64 arch" \
-	org.opencontainers.image.licenses="Apache-2.0" \
+	org.opencontainers.image.licenses="MIT" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
 
