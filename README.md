@@ -15,12 +15,13 @@
 -	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
 -	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
 -	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
-- `7.4-fpm-alpine` (*Coming soon ...?*)
-- `7.4-fpm-alpine-arm` (*Coming soon ...?*)
-- `7.4-fpm-nginx-alpine-slim` (*Coming soon ...?*)
-- `7.4-fpm-nginx-alpine-slim-arm` (*Coming soon ...?*)
-- `7.4-fpm-nginx-alpine` (*Coming soon ...?*)
-- `7.4-fpm-nginx-alpine-arm` (*Coming soon ...?*)
+- [`7.4-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm.Dockerfile)
+- [`7.4-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm.Dockerfile)
+- [`7.4-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx_slim.Dockerfile)
+- [`7.4-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx_slim.Dockerfile)
+- [`7.4-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx.Dockerfile)
+- [`7.4-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx.Dockerfile)
+
 
 ### What is PHP?
 
@@ -68,7 +69,7 @@ PHP is a server-side scripting language designed for web development, but which 
     * or mount own config to `/etc/nginx/conf.d/default.conf`
 
 * Ports:
-  * php with apache: `80` (http), optional: `443` (https)
+  * php with apache/nginx: `80` (http), optional: `443` (https)
   * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
