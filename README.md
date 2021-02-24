@@ -1,26 +1,15 @@
 # PHP (with Apache2 or FPM or NGINX) on x86_64 and ARM
 
 ### Supported tags and respective `Dockerfile` links
--	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile)
--	[`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
--	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile)
--	[`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
-- [`8.0-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm.Dockerfile)
-- [`8.0-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm.Dockerfile)
-- [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile)
-- [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile)
-- [`8.0-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx.Dockerfile)
-- [`8.0-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx.Dockerfile)
--	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile)
--	[`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
--	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile)
--	[`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
-- [`7.4-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm.Dockerfile)
-- [`7.4-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm.Dockerfile)
-- [`7.4-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx_slim.Dockerfile)
-- [`7.4-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx_slim.Dockerfile)
-- [`7.4-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx.Dockerfile)
-- [`7.4-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx.Dockerfile)
+-	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile) | [`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
+-	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
+- [`8.0-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm.Dockerfile) | [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile) | [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile)
+- [`8.0-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx.Dockerfile) | [`8.0-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx.Dockerfile)
+-	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile) | [`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
+-	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
+- [`7.4-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm.Dockerfile)
+- [`7.4-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx_slim.Dockerfile) | [`7.4-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx_slim.Dockerfile)
+- [`7.4-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx.Dockerfile) | [`7.4-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx.Dockerfile)
 
 
 ### What is PHP?
@@ -122,6 +111,24 @@ services:
       ## next env only with nginx
       #ENABLE_NGINX_REMOTEIP: 0
       #ENABLE_NGINX_STATUS: 0
+```
+
+#### Troubleshooting
+
+If your container fails to start with Images that based on Alpine 3.13 or newer Ubuntu on ARM devices with Raspbian/Debian 10 Buster (32 bit) then update `libseccomp2`[*](https://packages.debian.org/buster-backports/libseccomp2) to >=2.4.4 and restart the container. (Source: [1](https://docs.linuxserver.io/faq#libseccomp), [2](https://github.com/owncloud/docs/pull/3196#issue-577993147), [3](https://github.com/moby/moby/issues/40734))  
+  
+Example (wrong date):
+```sh
+$ docker run --rm --name testing -it alpine:3.13 date
+Sun Jan  0 00:100:4174038  1900
+```
+  
+Solution:
+```sh
+ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
+ echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee -a /etc/apt/sources.list.d/buster-backports.list
+ sudo apt update
+ sudo apt install -t buster-backports libseccomp2
 ```
 
 ### This Image on
