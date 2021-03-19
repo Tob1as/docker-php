@@ -34,6 +34,8 @@ services:
       PHP_MAX_FILE_UPLOADS: 20
       CREATE_PHPINFO_FILE: 0
       CREATE_INDEX_FILE: 0
+      ## next env only with php-fpm
+      #ENABLE_PHP_FPM_STATUS: 1
       ## next env only with apache
       ENABLE_APACHE_REWRITE: 1
       ENABLE_APACHE_ACTIONS: 0

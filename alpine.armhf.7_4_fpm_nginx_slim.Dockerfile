@@ -85,6 +85,8 @@ RUN apk --no-cache add \
 		#echo '  }'; \
 		echo '  ##REPLACE_WITH_NGINXSTATUS_CONFIG##'; \
 		echo ' '; \
+		echo '  ##REPLACE_WITH_PHPFPMSTATUS_CONFIG##'; \
+		echo ' '; \
 		echo '  root /var/www/html;'; \
 		echo '  index index.html index.htm index.php;'; \
 		echo ' '; \

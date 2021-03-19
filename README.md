@@ -40,6 +40,8 @@ PHP is a server-side scripting language designed for web development, but which 
   * `PHP_MAX_FILE_UPLOADS` (set number, example: 20)
   * `CREATE_PHPINFO_FILE` (set 1 to enable, for dev and testing)
   * `CREATE_INDEX_FILE` (set 1 to enable, for dev and testing)
+  * PHP-FPM (only):
+    * `ENABLE_PHP_FPM_STATUS` (set 1 to enable on `/php_fpm_status`)
   * Apache2 (only):
     * `ENABLE_APACHE_REWRITE` (set 1 to enable)
     * `ENABLE_APACHE_ACTIONS` (set 1 to enable)
