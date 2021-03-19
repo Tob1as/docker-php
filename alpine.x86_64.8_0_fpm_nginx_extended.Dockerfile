@@ -78,4 +78,4 @@ RUN apk add --no-cache --virtual .gettext gettext ; \
     curl -sSL https://github.com/nginxinc/docker-nginx/raw/master/entrypoint/20-envsubst-on-templates.sh -o /entrypoint.d/20-envsubst-on-templates.sh ; \
     chmod +x /entrypoint.d/20-envsubst-on-templates.sh
 
-EXPOSE 80 443 9113 9114
+EXPOSE 80 443 9113 9253
