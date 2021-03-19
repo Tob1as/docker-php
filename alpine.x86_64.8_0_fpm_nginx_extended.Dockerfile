@@ -2,7 +2,7 @@ ARG BASE_IMAGE_TAG=8.0-fpm-nginx-alpine
 FROM tobi312/php:${BASE_IMAGE_TAG}
 ARG BASE_IMAGE_TAG
 
-## example build command: docker build -t tobi312/php:8.0-fpm-nginx-extended-alpine --build-arg BASE_IMAGE_TAG=8.0-fpm-nginx-slim-alpine -f alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile .
+## example build command: docker build -t tobi312/php:8.0-fpm-nginx-alpine-extended --build-arg BASE_IMAGE_TAG=8.0-fpm-nginx-alpine -f alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile .
 
 # set environment variable
 ENV ENABLE_NGINX_STATUS=1 \
