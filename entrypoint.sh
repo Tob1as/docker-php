@@ -65,7 +65,7 @@ echo "; ${PHP_INI_FILE_NAME} create by entrypoint.sh in container image" > /usr/
 ## set TimeZone
 if [ -n "$TZ" ]; then
 	echo ">> set timezone to ${TZ} ..."
-	if [ "$lsb_dist" = "alpine" ]; then apk add --no-cache --virtual .fetch-tmp tzdata; fi
+	#if [ "$lsb_dist" = "alpine" ]; then apk add --no-cache --virtual .fetch-tmp tzdata; fi
 	#ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 	cp /usr/share/zoneinfo/${TZ} /etc/localtime
 	echo ${TZ} >  /etc/timezone

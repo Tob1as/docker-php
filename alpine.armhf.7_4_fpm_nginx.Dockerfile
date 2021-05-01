@@ -18,13 +18,14 @@ ENV CFLAGS="-I/usr/src/php"
 
 # NGINX + Supervisor
 RUN apk --no-cache add \
-		#tzdata \
+		tzdata \
 		supervisor \
 		nginx \
 	; \
 	mkdir -p /run/nginx ; \
 	mkdir -p /etc/ssl/nginx ; \
 	mkdir /etc/supervisor.d/ ; \
+	chown -R www-data:www-data /var/lib/nginx/ ; \
 	sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
 	sed -i "s/ssl_session_cache shared:SSL:2m;/#ssl_session_cache shared:SSL:2m;/g" /etc/nginx/nginx.conf ; \
 	sed -i "s/client_max_body_size .*/client_max_body_size 0;/" /etc/nginx/nginx.conf ; \

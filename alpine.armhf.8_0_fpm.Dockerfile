@@ -15,6 +15,10 @@ ENV LANG C.UTF-8
 ENV TERM=xterm
 ENV CFLAGS="-I/usr/src/php"
 
+# tzdata to set the timezones through the environment variables
+RUN apk --no-cache add \
+		tzdata
+
 # COMPOSER
 RUN \
 	curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
