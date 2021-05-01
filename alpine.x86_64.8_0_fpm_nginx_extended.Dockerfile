@@ -23,7 +23,7 @@ ENV ENABLE_NGINX_STATUS=1 \
 RUN \
     NGINX_EXPORTER_VERSION=$(curl -s https://api.github.com/repos/nginxinc/nginx-prometheus-exporter/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
     echo "NGINX_EXPORTER_VERSION=${NGINX_EXPORTER_VERSION}" ; \
-    curl -sSL https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/${NGINX_EXPORTER_VERSION}/nginx-prometheus-exporter-$(echo ${NGINX_EXPORTER_VERSION} | sed 's/[^.0-9][^.0-9]*//g')-linux-${ARCH}.tar.gz | tar xvz -C /usr/local/bin ; \
+    curl -sSL https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/${NGINX_EXPORTER_VERSION}/nginx-prometheus-exporter_$(echo ${NGINX_EXPORTER_VERSION} | sed 's/[^.0-9][^.0-9]*//g')_linux_${ARCH}.tar.gz | tar xvz -C /usr/local/bin ; \
     chmod +x /usr/local/bin/nginx-prometheus-exporter \
     ; \
     { \
