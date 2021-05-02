@@ -1,12 +1,15 @@
 ARG BASE_IMAGE_TAG=8.0-fpm-nginx-alpine-arm
 ARG ARCH="armv7"
 
-FROM golang:alpine AS builder
+FROM arm32v7/golang:alpine AS builder
+ARG ARCH
 
 ENV GOPATH /go
 ENV CGO_ENABLED 0
 ENV GO111MODULE on
 ENV GOOS linux
+ENV GOARCH arm
+ENV GOARM 7
 
 RUN \
     apk add --no-cache git ; \
