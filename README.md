@@ -4,9 +4,9 @@
 -	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile) | [`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
 -	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
 - [`8.0-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm.Dockerfile)
-- [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile) | [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile)
+- [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile) | [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile) (only with default extensions)
 - [`8.0-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx.Dockerfile) | [`8.0-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx.Dockerfile)
-- [`8.0-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile) (with Prometheus Exporter and more)
+- [`8.0-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile) | [`8.0-fpm-nginx-alpine-extended-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_extended_git.Dockerfile) (with Prometheus Exporter and more)
 -	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile) | [`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
 -	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
 - [`7.4-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm.Dockerfile)
@@ -23,7 +23,7 @@ PHP is a server-side scripting language designed for web development, but which 
 ![logo](https://raw.githubusercontent.com/docker-library/docs/master/php/logo.png)
 
 ### About these images:
-* based on official images: [https://hub.docker.com/_/php/](https://hub.docker.com/_/php/) / [https://github.com/docker-library/php](https://github.com/docker-library/php)
+* based on official images: [DockerHub](https://hub.docker.com/_/php/) / [GitHub](https://github.com/docker-library/php)
 * The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter ftp hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter zlib```
 * These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
@@ -119,7 +119,10 @@ services:
 
 #### Troubleshooting
 
-If your container fails to start with Images that based on Alpine 3.13 or newer Ubuntu on ARM devices with Raspbian/Debian 10 Buster (32 bit) then update `libseccomp2`[*](https://packages.debian.org/buster-backports/libseccomp2) to >=2.4.4 and restart the container. (Source: [1](https://docs.linuxserver.io/faq#libseccomp), [2](https://github.com/owncloud/docs/pull/3196#issue-577993147), [3](https://github.com/moby/moby/issues/40734))  
+<details>
+<summary>If your container fails to start with Images that based on Alpine 3.13 or newer Debian/Ubuntu on ARM devices...</summary>
+<p>
+... with Raspbian/Debian 10 Buster (32 bit) then update `libseccomp2`[*](https://packages.debian.org/buster-backports/libseccomp2) to >=2.4.4 and restart the container. (Source: [1](https://docs.linuxserver.io/faq#libseccomp), [2](https://github.com/owncloud/docs/pull/3196#issue-577993147), [3](https://github.com/moby/moby/issues/40734))  
   
 Example (wrong date):
 ```sh
@@ -134,6 +137,8 @@ Solution:
  sudo apt update
  sudo apt install -t buster-backports libseccomp2
 ```
+</p>
+</details>
 
 ### This Image on
 * [DockerHub](https://hub.docker.com/r/tobi312/php/)
