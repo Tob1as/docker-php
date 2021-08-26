@@ -24,6 +24,7 @@ RUN apk --no-cache add \
 	; \
 	mkdir -p /run/nginx ; \
 	mkdir -p /etc/ssl/nginx ; \
+	mkdir -p /etc/nginx/conf.d/ ; \
 	mkdir /etc/supervisor.d/ ; \
 	chown -R www-data:www-data /var/lib/nginx/ ; \
 	sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
