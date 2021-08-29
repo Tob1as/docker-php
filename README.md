@@ -89,7 +89,7 @@ services:
       #- ./ssl/mySSL.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem:ro
       #- ./ssl/mySSL.key:/etc/ssl/private/ssl-cert-snakeoil.key:ro
       ## optional for nginx: own nginx default.conf:
-      #- ./nginx_default.conf:/etc/nginx/conf.d/default.conf:ro
+      #- ./nginx_default.conf:/etc/nginx/http.d/default.conf:ro
     environment:
       TZ: "Europe/Berlin"
       PHP_ERRORS: 1

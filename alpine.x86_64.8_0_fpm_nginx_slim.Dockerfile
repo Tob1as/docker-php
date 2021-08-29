@@ -24,7 +24,6 @@ RUN apk --no-cache add \
 	; \
 	mkdir -p /run/nginx ; \
 	mkdir -p /etc/ssl/nginx ; \
-	mkdir -p /etc/nginx/conf.d/ ; \
 	mkdir /etc/supervisor.d/ ; \
 	chown -R www-data:www-data /var/lib/nginx/ ; \
 	sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
@@ -113,7 +112,7 @@ RUN apk --no-cache add \
 		echo '  location = /robots.txt { log_not_found off; access_log off; }'; \
 		echo ' '; \
 		echo '}'; \
-	} > /etc/nginx/conf.d/default.conf
+	} > /etc/nginx/http.d/default.conf
 
 # COMPOSER
 #RUN \
