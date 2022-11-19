@@ -1,8 +1,8 @@
-ARG BASE_IMAGE_TAG=8.0-fpm-nginx-alpine
-FROM tobi312/php:${BASE_IMAGE_TAG}
-ARG BASE_IMAGE_TAG
+ARG PHP_VERSION=8.1
+FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine
+ARG PHP_VERSION
 
-## example build command: docker build -t tobi312/php:8.0-fpm-nginx-alpine-extended --build-arg BASE_IMAGE_TAG=8.0-fpm-nginx-alpine -f alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile .
+## example build command: docker build -t tobi312/php:8.1-fpm-nginx-alpine-extended --build-arg PHP_VERSION=8.1 -f alpine.fpm_nginx.extended.Dockerfile .
 
 # set environment variable
 ENV ENABLE_NGINX_STATUS=1 \
@@ -59,7 +59,7 @@ RUN \
         echo 'autorestart=unexpected'; \
     } >> /etc/supervisor.d/supervisord.ini
 
-# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile#L87>
+# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile#L95-L111>
 RUN apk add --no-cache --virtual .gettext gettext ; \
     mv /usr/bin/envsubst /tmp/ \
     ; \
