@@ -1,17 +1,15 @@
 # PHP (with Apache2 or FPM or NGINX) on x86_64 and ARM
 
 ### Supported tags and respective `Dockerfile` links
--	[`8.0-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_apache.Dockerfile) | [`8.0-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_apache.Dockerfile)
--	[`8.0-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.8_0_fpm.Dockerfile)
-- [`8.0-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm.Dockerfile) | [`8.0-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm.Dockerfile)
-- [`8.0-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_slim.Dockerfile) | [`8.0-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_slim.Dockerfile) (only with default extensions)
-- [`8.0-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx.Dockerfile) | [`8.0-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx.Dockerfile)
-- [`8.0-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.8_0_fpm_nginx_extended.Dockerfile) | [`8.0-fpm-nginx-alpine-extended-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.8_0_fpm_nginx_extended_git.Dockerfile) (with Prometheus Exporter and more)
--	[`7.4-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_apache.Dockerfile) | [`7.4-apache-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_apache.Dockerfile)
--	[`7.4-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.armhf.7_4_fpm.Dockerfile)
-- [`7.4-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm.Dockerfile) | [`7.4-fpm-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm.Dockerfile)
-- [`7.4-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx_slim.Dockerfile) | [`7.4-fpm-nginx-alpine-slim-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx_slim.Dockerfile)
-- [`7.4-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.x86_64.7_4_fpm_nginx.Dockerfile) | [`7.4-fpm-nginx-alpine-arm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.armhf.7_4_fpm_nginx.Dockerfile)
+- [`8.1-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm.slim.Dockerfile)
+- [`8.1-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm.Dockerfile)
+- [`8.1-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
+- [`8.1-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.Dockerfile)
+- [`8.1-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
+- [`8.1-apache-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.slim.Dockerfile)
+- [`8.1-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.Dockerfile)
+- [`8.1-fpm-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.slim.Dockerfile)
+- [`8.1-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.Dockerfile)
 
 
 ### What is PHP?
@@ -30,7 +28,7 @@ PHP is a server-side scripting language designed for web development, but which 
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
 ### How to use these images:
-* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.0-apache```
+* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.1-apache```
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
@@ -66,7 +64,7 @@ PHP is a server-side scripting language designed for web development, but which 
   * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
-  ``` $ echo -e "FROM tobi312/php:8.0-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
+  ``` $ echo -e "FROM tobi312/php:8.1-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
 
 #### Docker-Compose
 
@@ -74,7 +72,7 @@ PHP is a server-side scripting language designed for web development, but which 
 version: "2.4"
 services:
   php:
-    image: tobi312/php:8.0-apache
+    image: tobi312/php:8.1-apache
     container_name: phpcontainer
     restart: unless-stopped
     ## ports ONLY with apache/nginx:

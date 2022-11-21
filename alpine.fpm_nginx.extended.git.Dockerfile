@@ -1,15 +1,14 @@
-ARG BASE_IMAGE_TAG=8.0-fpm-nginx-alpine-arm
-ARG ARCH="armv7"
+ARG PHP_VERSION=8.1
+ARG ARCH="amd64"
 
-FROM arm32v7/golang:alpine AS builder
+FROM golang:alpine AS builder
 ARG ARCH
 
 ENV GOPATH /go
 ENV CGO_ENABLED 0
 ENV GO111MODULE on
 ENV GOOS linux
-ENV GOARCH arm
-ENV GOARM 7
+ENV GOARCH ${ARCH}
 
 RUN \
     apk add --no-cache git ; \
@@ -25,8 +24,8 @@ RUN \
     go build -trimpath -a -v -ldflags "-X main.version=${BUILD_VERSION} -X main.commit=${VCS_REF} -X main.date=${BUILD_DATE}" -o "/go/bin/php-fpm-exporter" ; \
     echo "php-fpm_exporter build finished!"
 
-FROM tobi312/php:${BASE_IMAGE_TAG}
-ARG BASE_IMAGE_TAG
+FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine
+ARG PHP_VERSION
 ARG ARCH
 
 # set environment variable
