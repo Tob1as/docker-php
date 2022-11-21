@@ -6,10 +6,10 @@
 - [`8.1-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
 - [`8.1-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.Dockerfile)
 - [`8.1-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
--	[`8.1-apache-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.slim.Dockerfile)
--	[`8.1-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.Dockerfile)
--	[`8.1-fpm-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.slim.Dockerfile)
--	[`8.1-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.Dockerfile)
+- [`8.1-apache-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.slim.Dockerfile)
+- [`8.1-apache` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.apache.Dockerfile)
+- [`8.1-fpm-slim` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.slim.Dockerfile)
+- [`8.1-fpm` (*Dockerfile*)](https://github.com/Tob1asDocker/php/blob/master/debian.fpm.Dockerfile)
 
 
 ### What is PHP?
