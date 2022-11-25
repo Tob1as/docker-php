@@ -338,7 +338,7 @@ fi
 ##################### NGINX ########################
 ####################################################
 
-NGINX_CONF_FILE="/etc/nginx/http.d/default.conf"
+NGINX_CONF_FILE="/etc/nginx/conf.d/default.conf"
 
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_STATUS" -eq "1" ]; then
 	echo ">> enabling nginx status!"

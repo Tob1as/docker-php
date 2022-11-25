@@ -26,6 +26,9 @@ RUN apk --no-cache add \
 	mkdir -p /etc/ssl/nginx ; \
 	mkdir /etc/supervisor.d/ ; \
 	chown -R www-data:www-data /var/lib/nginx/ ; \
+	mv /etc/nginx/http.d /etc/nginx/conf.d ; \
+	ln -s /etc/nginx/conf.d /etc/nginx/http.d ; \
+	sed -i "s+/etc/nginx/http.d+/etc/nginx/conf.d+g" /etc/nginx/nginx.conf ; \
 	sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
 	sed -i "s/ssl_session_cache shared:SSL:2m;/#ssl_session_cache shared:SSL:2m;/g" /etc/nginx/nginx.conf ; \
 	sed -i "s/client_max_body_size .*/client_max_body_size 0;/" /etc/nginx/nginx.conf ; \

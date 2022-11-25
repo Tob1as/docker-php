@@ -87,7 +87,7 @@ services:
       #- ./ssl/mySSL.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem:ro
       #- ./ssl/mySSL.key:/etc/ssl/private/ssl-cert-snakeoil.key:ro
       ## optional for nginx: own nginx default.conf:
-      #- ./nginx_default.conf:/etc/nginx/http.d/default.conf:ro
+      #- ./nginx_default.conf:/etc/nginx/conf.d/default.conf:ro
     environment:
       TZ: "Europe/Berlin"
       PHP_ERRORS: 1
@@ -114,30 +114,6 @@ services:
       #ENABLE_NGINX_REMOTEIP: 0
       #ENABLE_NGINX_STATUS: 0
 ```
-
-#### Troubleshooting
-
-<details>
-<summary>If your container fails to start with Images that based on Alpine 3.13 or newer Debian/Ubuntu on ARM devices...</summary>
-<p>
-
-... with Raspbian/Debian 10 Buster (32 bit) then update `libseccomp2`[*](https://packages.debian.org/buster-backports/libseccomp2) to >=2.4.4 and restart the container. (Source: [1](https://docs.linuxserver.io/faq#libseccomp), [2](https://github.com/owncloud/docs/pull/3196#issue-577993147), [3](https://github.com/moby/moby/issues/40734))  
-  
-Example (wrong date):
-```sh
-$ docker run --rm --name testing -it alpine:3.13 date
-Sun Jan  0 00:100:4174038  1900
-```
-  
-Solution:
-```sh
- sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
- echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee -a /etc/apt/sources.list.d/buster-backports.list
- sudo apt update
- sudo apt install -t buster-backports libseccomp2
-```
-</p>
-</details>
 
 ### This Image on
 * [DockerHub](https://hub.docker.com/r/tobi312/php/)
