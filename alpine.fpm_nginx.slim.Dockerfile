@@ -135,5 +135,7 @@ VOLUME /var/www/html
 
 EXPOSE 80 443
 
+#STOPSIGNAL SIGQUIT
+
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
