@@ -8,7 +8,7 @@ on:
   #  paths:
   #    - 'debian.fpm.slim.Dockerfile'
   #    - 'debian.fpm.Dockerfile'
-  #    - '.github/workflows/build_docker_images-php8_1-debian_fpm.yaml'
+  #    - '.github/workflows/build_docker_images-php8_2-debian_fpm.yaml'
   workflow_dispatch:
   schedule:
     - cron: '45 2 22 * *'  # At 05:45 on day-of-month 22.
