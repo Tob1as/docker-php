@@ -1,4 +1,4 @@
-name: 'build docker images: Debian + PHP + Apache2'
+name: 'build docker images: Debian + 8.1 PHP + Apache2'
 
 on:
   #push:
