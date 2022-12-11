@@ -11,7 +11,7 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.description="Debian with PHP ${PHP_VERSION} with FPM" \
 	org.opencontainers.image.licenses="MIT" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
-	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
+	org.opencontainers.image.source="https://github.com/Tob1as/docker-php"
 
 # PHP
 RUN \

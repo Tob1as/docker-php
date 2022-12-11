@@ -5,7 +5,7 @@
 ##   \_/\_/ \___|_.__/____/|_|\__\___|   |_|   |____/____/|_| |_/_/  |____/|_|     |_| |_|
 ##
 
-## https://github.com/Tob1asDocker/php + https://hub.docker.com/r/tobi312/php
+## https://github.com/Tob1as/docker-php + https://hub.docker.com/r/tobi312/php
 ## https://github.com/linuxserver/docker-openssh-server + https://hub.docker.com/r/linuxserver/openssh-server
 
 ## https://kubernetes.io/docs/reference/kubectl/cheatsheet/

@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.description="Alpine with PHP-FPM ${PHP_VERSION} and NGINX" \
 	org.opencontainers.image.licenses="MIT" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
-	org.opencontainers.image.source="https://github.com/Tob1asDocker/php"
+	org.opencontainers.image.source="https://github.com/Tob1as/docker-php"
 
 ENV LANG C.UTF-8
 ENV TERM=xterm
