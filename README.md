@@ -11,6 +11,7 @@
 - [`8.1-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.1-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 
+All 8.1 images are also available as 8.2 since December 2022. ;-)
 
 ### What is PHP?
 
