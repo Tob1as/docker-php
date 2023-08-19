@@ -55,6 +55,17 @@ else
 	NGINX_IS_EXISTS="0"
 fi
 
+## print versions
+echo ">> print versions ..."
+php -v | head -1
+if [ "$APACHE_IS_EXISTS" -eq "1" ]; then
+	#httpd -v
+	apache2 -v | head -1
+fi
+if [ "$NGINX_IS_EXISTS" -eq "1" ]; then
+	nginx -v | head -1
+fi
+
 ####################################################
 ##################### PHP ##########################
 ####################################################
