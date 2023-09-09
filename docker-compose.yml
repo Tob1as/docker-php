@@ -66,25 +66,25 @@ services:
       retries: 3
     networks:
       website:
-    labels:
-      # for Traefik "docker-compose" example see: https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/traefik.yml
-      - "traefik.enable=true"
-      #- "traefik.docker.network=website"
-      - "traefik.http.services.website.loadbalancer.server.port=80"
-      # http
-      - "traefik.http.routers.website-http.rule=Host(`example.com`)"
-      - "traefik.http.routers.website-http.entrypoints=web"
-      - "traefik.http.routers.website-http.service=website"
-      # https
-      - "traefik.http.routers.website-https.tls=true"
-      - "traefik.http.routers.website-https.rule=Host(`example.com`)"
-      - "traefik.http.routers.website-https.entrypoints=websecure"
-      - "traefik.http.routers.website-https.service=website"
-      # http to https redirect      
-      - "traefik.http.routers.website-http.middlewares=website-https"
-      - "traefik.http.middlewares.website-https.redirectscheme.scheme=https"
-      #- "traefik.http.middlewares.website-https.redirectscheme.permanent=false"
-      #- "traefik.http.middlewares.website-https.redirectscheme.port=443"
+    #labels:
+    #  # for Traefik "docker-compose" example see: https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/traefik.yml
+    #  - "traefik.enable=true"
+    #  #- "traefik.docker.network=website"
+    #  - "traefik.http.services.website.loadbalancer.server.port=80"
+    #  # http
+    #  - "traefik.http.routers.website-http.rule=Host(`example.com`)"
+    #  - "traefik.http.routers.website-http.entrypoints=web"
+    #  - "traefik.http.routers.website-http.service=website"
+    #  # https
+    #  - "traefik.http.routers.website-https.tls=true"
+    #  - "traefik.http.routers.website-https.rule=Host(`example.com`)"
+    #  - "traefik.http.routers.website-https.entrypoints=websecure"
+    #  - "traefik.http.routers.website-https.service=website"
+    #  # http to https redirect      
+    #  - "traefik.http.routers.website-http.middlewares=website-https"
+    #  - "traefik.http.middlewares.website-https.redirectscheme.scheme=https"
+    #  #- "traefik.http.middlewares.website-https.redirectscheme.permanent=false"
+    #  #- "traefik.http.middlewares.website-https.redirectscheme.port=443"
 
 # https://github.com/robbertkl/docker-ipv6nat/issues/65#issuecomment-754600212
 networks:
