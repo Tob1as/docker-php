@@ -366,7 +366,7 @@ fi
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_REMOTEIP" -eq "1" ]; then
 	# https://nginx.org/en/docs/http/ngx_http_realip_module.html
 	echo ">> enabling remoteip support, use this only behind a proxy!"
-	nginx_remoteip_string="set_real_ip_from 172.16.0.0/12;\n  set_real_ip_from fd00:dead:beef::/48;\n  set_real_ip_from fd00:dead:cafe::/48;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
+	nginx_remoteip_string="set_real_ip_from 172.20.0.0/8;\n  #set_real_ip_from fd00:dead:beef::/48;\n  set_real_ip_from fd00::/8;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
 	sed -i "s|##REPLACE_WITH_REMOTEIP_CONFIG##|${nginx_remoteip_string}|g" ${NGINX_CONF_FILE}
 fi
 
