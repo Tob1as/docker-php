@@ -22,18 +22,18 @@ RUN apk --no-cache add \
 		supervisor \
 		nginx \
 	; \
-	mkdir -p /run/nginx ; \
+	#mkdir -p /run/nginx ; \
 	mkdir -p /etc/ssl/nginx ; \
 	mkdir /etc/supervisor.d/ ; \
 	chown -R www-data:www-data /var/lib/nginx/ ; \
 	mv /etc/nginx/http.d /etc/nginx/conf.d ; \
-	ln -s /etc/nginx/conf.d /etc/nginx/http.d ; \
-	sed -i "s+/etc/nginx/http.d+/etc/nginx/conf.d+g" /etc/nginx/nginx.conf ; \
-	sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
-	sed -i "s/ssl_session_cache shared:SSL:2m;/#ssl_session_cache shared:SSL:2m;/g" /etc/nginx/nginx.conf ; \
-	sed -i "s/client_max_body_size .*/client_max_body_size 0;/" /etc/nginx/nginx.conf ; \
 	ln -sf /dev/stdout /var/log/nginx/access.log ; \
 	ln -sf /dev/stderr /var/log/nginx/error.log ; \
+    #ln -s /etc/nginx/conf.d /etc/nginx/http.d ; \
+	#sed -i "s+/etc/nginx/http.d+/etc/nginx/conf.d+g" /etc/nginx/nginx.conf ; \
+	#sed -i "s/user nginx;/user www-data;/g" /etc/nginx/nginx.conf ; \
+	#sed -i "s/ssl_session_cache shared:SSL:2m;/#ssl_session_cache shared:SSL:2m;/g" /etc/nginx/nginx.conf ; \
+	#sed -i "s/client_max_body_size .*/client_max_body_size 0;/" /etc/nginx/nginx.conf ; \
 	\
 	{ \
 		echo '[supervisord]'; \
@@ -68,6 +68,41 @@ RUN apk --no-cache add \
 	} > /etc/supervisor.d/supervisord.ini \
 	; \
 	{ \
+		echo ''; \
+		echo 'user  www-data;'; \
+		echo 'worker_processes  auto;'; \
+		echo ''; \
+		echo 'error_log  /var/log/nginx/error.log notice;'; \
+		echo 'pid        /var/run/nginx.pid;'; \
+		echo ''; \
+		echo ''; \
+		echo 'events {'; \
+		echo '    worker_connections  1024;'; \
+		echo '}'; \
+		echo ''; \
+		echo ''; \
+		echo 'http {'; \
+		echo '    include       /etc/nginx/mime.types;'; \
+		echo '    default_type  application/octet-stream;'; \
+		echo $'    log_format  main  \'$remote_addr - $remote_user [$time_local] "$request" \''; \
+		echo $'                      \'$status $body_bytes_sent "$http_referer" \''; \
+		echo $'                      \'"$http_user_agent" "$http_x_forwarded_for"\';'; \
+		echo ''; \
+		echo '    access_log  /var/log/nginx/access.log  main;'; \
+		echo ''; \
+		echo '    sendfile        on;'; \
+		echo '    #tcp_nopush     on;'; \
+		echo ''; \
+		echo '    keepalive_timeout  65;'; \
+		echo ''; \
+		echo '    #gzip  on;'; \
+		echo ''; \
+		echo '    include /etc/nginx/conf.d/*.conf;'; \
+		echo '}'; \
+		echo ''; \
+	} > /etc/nginx/nginx.conf \
+    ; \
+	{ \
 		echo 'server {'; \
 		echo '  listen 80 default_server;'; \
 		echo '  listen [::]:80 default_server;'; \
@@ -77,16 +112,6 @@ RUN apk --no-cache add \
 		echo ' '; \
 		echo '  #client_max_body_size 64M;'; \
 		echo ' '; \
-		#echo '  location /nginx_status {'; \
-		#echo '    stub_status on;'; \
-		#echo '    access_log off;'; \
-		#echo '    allow 127.0.0.1;'; \
-		#echo '    allow ::1;'; \
-		#echo '    allow 10.0.0.0/8;'; \
-		#echo '    allow 172.16.0.0/12;'; \
-		#echo '    allow 192.168.1.0/16;'; \
-		#echo '    deny all;'; \
-		#echo '  }'; \
 		echo '  ##REPLACE_WITH_NGINXSTATUS_CONFIG##'; \
 		echo ' '; \
 		echo '  ##REPLACE_WITH_PHPFPMSTATUS_CONFIG##'; \
@@ -115,7 +140,7 @@ RUN apk --no-cache add \
 		echo '  location = /robots.txt { log_not_found off; access_log off; }'; \
 		echo ' '; \
 		echo '}'; \
-	} > /etc/nginx/http.d/default.conf
+	} > /etc/nginx/conf.d/default.conf
 
 # PHP-EXTENSION-INSTALLER
 RUN \
