@@ -1,17 +1,20 @@
 # PHP (with Apache2 or FPM or NGINX) on x86_64 and ARM
 
 ### Supported tags and respective `Dockerfile` links
-- [`8.1-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.slim.Dockerfile)
-- [`8.1-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.Dockerfile)
-- [`8.1-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
-- [`8.1-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
-- [`8.1-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
-- [`8.1-apache-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
-- [`8.1-apache` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
-- [`8.1-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
-- [`8.1-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
+- [`8.X-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.slim.Dockerfile)
+- [`8.X-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.Dockerfile)
+- [`8.X-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
+- [`8.X-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
+- [`8.X-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
+- [`8.X-apache-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
+- [`8.X-apache` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
+- [`8.X-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
+- [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 
-All 8.1 images are also available as 8.2 since December 2022. ;-)
+**All container images are available in versions 8.1, 8.2 and 8.3.** ;-)  
+  
+*How long php versions are supported (End of Life): [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)  
+Do not use an container image which php version is no longer supported!*
 
 ### What is PHP?
 
