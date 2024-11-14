@@ -88,7 +88,7 @@ RUN \
         } >> /etc/supervisor.d/supervisord.ini ; \
     fi
 
-# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile#L95-L111>
+# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine-slim/Dockerfile#L86-L102>
 RUN apk add --no-cache --virtual .gettext gettext ; \
     mv /usr/bin/envsubst /tmp/ \
     ; \

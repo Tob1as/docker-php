@@ -82,7 +82,7 @@ RUN \
         echo 'autorestart=unexpected'; \
     } >> /etc/supervisor.d/supervisord.ini
 
-# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile#L87>
+# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine-slim/Dockerfile#L86-L102>
 RUN apk add --no-cache --virtual .gettext gettext ; \
     mv /usr/bin/envsubst /tmp/ \
     ; \
