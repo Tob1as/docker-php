@@ -8,7 +8,7 @@ ARG PHP_VERSION
 ENV ENABLE_NGINX_STATUS=1 \
     ENABLE_PHP_FPM_STATUS=1 \
     WWW_USER=www-data \
-    NGINX_EXPORTER="-nginx.scrape-uri='http://localhost/nginx_status' -web.listen-address=':9113' -web.telemetry-path='/metrics' -nginx.ssl-verify=false" \
+    NGINX_EXPORTER="--nginx.scrape-uri='http://localhost/nginx_status' --web.listen-address=':9113' --web.telemetry-path='/metrics' --no-nginx.ssl-verify" \
     PHP_FPM_EXPORTER="server --phpfpm.scrape-uri='tcp://127.0.0.1:9000/php_fpm_status' --web.listen-address=':9253' --web.telemetry-path='/metrics' --log.level=info --phpfpm.fix-process-count=false"
 
 # install tools
