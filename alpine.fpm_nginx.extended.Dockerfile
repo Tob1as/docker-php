@@ -34,7 +34,7 @@ RUN \
         INSTALL="0" ; \
     fi ; \ 
     if [ "$INSTALL" -eq "1" ]; then \
-        NGINX_EXPORTER_VERSION=$(curl -s https://api.github.com/repos/nginxinc/nginx-prometheus-exporter/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
+        NGINX_EXPORTER_VERSION=$(curl -sL https://api.github.com/repos/nginxinc/nginx-prometheus-exporter/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
         echo "NGINX_EXPORTER_VERSION=${NGINX_EXPORTER_VERSION}" ; \
         curl -sSL https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/${NGINX_EXPORTER_VERSION}/nginx-prometheus-exporter_$(echo ${NGINX_EXPORTER_VERSION} | sed 's/[^.0-9][^.0-9]*//g')_linux_${TARGETARCH}.tar.gz | tar xvz -C /usr/local/bin ; \
         chmod +x /usr/local/bin/nginx-prometheus-exporter \
@@ -69,7 +69,7 @@ RUN \
         INSTALL="0" ; \
     fi ; \ 
     if [ "$INSTALL" -eq "1" ]; then \
-        PHP_FPM_EXPORTER_VERSION=$(curl -s https://api.github.com/repos/hipages/php-fpm_exporter/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
+        PHP_FPM_EXPORTER_VERSION=$(curl -sL https://api.github.com/repos/hipages/php-fpm_exporter/releases/latest | grep 'tag_name' | cut -d '"' -f4) ; \
         echo "PHP_FPM_EXPORTER_VERSION=${PHP_FPM_EXPORTER_VERSION}" ; \
         curl -sSL https://github.com/hipages/php-fpm_exporter/releases/download/${PHP_FPM_EXPORTER_VERSION}/php-fpm_exporter_$(echo ${PHP_FPM_EXPORTER_VERSION} | sed 's/[^.0-9][^.0-9]*//g')_linux_${TARGETARCH} -o /usr/local/bin/php-fpm-exporter ; \
         chmod +x /usr/local/bin/php-fpm-exporter \
@@ -88,22 +88,8 @@ RUN \
         } >> /etc/supervisor.d/supervisord.ini ; \
     fi
 
-# envsubst for templating <https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine-slim/Dockerfile#L86-L102>
-RUN apk add --no-cache --virtual .gettext gettext ; \
-    mv /usr/bin/envsubst /tmp/ \
-    ; \
-    runDeps="$( \
-        scanelf --needed --nobanner /tmp/envsubst \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | sort -u \
-            | xargs -r apk info --installed \
-            | sort -u \
-    )" \
-    ; \
-    apk add --no-cache $runDeps ; \
-    apk del .gettext ; \
-    mv /tmp/envsubst /usr/local/bin/ \
-    ; \
+# envsubst for templating <https://github.com/nginx/docker-nginx/blob/master/stable/alpine-slim/Dockerfile#L86-L87>
+RUN apk add --no-cache gettext-envsubst ; \
     curl -sSL https://github.com/nginxinc/docker-nginx/raw/master/entrypoint/20-envsubst-on-templates.sh -o /entrypoint.d/20-envsubst-on-templates.sh ; \
     chmod +x /entrypoint.d/20-envsubst-on-templates.sh ; \
     mkdir /etc/nginx/templates

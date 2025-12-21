@@ -36,7 +36,7 @@ jobs:
           DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/${GITHUB_REPO_SHORT}
           REDHAT_QUAY_REPO=${{ secrets.REDHAT_QUAY_USERNAME }}/${GITHUB_REPO_SHORT}
 
-          PHP_VERSION="8.4"
+          PHP_VERSION="8.5"
           
           # Set output parameters to github action.
           echo ::set-output name=build_date::${BUILD_DATE}

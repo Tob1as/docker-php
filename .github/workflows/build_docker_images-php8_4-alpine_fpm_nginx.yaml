@@ -1,4 +1,4 @@
-name: 'build docker images: Alpine + 8.4 PHP-FPM + NGINX'
+name: 'docker:Alpine + 8.4 PHP-FPM + NGINX'
 
 on:
   #push:
@@ -137,12 +137,3 @@ jobs:
           #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-nginx-alpine-extended-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
           #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-nginx-alpine-extended
           #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-fpm-nginx-alpine-extended
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{steps.script.outputs.docker_repo}}
-          short-description: ${{ github.event.repository.description }}
-          readme-filepath: README.md

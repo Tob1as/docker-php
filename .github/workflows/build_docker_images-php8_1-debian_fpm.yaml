@@ -1,4 +1,4 @@
-name: 'build docker images: Debian + 8.1 PHP-FPM'
+name: 'docker:Debian + 8.1 PHP-FPM'
 
 on:
   #push:
@@ -10,8 +10,8 @@ on:
   #    - 'debian.fpm.Dockerfile'
   #    - '.github/workflows/build_docker_images-php8_1-debian_fpm.yaml'
   workflow_dispatch:
-  schedule:
-    - cron: '45 2 20 * *'  # At 05:45 on day-of-month 20.
+  #schedule:
+  #  - cron: '45 2 20 * *'  # At 05:45 on day-of-month 20.
 
 defaults:
   run:
@@ -117,12 +117,3 @@ jobs:
           #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
           #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm
           #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-fpm
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{steps.script.outputs.docker_repo}}
-          short-description: ${{ github.event.repository.description }}
-          readme-filepath: README.md

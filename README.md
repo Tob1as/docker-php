@@ -11,7 +11,7 @@
 - [`8.X-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 
-**All container images are available in versions 8.1, 8.2, 8.3 and 8.4.** ;-)  
+**All container images are available in versions 8.3 and 8.4.** ;-)  
   
 *How long php versions are supported (End of Life): [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)  
 Do not use an container image which php version is no longer supported!*

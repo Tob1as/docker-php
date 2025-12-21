@@ -1,4 +1,4 @@
-name: 'docker:Debian + 8.4 PHP-FPM'
+name: 'docker:Debian + 8.4 PHP + Apache2'
 
 on:
   #push:
@@ -6,12 +6,12 @@ on:
   #    - 'main'
   #    - 'master'
   #  paths:
-  #    - 'debian.fpm.slim.Dockerfile'
-  #    - 'debian.fpm.Dockerfile'
-  #    - '.github/workflows/build_docker_images-php8_4-debian_fpm.yaml'
+  #    - 'debian.apache.slim.Dockerfile'
+  #    - 'debian.apache.Dockerfile'
+  #    - '.github/workflows/build_docker_images-php8_4-debian_apache.yaml'
   workflow_dispatch:
   schedule:
-    - cron: '45 2 24 * *'  # At 02:45 on day-of-month 24.
+    - cron: '45 5 24 * *'  # At 05:45 on day-of-month 24.
 
 defaults:
   run:
@@ -36,7 +36,7 @@ jobs:
           DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/${GITHUB_REPO_SHORT}
           REDHAT_QUAY_REPO=${{ secrets.REDHAT_QUAY_USERNAME }}/${GITHUB_REPO_SHORT}
 
-          PHP_VERSION="8.4"
+          PHP_VERSION="8.5"
           
           # Set output parameters to github action.
           echo ::set-output name=build_date::${BUILD_DATE}
@@ -85,7 +85,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./debian.fpm.slim.Dockerfile
+          file: ./debian.apache.slim.Dockerfile
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/arm/v6
           #pull: true
           push: true
@@ -94,17 +94,17 @@ jobs:
             VCS_REF=${{steps.script.outputs.commit_hash}}
             PHP_VERSION=${{steps.script.outputs.php_version}}
           tags: |
-            docker.io/${{steps.script.outputs.docker_repo}}:${{steps.script.outputs.php_version}}-fpm-slim
-          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-slim-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
-          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-slim
-          #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-fpm-slim
+            docker.io/${{steps.script.outputs.docker_repo}}:${{steps.script.outputs.php_version}}-apache-slim
+          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-apache-slim-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
+          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-apache-slim
+          #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-apache-slim
 
       - name: Build
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./debian.fpm.Dockerfile
+          file: ./debian.apache.Dockerfile
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
           pull: true
           push: true
@@ -113,7 +113,7 @@ jobs:
             VCS_REF=${{steps.script.outputs.commit_hash}}
             PHP_VERSION=${{steps.script.outputs.php_version}}
           tags: |
-            docker.io/${{steps.script.outputs.docker_repo}}:${{steps.script.outputs.php_version}}-fpm
-          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
-          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-fpm
-          #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-fpm
+            docker.io/${{steps.script.outputs.docker_repo}}:${{steps.script.outputs.php_version}}-apache
+          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-apache-${{steps.script.outputs.build_date_numeric}}.${{steps.script.outputs.commit_hash}}
+          #  ghcr.io/${{steps.script.outputs.github_repo}}:${{steps.script.outputs.php_version}}-apache
+          #  quay.io/${{steps.script.outputs.redhat_quay_repo}}:${{steps.script.outputs.php_version}}-apache
