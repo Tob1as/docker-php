@@ -1,4 +1,4 @@
-name: 'docker:Alpine + 8.4 PHP-FPM + NGINX'
+name: 'docker:Alpine + 8.5 PHP-FPM + NGINX'
 
 on:
   #push:

@@ -1,4 +1,4 @@
-name: 'docker:Debian + 8.4 PHP + Apache2'
+name: 'docker:Debian + 8.5 PHP + Apache2'
 
 on:
   #push:
