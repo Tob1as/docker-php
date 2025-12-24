@@ -105,8 +105,8 @@ spec:
       #hostname: website
       containers:
         - name: website
-          #image: tobi312/php:8.1-fpm-nginx-alpine
-          image: tobi312/php:8.1-apache
+          #image: tobi312/php:8.4-fpm-nginx-alpine
+          image: tobi312/php:8.4-apache
           imagePullPolicy: Always
           envFrom:
           - configMapRef:

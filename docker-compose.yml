@@ -6,8 +6,8 @@ services:
     #build:
     #  context: ./
     #  dockerfile: debian.apache.Dockerfile
-    image: tobi312/php:8.1-apache
-    #image: tobi312/php:8.1-fpm-nginx-alpine
+    image: tobi312/php:8.4-apache
+    #image: tobi312/php:8.4-fpm-nginx-alpine
     container_name: phpcontainer  # or: website
     #restart: unless-stopped
     ## ports ONLY with apache/nginx:
