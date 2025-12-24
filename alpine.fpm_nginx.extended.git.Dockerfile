@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.4
 ARG ARCH="amd64"
 
 FROM golang:alpine AS builder

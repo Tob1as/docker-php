@@ -1,8 +1,8 @@
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.4
 FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine
 ARG PHP_VERSION
 
-## example build command: docker build -t tobi312/php:8.1-fpm-nginx-alpine-extended --build-arg PHP_VERSION=8.1 -f alpine.fpm_nginx.extended.Dockerfile .
+## example build command: docker build -t tobi312/php:8.1-fpm-nginx-alpine-extended --build-arg PHP_VERSION=8.4 -f alpine.fpm_nginx.extended.Dockerfile .
 
 # set environment variable
 ENV ENABLE_NGINX_STATUS=1 \
