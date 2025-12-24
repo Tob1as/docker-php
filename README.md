@@ -32,7 +32,7 @@ PHP is a server-side scripting language designed for web development, but which 
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
 ### How to use these images:
-* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.1-apache```
+* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.4-apache```
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
@@ -68,7 +68,7 @@ PHP is a server-side scripting language designed for web development, but which 
   * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
-  ``` $ echo -e "FROM tobi312/php:8.1-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
+  ``` $ echo -e "FROM tobi312/php:8.4-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
 
 #### Docker-Compose
 
@@ -76,7 +76,7 @@ PHP is a server-side scripting language designed for web development, but which 
 version: "2.4"
 services:
   php:
-    image: tobi312/php:8.1-apache
+    image: tobi312/php:8.4-apache
     container_name: phpcontainer
     restart: unless-stopped
     ## ports ONLY with apache/nginx:
