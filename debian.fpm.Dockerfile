@@ -56,7 +56,7 @@ RUN \
     if [[ "$ARCH" == "armv"* ]]; then \
 		# fix: /usr/lib/gcc/arm-linux-gnueabihf/10/include/arm_neon.h:10403:1: error: inlining failed in call to ‘always_inline’ ‘vld1q_u8’: target specific option mismatch
 		apt-get update ; \
-		apt-get install -y --no-install-recommends libfreetype6 libjpeg62-turbo ^libpng[0-9]+-[0-9]+$ libxpm4 ^libwebp[0-9]+$ ; \
+		apt-get install -y --no-install-recommends libfreetype6 libjpeg62-turbo ^libpng[0-9]+-[0-9]+$ libxpm4 ^libwebp[0-9]+$ libssl3t64 ; \
 		temp_package="libfreetype6-dev libjpeg62-turbo-dev libpng-dev libxpm-dev libwebp-dev" ; \
 		apt-get install -y --no-install-recommends $temp_package ; \
 		docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype ; \
