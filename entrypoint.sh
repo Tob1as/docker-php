@@ -115,6 +115,12 @@ if [ -n "$PHP_MAX_FILE_UPLOADS" ]; then
 	echo "max_file_uploads = ${PHP_MAX_FILE_UPLOADS}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 fi
 
+## changes the max_execution_time
+if [ -n "$PHP_MAX_EXECUTION_TIME" ]; then
+	echo ">> set max_execution_time"
+	echo "max_execution_time = ${PHP_MAX_EXECUTION_TIME}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
+fi
+
 ####################################################
 ##################### PHP-FPM ######################
 ####################################################

@@ -2,11 +2,16 @@ ARG PHP_VERSION=8.4
 FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine-slim
 ARG PHP_VERSION
 
+ARG VCS_REF
+ARG BUILD_DATE
+
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 	org.opencontainers.image.title="PHP-FPM+NGINX" \
 	org.opencontainers.image.description="Alpine with PHP-FPM ${PHP_VERSION} and NGINX" \
+	org.opencontainers.image.created="${BUILD_DATE}" \
+	org.opencontainers.image.revision="${VCS_REF}" \
 	org.opencontainers.image.licenses="MIT" \
 	org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
 	org.opencontainers.image.source="https://github.com/Tob1as/docker-php"

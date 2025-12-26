@@ -28,6 +28,9 @@ FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine
 ARG PHP_VERSION
 ARG ARCH
 
+ARG VCS_REF
+ARG BUILD_DATE
+
 # set environment variable
 ENV ENABLE_NGINX_STATUS=1 \
     ENABLE_PHP_FPM_STATUS=1 \

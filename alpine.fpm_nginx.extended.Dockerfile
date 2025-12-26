@@ -2,6 +2,9 @@ ARG PHP_VERSION=8.4
 FROM tobi312/php:${PHP_VERSION}-fpm-nginx-alpine
 ARG PHP_VERSION
 
+ARG VCS_REF
+ARG BUILD_DATE
+
 ## example build command: docker build -t tobi312/php:8.1-fpm-nginx-alpine-extended --build-arg PHP_VERSION=8.4 -f alpine.fpm_nginx.extended.Dockerfile .
 
 # set environment variable

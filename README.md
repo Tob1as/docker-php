@@ -36,11 +36,12 @@ PHP is a server-side scripting language designed for web development, but which 
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
-  * `PHP_ERRORS` (set 1 to enable)
-  * `PHP_MEM_LIMIT` (set Value in MB, example: 128)
-  * `PHP_POST_MAX_SIZE` (set Value in MB, example: 250)
-  * `PHP_UPLOAD_MAX_FILESIZE` (set Value in MB, example: 250)
-  * `PHP_MAX_FILE_UPLOADS` (set number, example: 20)
+  * `PHP_ERRORS` (set 1 to enable, default: disabled)
+  * `PHP_MEM_LIMIT` (set Value in MB, example: 256, default: 128)
+  * `PHP_POST_MAX_SIZE` (set Value in MB, example: 250, default: 8)
+  * `PHP_UPLOAD_MAX_FILESIZE` (set Value in MB, example: 240, default: 2)
+  * `PHP_MAX_FILE_UPLOADS` (set number, example: 25, default: 20)
+  * `PHP_MAX_EXECUTION_TIME` (set Value in Seconds, example: 120, default: 30)
   * `CREATE_PHPINFO_FILE` (set 1 to enable, for dev and testing)
   * `CREATE_INDEX_FILE` (set 1 to enable, for dev and testing)
   * PHP-FPM (only):
