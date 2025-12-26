@@ -67,6 +67,17 @@ RUN \
     else \
         PHP_EXTENSIONS_LIST="$PHP_EXTENSIONS_LIST gd" ; \
     fi ; \
-	install-php-extensions $PHP_EXTENSIONS_LIST ; \
-	php -m
-
+    # bugfix/workarround: https://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=libmemcachedutil2
+    DISTRO="$(cat /etc/os-release | grep -E ^ID= | cut -d = -f 2)" ; \
+    DISTRO_VERSION_NUMBER="$(cat /etc/os-release | grep -E ^VERSION_ID= | cut -d = -f 2 | cut -d '"' -f 2 | cut -d . -f 1,2)" ; \
+    if [ "$DISTRO" = "debian" ] && [ "$DISTRO_VERSION_NUMBER" -ge 13 ]; then \
+        if grep -q 'libmemcachedutil2' /usr/local/bin/install-php-extensions && \
+           ! grep -q 'libmemcachedutil2t64' /usr/local/bin/install-php-extensions; then \
+            echo ">> Applying libmemcachedutil2 → libmemcachedutil2t64 workaround"; \
+            sed -i 's/libmemcachedutil2/libmemcachedutil2t64/g' /usr/local/bin/install-php-extensions; \
+        else \
+            echo ">> Workaround not needed (already fixed upstream)"; \
+        fi; \
+    fi; \
+    install-php-extensions $PHP_EXTENSIONS_LIST ; \
+    php -m
