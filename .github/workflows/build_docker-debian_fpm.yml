@@ -134,7 +134,7 @@ jobs:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
           file: ./debian.fpm.slim.Dockerfile
-          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/riscv64,linux/s390x,linux/386
           pull: true
           push: true
           #target: runtime
@@ -197,7 +197,7 @@ jobs:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
           file: ./debian.fpm.Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/riscv64,linux/s390x,linux/386
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
           push: true
           #target: runtime
