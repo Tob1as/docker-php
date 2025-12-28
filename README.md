@@ -11,7 +11,7 @@
 - [`8.X-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 
-**All container images are available in versions 8.3 and 8.4.** ;-)  
+**All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)  
   
 *How long php versions are supported (End of Life): [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)  
 Do not use an container image which php version is no longer supported!*
@@ -100,6 +100,7 @@ services:
       PHP_POST_MAX_SIZE: 250
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
+      PHP_MAX_EXECUTION_TIME: 120
       CREATE_PHPINFO_FILE: 0
       CREATE_INDEX_FILE: 0
       ## next env only with apache
