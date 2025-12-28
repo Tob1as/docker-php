@@ -1,0 +1,212 @@
+name: 'docker: Debian + PHP-FPM'
+
+on:
+  #push:
+  #  branches:
+  #    - 'main'
+  #    - 'master'
+  #  paths:
+  #    - 'debian.fpm.slim.Dockerfile'
+  #    - 'debian.fpm.Dockerfile'
+  #    - '.github/workflows/build_docker-debian_fpm.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '45 2 24 * *'  # At 02:45 on day-of-month 24.
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  # --------------------------------------------------
+  # JOB: PREPARE (Variables)
+  # --------------------------------------------------
+  prepare:
+    name: Prepare build variables
+    runs-on: ubuntu-latest
+
+    steps:
+      #- name: Checkout
+      #  uses: actions/checkout@v6
+
+      - name: Define PHP matrix
+        id: matrix
+        shell: bash
+        run: |
+          echo 'php_matrix=["8.3","8.4","8.5"]' >> "$GITHUB_OUTPUT"
+
+      - name: Generate build variables
+        id: vars
+        shell: bash
+        run: |
+          BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          BUILD_DATE_NUMERIC="${BUILD_DATE//[^[:digit:]]/}"
+          #COMMIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
+          COMMIT_HASH=${GITHUB_SHA::7}
+          GIT_URL=$(echo "${GITHUB_SERVER_URL}" | awk -F/ '{print $3}' | sed 's/\/*$//')
+          GIT_URL=$(echo "$GIT_URL" | sed 's/github\.com/ghcr\.io/g')   # GIT_URL switch to ghcr.io registry for GitHub
+          GIT_REPO=${GITHUB_REPOSITORY,,}
+          GIT_REPO_SHORT=${GIT_REPO#*/}
+          GIT_REPO_SHORT=${GIT_REPO_SHORT#"docker-"}
+          DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/${GIT_REPO_SHORT}
+          REDHAT_QUAY_REPO=${{ secrets.REDHAT_QUAY_USERNAME }}/${GIT_REPO_SHORT}
+
+          #echo "ENVs: BUILD_DATE=${BUILD_DATE}, BUILD_DATE_NUMERIC=${BUILD_DATE_NUMERIC}, COMMIT_HASH=${COMMIT_HASH}, GIT_URL=${GIT_URL}, GIT_REPO=${GIT_REPO}, DOCKER_REPO=${DOCKER_REPO}, REDHAT_QUAY_REPO=${REDHAT_QUAY_REPO}"
+          
+          # Set output parameters to action.
+          echo "build_date=${BUILD_DATE}" >> "$GITHUB_OUTPUT"
+          echo "build_date_numeric=${BUILD_DATE_NUMERIC}" >> "$GITHUB_OUTPUT"
+          echo "commit_hash=${COMMIT_HASH}" >> "$GITHUB_OUTPUT"
+          echo "git_url=${GIT_URL}" >> "$GITHUB_OUTPUT"
+          echo "git_repo=${GIT_REPO}" >> "$GITHUB_OUTPUT"
+          echo "git_repo_short=${GIT_REPO_SHORT}" >> "$GITHUB_OUTPUT"
+          echo "docker_repo=${DOCKER_REPO}" >> "$GITHUB_OUTPUT"
+          echo "redhat_quay_repo=${REDHAT_QUAY_REPO}" >> "$GITHUB_OUTPUT"
+
+    outputs:
+      build_date: ${{ steps.vars.outputs.build_date }}
+      build_date_numeric: ${{ steps.vars.outputs.build_date_numeric }}
+      commit_hash: ${{ steps.vars.outputs.commit_hash }}
+      git_url: ${{ steps.vars.outputs.git_url }}
+      git_repo: ${{ steps.vars.outputs.git_repo }}
+      git_repo_short: ${{ steps.vars.outputs.git_repo_short }}
+      #docker_repo: ${{ steps.vars.outputs.docker_repo }}    # emtpy because contains secret
+      #quay_repo: ${{ steps.vars.outputs.redhat_quay_repo }} # emtpy because contains secret
+      php_matrix: ${{ steps.matrix.outputs.php_matrix }}
+
+
+  # --------------------------------------------------
+  # JOB: Base-Image: php-slim
+  # --------------------------------------------------
+  build-php-slim:
+    name: Build php-slim (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    needs: prepare
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJson(needs.prepare.outputs.php_matrix) }}
+
+    env:
+      BUILD_DATE: ${{ needs.prepare.outputs.build_date }}
+      BUILD_DATE_NUMERIC: ${{ needs.prepare.outputs.build_date_numeric}}
+      COMMIT_HASH: ${{ needs.prepare.outputs.commit_hash }}
+      GIT_URL: ${{ needs.prepare.outputs.git_url }}
+      GIT_REPO: ${{ needs.prepare.outputs.git_repo }}
+      GIT_REPO_SHORT: ${{ needs.prepare.outputs.git_repo_short }}
+      DOCKER_REPO: "${{ secrets.DOCKER_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      QUAY_REPO: "${{ secrets.REDHAT_QUAY_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      PHP_VERSION: ${{ matrix.php }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Debug Variables
+        run: |
+          echo "BUILD_DATE=${BUILD_DATE}"
+          echo "BUILD_DATE_NUMERIC=${BUILD_DATE_NUMERIC}"
+          echo "COMMIT_HASH=${COMMIT_HASH}"
+          echo "GIT_URL=${GIT_URL}"
+          echo "GIT_REPO=${GIT_REPO}"
+          echo "GIT_REPO_SHORT=${GIT_REPO_SHORT}"
+          echo "DOCKER_REPO=${DOCKER_REPO}"
+          echo "QUAY_REPO=${QUAY_REPO}"
+          echo "PHP_VERSION=${PHP_VERSION}"
+
+      - name: Execute Docker Setup
+        id: docker-setup
+        uses: ./.github/actions/docker-setup
+        #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
+        with:
+          git_url: ${{ env.GIT_URL }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          docker_username: ${{ secrets.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+          quay_username: ${{ secrets.REDHAT_QUAY_USERNAME }}
+          quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          builder: ${{ steps.docker-setup.outputs.builder_name }}
+          context: .
+          file: ./debian.fpm.slim.Dockerfile
+          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/arm/v6
+          pull: true
+          push: true
+          #target: runtime
+          build-args: |
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            VCS_REF=${{ env.COMMIT_HASH }}
+            PHP_VERSION=${{ env.PHP_VERSION }}
+          tags: |
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-slim
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-slim
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-slim
+
+
+  # --------------------------------------------------
+  # JOB: Derived-Image: php
+  # --------------------------------------------------
+  build-php:
+    name: Build php (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    needs:
+    - prepare
+    - build-php-slim
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJson(needs.prepare.outputs.php_matrix) }}
+
+    env:
+      BUILD_DATE: ${{ needs.prepare.outputs.build_date }}
+      BUILD_DATE_NUMERIC: ${{ needs.prepare.outputs.build_date_numeric}}
+      COMMIT_HASH: ${{ needs.prepare.outputs.commit_hash }}
+      GIT_URL: ${{ needs.prepare.outputs.git_url }}
+      GIT_REPO: ${{ needs.prepare.outputs.git_repo }}
+      GIT_REPO_SHORT: ${{ needs.prepare.outputs.git_repo_short }}
+      DOCKER_REPO: "${{ secrets.DOCKER_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      QUAY_REPO: "${{ secrets.REDHAT_QUAY_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      PHP_VERSION: ${{ matrix.php }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Execute Docker Setup
+        id: docker-setup
+        uses: ./.github/actions/docker-setup
+        #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
+        with:
+          git_url: ${{ env.GIT_URL }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          docker_username: ${{ secrets.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+          quay_username: ${{ secrets.REDHAT_QUAY_USERNAME }}
+          quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          builder: ${{ steps.docker-setup.outputs.builder_name }}
+          context: .
+          file: ./debian.fpm.Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/riscv64,linux/s390x,linux/386
+          pull: true
+          push: true
+          #target: runtime
+          build-args: |
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            VCS_REF=${{ env.COMMIT_HASH }}
+            PHP_VERSION=${{ env.PHP_VERSION }}
+          tags: |
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm

@@ -1,0 +1,109 @@
+# .github/actions/docker-setup/action.yml
+name: 'Docker setup [EXPANDED]'
+description: Docker Setup (install, qemu, buildx and login)
+
+inputs:
+  git_url:
+    description: "Git-URL from Workflow"
+    required: false
+  github_token:
+    description: "secrets.GITHUB_TOKEN from Workflow"
+    required: false
+  docker_username:
+    description: "secrets.DOCKER_USERNAME from Workflow"
+    required: false
+  docker_password:
+    description: "secrets.DOCKER_PASSWORD from Workflow"
+    required: false
+  quay_username:
+    description: "secrets.REDHAT_QUAY_USERNAME from Workflow"
+    required: false
+  quay_password:
+    description: "secrets.REDHAT_QUAY_PASSWORD from Workflow"
+    required: false
+
+outputs:
+  builder_name:
+    description: "Name of Buildx Builders for Workflow"
+    value: ${{ steps.buildx.outputs.name }}
+
+runs:
+  using: composite
+  steps:
+
+    - name: Set git_url when empty to ghcr.io registry
+      id: set_git_url
+      shell: bash
+      run: |
+        GIT_URL="${{ inputs.git_url }}"
+        if [[ -z "$GIT_URL" ]]; then
+          GIT_URL="ghcr.io"
+        fi
+        echo "GIT_URL=$GIT_URL" >> "$GITHUB_ENV"
+
+    - name: Debug Variables
+      id: debug
+      shell: bash
+      run: |
+        echo "GIT_URL=${{ env.GIT_URL }}"
+        echo "\"GITHUB_USERNAME\"=${{ github.repository_owner }}"
+        echo "DOCKER_USERNAME=${{ inputs.docker_username }}"
+        echo "QUAY_USERNAME=${{ inputs.quay_username }}"
+
+    #- name: Install Docker
+    #  id: install
+    #  shell: bash
+    #  run: |
+    #    if ! command -v docker &> /dev/null; then
+    #      curl -fsSL https://get.docker.com | sh
+    #    else
+    #      echo "skip -> Docker is already installed!"
+    #    fi
+
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v3
+      with:
+        image: tonistiigi/binfmt:latest
+        platforms: all
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v3
+      #with:
+      #  config-inline: |
+      #    [registry."${{ env.GIT_URL }}"]
+      #      #insecure = true
+      #      ca=["/etc/ssl/certs/ca-certificates.crt"]       
+
+    - name: Login to GIT Container Registry
+      if: env.GIT_URL != '' && github.repository_owner != '' && inputs.github_token != ''
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.git_url }}
+        username: ${{ github.repository_owner }}
+        password: ${{ inputs.github_token }}
+
+    - name: Login to Docker Hub Container Registry
+      if: inputs.docker_username != '' && inputs.docker_password != ''
+      uses: docker/login-action@v3
+      with:
+        registry: docker.io
+        username: ${{ inputs.docker_username }}
+        password: ${{ inputs.docker_password }}
+
+    #- name: Login to Docker Hardened Images Container Registry
+    #  if: inputs.docker_username != '' && inputs.docker_password != ''
+    #  uses: docker/login-action@v3
+    #  with:
+    #    registry: dhi.io
+    #    username: ${{ inputs.docker_username }}
+    #    password: ${{ inputs.docker_password }}
+
+    - name: Login to RED HAT Quay.io Container Registry
+      if: inputs.quay_username != '' && inputs.quay_password != ''
+      uses: docker/login-action@v3
+      with:
+        registry: quay.io
+        username: ${{ inputs.quay_username }}
+        password: ${{ inputs.quay_password }}
