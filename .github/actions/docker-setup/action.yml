@@ -7,24 +7,24 @@ inputs:
     description: "Git-URL from Workflow"
     required: false
   github_token:
-    description: "secrets.GITHUB_TOKEN from Workflow"
+    description: "GitHub Token secret from Workflow"
     required: false
   docker_username:
-    description: "secrets.DOCKER_USERNAME from Workflow"
+    description: "Docker Username variable from Workflow"
     required: false
   docker_password:
-    description: "secrets.DOCKER_PASSWORD from Workflow"
+    description: "Docker Password or Token secret from Workflow"
     required: false
   quay_username:
-    description: "secrets.REDHAT_QUAY_USERNAME from Workflow"
+    description: "Quay Username variable from Workflow"
     required: false
   quay_password:
-    description: "secrets.REDHAT_QUAY_PASSWORD from Workflow"
+    description: "Quay Password or Token secret from Workflow"
     required: false
 
 outputs:
   builder_name:
-    description: "Name of Buildx Builders for Workflow"
+    description: "Name of Buildx Builders to be sent to the Workflow"
     value: ${{ steps.buildx.outputs.name }}
 
 runs:

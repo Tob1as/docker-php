@@ -32,8 +32,8 @@ jobs:
           GITHUB_REPO=${GITHUB_REPOSITORY,,}
           GITHUB_REPO_SHORT=${GITHUB_REPO#*/}
           GITHUB_REPO_SHORT=${GITHUB_REPO_SHORT#"docker-"}
-          DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/${GITHUB_REPO_SHORT}
-          REDHAT_QUAY_REPO=${{ secrets.REDHAT_QUAY_USERNAME }}/${GITHUB_REPO_SHORT}
+          DOCKER_REPO=${{ vars.DOCKER_USERNAME }}/${GITHUB_REPO_SHORT}
+          REDHAT_QUAY_REPO=${{ vars.REDHAT_QUAY_USERNAME }}/${GITHUB_REPO_SHORT}
           
           # Set output parameters to action.
           echo "build_date=${BUILD_DATE}" >> "$GITHUB_OUTPUT"
@@ -47,7 +47,7 @@ jobs:
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v5
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{steps.script.outputs.docker_repo}}
           short-description: ${{ github.event.repository.description }}
@@ -57,7 +57,7 @@ jobs:
       #- name: Docker Hub Description
       #  uses: christian-korneck/update-container-description-action@v1
       #  env:
-      #    DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      #    DOCKER_USER: ${{ vars.DOCKER_USERNAME }}
       #    DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
       #  with:
       #    destination_container_repo: ${{steps.script.outputs.docker_repo}}

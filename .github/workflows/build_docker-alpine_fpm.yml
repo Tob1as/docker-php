@@ -49,8 +49,8 @@ jobs:
           GIT_REPO=${GITHUB_REPOSITORY,,}
           GIT_REPO_SHORT=${GIT_REPO#*/}
           GIT_REPO_SHORT=${GIT_REPO_SHORT#"docker-"}
-          DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/${GIT_REPO_SHORT}
-          REDHAT_QUAY_REPO=${{ secrets.REDHAT_QUAY_USERNAME }}/${GIT_REPO_SHORT}
+          DOCKER_REPO=${{ vars.DOCKER_USERNAME }}/${GIT_REPO_SHORT}
+          REDHAT_QUAY_REPO=${{ vars.REDHAT_QUAY_USERNAME }}/${GIT_REPO_SHORT}
 
           #echo "ENVs: BUILD_DATE=${BUILD_DATE}, BUILD_DATE_NUMERIC=${BUILD_DATE_NUMERIC}, COMMIT_HASH=${COMMIT_HASH}, GIT_URL=${GIT_URL}, GIT_REPO=${GIT_REPO}, DOCKER_REPO=${DOCKER_REPO}, REDHAT_QUAY_REPO=${REDHAT_QUAY_REPO}"
           
@@ -71,8 +71,8 @@ jobs:
       git_url: ${{ steps.vars.outputs.git_url }}
       git_repo: ${{ steps.vars.outputs.git_repo }}
       git_repo_short: ${{ steps.vars.outputs.git_repo_short }}
-      #docker_repo: ${{ steps.vars.outputs.docker_repo }}    # emtpy because contains secret
-      #quay_repo: ${{ steps.vars.outputs.redhat_quay_repo }} # emtpy because contains secret
+      docker_repo: ${{ steps.vars.outputs.docker_repo }}
+      quay_repo: ${{ steps.vars.outputs.redhat_quay_repo }}
       php_matrix: ${{ steps.matrix.outputs.php_matrix }}
 
 
@@ -96,8 +96,8 @@ jobs:
       GIT_URL: ${{ needs.prepare.outputs.git_url }}
       GIT_REPO: ${{ needs.prepare.outputs.git_repo }}
       GIT_REPO_SHORT: ${{ needs.prepare.outputs.git_repo_short }}
-      DOCKER_REPO: "${{ secrets.DOCKER_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
-      QUAY_REPO: "${{ secrets.REDHAT_QUAY_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      DOCKER_REPO: ${{ needs.prepare.outputs.docker_repo }}
+      QUAY_REPO: ${{ needs.prepare.outputs.quay_repo }}
       PHP_VERSION: ${{ matrix.php }}
 
     steps:
@@ -123,9 +123,9 @@ jobs:
         with:
           git_url: ${{ env.GIT_URL }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          docker_username: ${{ secrets.DOCKER_USERNAME }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
-          quay_username: ${{ secrets.REDHAT_QUAY_USERNAME }}
+          quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
           quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
 
       - name: Build
@@ -171,8 +171,8 @@ jobs:
       GIT_URL: ${{ needs.prepare.outputs.git_url }}
       GIT_REPO: ${{ needs.prepare.outputs.git_repo }}
       GIT_REPO_SHORT: ${{ needs.prepare.outputs.git_repo_short }}
-      DOCKER_REPO: "${{ secrets.DOCKER_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
-      QUAY_REPO: "${{ secrets.REDHAT_QUAY_USERNAME }}/${{ needs.prepare.outputs.git_repo_short }}"
+      DOCKER_REPO: ${{ needs.prepare.outputs.docker_repo }}
+      QUAY_REPO: ${{ needs.prepare.outputs.quay_repo }}
       PHP_VERSION: ${{ matrix.php }}
 
     steps:
@@ -186,9 +186,9 @@ jobs:
         with:
           git_url: ${{ env.GIT_URL }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          docker_username: ${{ secrets.DOCKER_USERNAME }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
-          quay_username: ${{ secrets.REDHAT_QUAY_USERNAME }}
+          quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
           quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
 
       - name: Build
