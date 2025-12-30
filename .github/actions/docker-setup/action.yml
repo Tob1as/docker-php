@@ -40,7 +40,8 @@ runs:
       run: |
         GIT_URL="${{ inputs.git_url }}"
         if [[ -z "$GIT_URL" ]]; then
-          GIT_URL="ghcr.io"
+          GIT_URL=$(echo "${GITHUB_SERVER_URL}" | awk -F/ '{print $3}' | sed 's/\/*$//')
+          GIT_URL=$(echo "$GIT_URL" | sed 's/github\.com/ghcr\.io/g')   # GIT_URL switch to ghcr.io registry for GitHub
         fi
         echo "GIT_URL=$GIT_URL" >> "$GITHUB_ENV"
 
