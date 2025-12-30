@@ -6,6 +6,7 @@ inputs:
   git_url:
     description: "Git-URL from Workflow"
     required: false
+    #default: 'ghcr.io'
   git_username:
     description: "Git-Username variable from Workflow"
     required: false
