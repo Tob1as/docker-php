@@ -123,7 +123,7 @@ jobs:
         #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
         with:
           git_url: ${{ env.GIT_URL }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_token: ${{ secrets.GITHUB_TOKEN }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
@@ -188,7 +188,7 @@ jobs:
         #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
         with:
           git_url: ${{ env.GIT_URL }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_token: ${{ secrets.GITHUB_TOKEN }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
@@ -253,7 +253,7 @@ jobs:
         #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
         with:
           git_url: ${{ env.GIT_URL }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_token: ${{ secrets.GITHUB_TOKEN }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
