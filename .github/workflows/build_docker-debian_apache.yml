@@ -149,8 +149,8 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian-slim
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-slim-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian-slim-${{env.COMMIT_HASH}}
-          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache-slim
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache-slim
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache-debian-slim
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache-debian-slim
 
 
   # --------------------------------------------------
@@ -215,8 +215,8 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian-${{env.COMMIT_HASH}}
-          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache-debian
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache-debian
 
 
   # --------------------------------------------------
@@ -281,5 +281,5 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-wsc-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-apache-debian-wsc-${{env.COMMIT_HASH}}
-          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache-wsc
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache-wsc
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-apache-debian-wsc
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-apache-debian-wsc

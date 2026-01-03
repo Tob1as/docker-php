@@ -212,3 +212,67 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine
           #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine
+
+
+  # --------------------------------------------------
+  # JOB: Derived-Image: php-wsc
+  # --------------------------------------------------
+  build-php-wsc:
+    name: Build php-wsc (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    needs:
+    - prepare
+    - build-php-slim
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJson(needs.prepare.outputs.php_matrix) }}
+
+    env:
+      BUILD_DATE: ${{ needs.prepare.outputs.build_date }}
+      BUILD_DATE_NUMERIC: ${{ needs.prepare.outputs.build_date_numeric}}
+      COMMIT_HASH: ${{ needs.prepare.outputs.commit_hash }}
+      GIT_URL: ${{ needs.prepare.outputs.git_url }}
+      GIT_REPO: ${{ needs.prepare.outputs.git_repo }}
+      GIT_REPO_SHORT: ${{ needs.prepare.outputs.git_repo_short }}
+      DOCKER_REPO: ${{ needs.prepare.outputs.docker_repo }}
+      QUAY_REPO: ${{ needs.prepare.outputs.quay_repo }}
+      PHP_VERSION: ${{ matrix.php }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Execute Docker Setup
+        id: docker-setup
+        uses: ./.github/actions/docker-setup
+        #uses: tob1as/docker-build-example/.github/actions/docker-setup@main
+        with:
+          git_url: ${{ env.GIT_URL }}
+          git_username: ${{ github.repository_owner }}
+          git_token: ${{ secrets.GITHUB_TOKEN }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+          quay_username: ${{ vars.REDHAT_QUAY_USERNAME }}
+          quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          builder: ${{ steps.docker-setup.outputs.builder_name }}
+          context: .
+          file: ./alpine.fpm.wsc.Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
+          push: true
+          #target: runtime
+          build-args: |
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            VCS_REF=${{ env.COMMIT_HASH }}
+            PHP_VERSION=${{ env.PHP_VERSION }}
+          tags: |
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc
+          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc

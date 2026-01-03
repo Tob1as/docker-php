@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.4
-FROM tobi312/php:${PHP_VERSION}-fpm-slim
+FROM tobi312/php:${PHP_VERSION}-fpm-debian-slim
 ARG PHP_VERSION
 
 ARG VCS_REF
