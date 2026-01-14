@@ -3,15 +3,20 @@
 ### Supported tags and respective `Dockerfile` links
 - [`8.X-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.slim.Dockerfile)
 - [`8.X-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.Dockerfile)
+- [`8.X-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.wsc.Dockerfile)
 - [`8.X-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
 - [`8.X-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
+- [`8.X-fpm-nginx-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.wsc.Dockerfile)
 - [`8.X-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
 - [`8.X-apache-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
 - [`8.X-apache` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
+- [`8.X-apache-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.wsc.Dockerfile)
 - [`8.X-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
+- [`8.X-fpm-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
 
 **All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)  
+*Images with `-wsc` suffix only contain PHP extensions for [WSC](https://www.woltlab.com).*   
   
 *How long php versions are supported (End of Life): [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)  
 Do not use an container image which php version is no longer supported!*
@@ -26,7 +31,7 @@ PHP is a server-side scripting language designed for web development, but which 
 
 ### About these images:
 * based on official images: [DockerHub](https://hub.docker.com/_/php/) / [GitHub](https://github.com/docker-library/php)
-* The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter ftp hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter zlib```
+* The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix random readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter 'Zend OPcache' zlib```
 * These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
