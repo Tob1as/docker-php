@@ -48,6 +48,7 @@ RUN \
 	#	opcache \
 	#	curl \
 		ldap \
+		redis \
 	" ; \
 	PHP_EXTENSIONS_LIST="$PHP_EXTENSIONS_LIST_BASE $PHP_EXTENSIONS_LIST_OPTIONAL" ; \
     \
