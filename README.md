@@ -15,8 +15,7 @@
 - [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 - [`8.X-fpm-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
 
-**All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)  
-*Images with `-wsc` suffix only contain PHP extensions for [WSC](https://www.woltlab.com).*   
+**All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)   
   
 *How long php versions are supported (End of Life): [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)  
 Do not use an container image which php version is no longer supported!*
@@ -32,7 +31,11 @@ PHP is a server-side scripting language designed for web development, but which 
 ### About these images:
 * based on official images: [DockerHub](https://hub.docker.com/_/php/) / [GitHub](https://github.com/docker-library/php)
 * The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix random readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter 'Zend OPcache' zlib```
-* These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.
+* These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.  
+  * *Images with `-slim` suffix have only the PHP extensions like offical base image, but with entrypoint script for some settings and other adjustments. This is the base image for all others.* 
+  * *Images without `-slim` or other suffix have a mix of additional extensions, which should maybe sufficient for most PHP web applications.*
+  * *Images with `-wsc` suffix only contain PHP extensions for [WSC](https://www.woltlab.com). (Alternatively, you can use [wsc-dockerized](https://github.com/SoftCreatRMedia/wsc-dockerized) setup.)*
+  * *Images with `-extended` suffix at present only for php images with nginx. (Prometheus Exporter and other)*
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
