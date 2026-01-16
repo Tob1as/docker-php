@@ -8,12 +8,12 @@
 - [`8.X-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
 - [`8.X-fpm-nginx-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.wsc.Dockerfile)
 - [`8.X-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
-- [`8.X-apache-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
-- [`8.X-apache` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
-- [`8.X-apache-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.wsc.Dockerfile)
-- [`8.X-fpm-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
-- [`8.X-fpm` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
-- [`8.X-fpm-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
+- [`8.X-apache-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
+- [`8.X-apache-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
+- [`8.X-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.wsc.Dockerfile)
+- [`8.X-fpm-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
+- [`8.X-fpm-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
+- [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
 
 **All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)   
   
@@ -34,7 +34,7 @@ PHP is a server-side scripting language designed for web development, but which 
 * These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.  
   * *Images with `-slim` suffix have only the PHP extensions like offical base image, but with entrypoint script for some settings and other adjustments. This is the base image for all others.* 
   * *Images without `-slim` or other suffix have a mix of additional extensions, which should maybe sufficient for most PHP web applications.*
-  * *Images with `-wsc` suffix only contain PHP extensions for [WSC](https://www.woltlab.com).  
+  * *Images with `-wsc` suffix only contain PHP extensions for [WSC (WoltLab Suite Core)](https://www.woltlab.com) [[Software Download](https://www.woltlab.com/en/woltlab-suite-download/)].  
   (Alternatively, you can use [wsc-dockerized](https://github.com/SoftCreatRMedia/wsc-dockerized) setup.)*
   * *Images with `-extended` suffix at present only for php images with nginx. (Prometheus Exporter and other)*
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
@@ -78,7 +78,7 @@ PHP is a server-side scripting language designed for web development, but which 
   * php with fpm: `9000`
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
-  ``` $ echo -e "FROM tobi312/php:8.4-apache\nCOPY *.sh /entrypoint.d/" > Dockerfile```
+  ``` $ echo -e "FROM tobi312/php:8.4-apache-debian\nCOPY *.sh /entrypoint.d/" > Dockerfile```
 
 #### Docker-Compose
 
@@ -86,7 +86,8 @@ PHP is a server-side scripting language designed for web development, but which 
 version: "2.4"
 services:
   php:
-    image: tobi312/php:8.4-apache
+    image: tobi312/php:8.4-apache-debian
+    #image: tobi312/php:8.4-fpm-nginx-alpine
     container_name: phpcontainer
     restart: unless-stopped
     ## ports ONLY with apache/nginx:
