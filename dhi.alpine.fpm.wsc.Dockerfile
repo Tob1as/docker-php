@@ -1,10 +1,10 @@
-# build: docker build --no-cache --progress=plain --build-arg PHP_VERSION=8.4 -t docker.io/tobi312/php:8.4-dhi-fpm-debian-wsc -f dhi.debian.fpm.wsc.Dockerfile .
-# check: docker run --rm --name phptest -it docker.io/tobi312/php:8.4-dhi-fpm-debian-wsc -m
+# build: docker build --no-cache --progress=plain --build-arg PHP_VERSION=8.4 -t docker.io/tobi312/php:8.4-dhi-fpm-alpine-wsc -f dhi.alpine.fpm.wsc.Dockerfile .
+# check: docker run --rm --name phptest -it docker.io/tobi312/php:8.4-dhi-fpm-alpine-wsc -m
 # https://hub.docker.com/hardened-images/catalog/dhi/php | short: https://dhi.io/catalog/php
 # https://github.com/docker-hardened-images/catalog
 ARG PHP_VERSION=8.4
 ARG BUILD_PHP_VERSION=${PHP_VERSION}
-ARG BUILD_OS=debian13
+ARG BUILD_OS=alpine3.22
 # =========================
 # Stage 0: Build Base Image
 # =========================
@@ -20,22 +20,21 @@ ARG BUILD_PHP_VERSION
 WORKDIR /tmp
 
 # Install required system libraries for building PHP extensions
-RUN apt-get update \ 
-    && apt-get install -y --no-install-recommends \
-        git \
-        unzip \
-        autoconf \
-        build-essential \
-        libjpeg-dev \
-        libpng-dev \
-        libxpm-dev \
-        libfreetype6-dev \
-        libicu-dev \
-        libldap2-dev \
-        libgmp-dev \
-    && apt-get install -y \
-        libmagickwand-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    git \
+    unzip \
+    autoconf \
+    build-base \
+    linux-headers \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libxpm-dev \
+    freetype-dev \
+    icu-dev \
+    openldap-dev \
+    gmp-dev \
+    imagemagick-dev
 
 # =========================
 # Core PHP Extensions
@@ -125,58 +124,45 @@ RUN echo "" \
 # Stage 2: Package extractor
 # =========================
 # more see: https://github.com/Tob1as/docker-build-example/blob/main/distroless.debian.Dockerfile#L54-L100
-FROM dev AS deb-extractor
+FROM dev AS apk-extractor
 
 WORKDIR /tmp
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
-# List of packages for download separated by spaces.
-ENV PACKAGE_LIST_GD='libpng16-16t64 libwebp7 libjpeg62-turbo libxpm4 libfreetype6 libbz2-1.0 libsharpyuv0 libx11-6 libxau6 libxcb1 libxdmcp6'
-ENV PACKAGE_LIST_IMAGICK="libgomp1 imagemagick-7-common libmagickcore-7.q16-10 libmagickcore-7.q16-10-extra libmagickwand-7.q16-10 liblcms2-2 liblqr-1-0 libfftw3-double3 libfontconfig1 libxext6 libltdl7 libglib2.0-0t64 libexpat1 libatomic1"
-ENV PACKAGE_LIST="${PACKAGE_LIST_GD} ${PACKAGE_LIST_IMAGICK}"
+# List of packages for download separated by spaces. (Helpful: https://pkgs.alpinelinux.org/contents)
+ENV PACKAGE_LIST_LDAP='libldap libsasl'
+ENV PACKAGE_LIST_GD="gmp libpng libwebp libjpeg-turbo freetype libsharpyuv libxpm libx11 libbz2 libxcb libxau libxdmcp libbsd libmd"
+ENV PACKAGE_LIST_IMAGICK="libgomp imagemagick-libs lcms2 fftw-double-libs fontconfig libxext libltdl libexpat"
+ENV PACKAGE_LIST="${PACKAGE_LIST_LDAP} ${PACKAGE_LIST_GD} ${PACKAGE_LIST_IMAGICK}"
 
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
-    apt-get update && \
-    apt-get install -y apt-rdepends tree && \
-    # Search subpackages for package (apt-rdepends PACKAGE | grep -v "^ " | sort -u | tr '\n' ' ')
-    #packages=$(for package in $PACKAGE_LIST; do \
-    #    apt-rdepends $package 2>/dev/null | \
-    #    grep -v "^ " | \
-    #    grep -v "^PreDepends:" | \
-    #    sort -u; \
-    #done | sort -u) && \
-    packages=$PACKAGE_LIST ; \
-    # Download packages
-    echo ">> Packages to Download: $(echo $packages | tr '\n' ' ')" && \
-    apt-get download \
-        $packages \
-    && \
-    mkdir -p /dpkg/var/lib/dpkg/status.d/ && \
-    for deb in *.deb; do \
-        package_name=$(dpkg-deb -I "${deb}" | awk '/^ Package: .*$/ {print $2}'); \
-        echo "Processing: ${package_name}"; \
-        dpkg --ctrl-tarfile "$deb" | tar -Oxf - ./control > "/dpkg/var/lib/dpkg/status.d/${package_name}"; \
-        dpkg --extract "$deb" /dpkg || exit 10; \
-    done \
-    && \
+    #apk fetch --no-cache --recursive $PACKAGE_LIST && \
+    apk fetch --no-cache $PACKAGE_LIST && \
+    mkdir -p /apkroot && \
+    for pkg in *.apk; do \
+        tar -xzf "$pkg" -C /apkroot; \
+    done && \
     echo "Packages have been processed !"
 
 # List directory and file structure
-#RUN tree /dpkg
+#RUN tree /apkroot
 
-# Remove empty folder
-RUN find /dpkg/ -type d -empty -delete
+# Remove unnecessary files extracted from apk packages like man pages and docs etc.
+#RUN rm -rf \
+#    /apkroot/usr/share/man \
+#    /apkroot/usr/share/doc \
+#    /apkroot/usr/share/info
 
 # Remove other not needed folder and files ?
-RUN find /dpkg -mindepth 1 \
-    ! -path '/dpkg/usr' \
-    ! -path '/dpkg/usr/lib' \
-    ! -path '/dpkg/usr/lib/*' \
+RUN find /apkroot -mindepth 1 \
+    ! -path '/apkroot/usr' \
+    ! -path '/apkroot/usr/lib' \
+    ! -path '/apkroot/usr/lib/*' \
     -exec rm -rf {} +
 
 # List directory and file structure
-RUN tree /dpkg
+RUN tree /apkroot
 
 # =========================
 # Stage 3: DHI FPM Image
@@ -188,7 +174,7 @@ ARG VCS_REF
 ARG BUILD_DATE
 LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
       org.opencontainers.image.title="DHI PHP-FPM for WSC" \
-      org.opencontainers.image.description="DHI (Docker Hardened Images): Debian with PHP-FPM ${BUILD_PHP_VERSION} for WSC (WoltLab Suite Core)" \
+      org.opencontainers.image.description="DHI (Docker Hardened Images): Alpine with PHP-FPM ${BUILD_PHP_VERSION} for WSC (WoltLab Suite Core)" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.licenses="Apache-2.0" \
@@ -198,4 +184,4 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 COPY --from=builder ${PHP_PREFIX}/lib/php/extensions/ ${PHP_PREFIX}/lib/php/extensions/
 COPY --from=builder ${PHP_PREFIX}/etc/php/conf.d ${PHP_PREFIX}/etc/php/conf.d
 # Copy the libraries from the extractor stage into root
-COPY --from=deb-extractor /dpkg /
+COPY --from=apk-extractor /apkroot /
