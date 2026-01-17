@@ -14,6 +14,8 @@
 - [`8.X-fpm-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.X-fpm-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 - [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
+- [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No entrypoint!)
+- [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No entrypoint!)
 
 **All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)   
   
@@ -37,6 +39,9 @@ PHP is a server-side scripting language designed for web development, but which 
   * *Images with `-wsc` suffix only contain PHP extensions for [WSC (WoltLab Suite Core)](https://www.woltlab.com) [[Software Download](https://www.woltlab.com/en/woltlab-suite-download/)].  
   (Alternatively, you can use [wsc-dockerized](https://github.com/SoftCreatRMedia/wsc-dockerized) setup.)*
   * *Images with `-extended` suffix at present only for php images with nginx. (Prometheus Exporter and other)*
+  * *Images containing `apache` or `nginx` are integrated with the web server.*
+  * *Images containing `debian` or `alpine` specify the operating system.*
+  * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and not based on offical images from community. This DHI do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not work here. Mount your configuration file(s).*
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
