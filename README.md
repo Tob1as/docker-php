@@ -14,8 +14,8 @@
 - [`8.X-fpm-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
 - [`8.X-fpm-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
 - [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
-- [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No entrypoint!)
-- [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No entrypoint!)
+- [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No shell and entrypoint!)
+- [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No shell and entrypoint!)
 
 **All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)   
   
