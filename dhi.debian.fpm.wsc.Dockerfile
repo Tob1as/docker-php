@@ -105,13 +105,13 @@ RUN pecl download imagick \
 	
 # Enable all extensions
 RUN echo "" \
-    && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/gd.ini \
-    && echo "extension=pdo_mysql.so" > $PHP_INI_DIR/conf.d/pdo_mysql.ini \
-    && echo "extension=ldap.so" > $PHP_INI_DIR/conf.d/ldap.ini \
-    && echo "extension=gmp.so" > $PHP_INI_DIR/conf.d/gmp.ini \
-    && echo "extension=exif.so" > $PHP_INI_DIR/conf.d/exif.ini \
-    && echo "extension=redis.so" > $PHP_INI_DIR/conf.d/redis.ini \
-    && echo "extension=imagick.so" > $PHP_INI_DIR/conf.d/imagick.ini \
+    && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-gd.ini \
+    && echo "extension=pdo_mysql.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-pdo_mysql.ini \
+    && echo "extension=ldap.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-ldap.ini \
+    && echo "extension=gmp.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-gmp.ini \
+    && echo "extension=exif.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-exif.ini \
+    && echo "extension=redis.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-redis.ini \
+    && echo "extension=imagick.so" > $PHP_INI_DIR/conf.d/10-docker-php-ext-imagick.ini \
     && echo ""
 
 ## create symlinks

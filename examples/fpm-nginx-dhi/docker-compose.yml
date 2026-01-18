@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./html:/var/www/html:rw
-      - ./config/php_wsc.ini:/opt/php/etc/php/conf.d/wsc.ini:ro
+      - ./config/php_wsc.ini:/opt/php/etc/php/conf.d/60-wsc.ini:ro
       - ./config/php_fpm_status.conf:/opt/php/etc/php-fpm.d/y-status.conf:ro
     #depends_on:
     #  wsc-db:
