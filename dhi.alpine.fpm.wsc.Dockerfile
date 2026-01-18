@@ -148,13 +148,7 @@ RUN \
 # List directory and file structure
 #RUN tree /apkroot
 
-# Remove unnecessary files extracted from apk packages like man pages and docs etc.
-#RUN rm -rf \
-#    /apkroot/usr/share/man \
-#    /apkroot/usr/share/doc \
-#    /apkroot/usr/share/info
-
-# Remove other not needed folder and files ?
+# Delete everything except libraries (*.so) that are required for PHP extensions
 RUN find /apkroot -mindepth 1 \
     ! -path '/apkroot/usr' \
     ! -path '/apkroot/usr/lib' \

@@ -165,10 +165,7 @@ RUN \
 # List directory and file structure
 #RUN tree /dpkg
 
-# Remove empty folder
-RUN find /dpkg/ -type d -empty -delete
-
-# Remove other not needed folder and files ?
+# Delete everything except libraries (*.so) that are required for PHP extensions
 RUN find /dpkg -mindepth 1 \
     ! -path '/dpkg/usr' \
     ! -path '/dpkg/usr/lib' \
