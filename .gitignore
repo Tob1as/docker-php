@@ -1,1 +1,6 @@
 temp/
+examples/**/.env
+examples/**/data
+examples/**/data-*
+examples/**/data_*
+examples/**/html/**
