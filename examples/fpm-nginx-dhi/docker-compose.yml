@@ -71,7 +71,7 @@ services:
       # only support in DHI (instead of own *.cnf file)
       MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M"
       # not supported in DHI, but for commands to create database and user
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-wcf}"
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
     #ports:
