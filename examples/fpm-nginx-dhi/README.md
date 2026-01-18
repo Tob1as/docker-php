@@ -1,4 +1,4 @@
-# PHP - Examples: PHP-FPM & NGINX & MySQL
+# PHP - Examples: PHP-FPM & NGINX & MySQL (using DHI)
 
 ## Information
 
