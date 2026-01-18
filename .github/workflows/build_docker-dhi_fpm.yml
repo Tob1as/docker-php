@@ -11,7 +11,7 @@ on:
   #    - '.github/workflows/build_docker-dhi_fpm.yml'
   workflow_dispatch:
   schedule:
-    - cron: '45 2 25 * *'  # At 02:45 on day-of-month 24.
+    - cron: '45 2 25 * *'  # At 02:45 on day-of-month 25.
 
 defaults:
   run:
