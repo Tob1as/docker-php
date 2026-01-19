@@ -41,7 +41,7 @@ PHP is a server-side scripting language designed for web development, but which 
   * *Images with `-extended` suffix at present only for php images with nginx. (Prometheus Exporter and other)*
   * *Images containing `apache` or `nginx` are integrated with the web server.*
   * *Images containing `debian` or `alpine` specify the operating system.*
-  * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and not based on offical images from community. This DHI do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not work here. Mount your configuration file(s).*
+  * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and not based on offical images from community. This DHI do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not work here. Mount your configuration file(s). A example docker-compose setup you can find [here](https://github.com/Tob1as/docker-php/tree/master/examples/fpm-nginx-dhi).*
 * For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
 * For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 
