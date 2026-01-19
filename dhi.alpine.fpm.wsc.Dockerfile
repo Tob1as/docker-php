@@ -176,6 +176,6 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
       org.opencontainers.image.source="https://github.com/Tob1as/docker-php"
 # Copy php extensions
 COPY --from=builder ${PHP_PREFIX}/lib/php/extensions/ ${PHP_PREFIX}/lib/php/extensions/
-COPY --from=builder ${PHP_PREFIX}/etc/php/conf.d ${PHP_PREFIX}/etc/php/conf.d
+COPY --from=builder ${PHP_PREFIX}/etc/php/conf.d/docker-php-ext-* ${PHP_PREFIX}/etc/php/conf.d/
 # Copy the libraries from the extractor stage into root
 COPY --from=apk-extractor /apkroot /
