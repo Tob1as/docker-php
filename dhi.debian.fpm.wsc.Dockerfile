@@ -43,13 +43,13 @@ RUN apt-get update \
 #   they are not copied into the final image (again).
 # =========================
 
-RUN mkdir -p /tmp/extension/ \
+RUN echo "" \
     #&& ls ${PHP_PREFIX}/etc/php/conf.d/ \
-    && mv ${PHP_PREFIX}/etc/php/conf.d/* /tmp/extension/ \
+    && rm -f ${PHP_PREFIX}/etc/php/conf.d/* \
     && VAR_PHP_EXTENSION_DIR=$(php -r "echo ini_get('extension_dir');") \
     #&& ls ${VAR_PHP_EXTENSION_DIR} \
-    && mv ${VAR_PHP_EXTENSION_DIR}/* /tmp/extension/ \
-    && ls /tmp/extension/
+    && rm -f ${VAR_PHP_EXTENSION_DIR}/* \
+    && echo ""
 
 # =========================
 # Core PHP Extensions
