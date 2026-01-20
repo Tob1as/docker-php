@@ -8,7 +8,7 @@ services:
     container_name: wsc-php
     restart: unless-stopped
     #ports:
-    #  - "80:80"
+    #  - 80:80/tcp
     volumes:
       - ./html:/var/www/html:rw
     environment:
@@ -75,7 +75,7 @@ services:
       MARIADB_MYSQL_LOCALHOST_USER: "true"
       #MARIADB_AUTO_UPGRADE: 1
     #ports:
-    #  - 127.0.0.1:9306:3306/tcp
+    #  - 127.0.0.1:3306:3306/tcp
     healthcheck:
       test:  mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD || exit 1
       #test:  mysqladmin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD || exit 1
