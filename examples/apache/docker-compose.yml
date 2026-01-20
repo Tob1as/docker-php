@@ -1,0 +1,98 @@
+services:
+
+  # https://github.com/Tob1as/docker-php
+  # based on: https://hub.docker.com/_/php (https://github.com/docker-library/php)
+  # command: mkdir ./html && chown 33:33 ./html
+  wsc-php:
+    image: docker.io/tobi312/php:8.4-apache-wsc
+    container_name: wsc-php
+    restart: unless-stopped
+    #ports:
+    #  - "80:80"
+    volumes:
+      - ./html:/var/www/html:rw
+    environment:
+      TZ: "${TIMEZONE:-Europe/Berlin}"
+      PHP_ERRORS: 0
+      PHP_MEM_LIMIT: 256
+      PHP_POST_MAX_SIZE: 250
+      PHP_UPLOAD_MAX_FILESIZE: 250
+      PHP_MAX_FILE_UPLOADS: 20
+      PHP_MAX_EXECUTION_TIME: 120
+      ## next env only with apache
+      ENABLE_APACHE_REWRITE: 1
+      ENABLE_APACHE_ALLOWOVERRIDE: 1
+      ENABLE_APACHE_REMOTEIP: 1
+      ENABLE_APACHE_STATUS: 1
+      #APACHE_SERVER_NAME: "${DOMAIN}"
+      #APACHE_SERVER_ADMIN: "webmaster@${DOMAIN}"
+    #depends_on:
+    #  wsc-mariadb:
+    #    condition: service_started # service_started or service_healthy
+    networks:
+      - wsc-net
+      - traefik
+    labels:
+      # Explicitly tell Traefik to expose this container
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # Tell Traefik to use the http port 80 to connect to container
+      - "traefik.http.services.wsc.loadbalancer.server.port=80"
+      - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
+      # http
+      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-http.entrypoints=web"
+      - "traefik.http.routers.wsc-http.service=wsc"
+      # https
+      - "traefik.http.routers.wsc-https.tls=true"
+      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-https.entrypoints=websecure"
+      - "traefik.http.routers.wsc-https.service=wsc"
+      # load middlewares for routes
+      - "traefik.http.routers.wsc-http.middlewares=wsc-https"
+      #- "traefik.http.routers.wsc-https.middlewares="
+      # http to https redirect      
+      - "traefik.http.middlewares.wsc-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.wsc-https.redirectscheme.permanent=true"
+      #- "traefik.http.middlewares.wsc-https.redirectscheme.port=443"
+
+  # https://hub.docker.com/_/mariadb
+  # https://github.com/MariaDB/mariadb-docker
+  # command: mkdir ./data-db && chown 999:999 ./data-db
+  wsc-db:
+    image: docker.io/library/mariadb:11.4
+    container_name: wsc-db
+    restart: unless-stopped
+    volumes:
+      - ./data-db:/var/lib/mysql:rw
+      - ./config/mysql_wsc.cnf:/etc/mysql/conf.d/70-wsc.cnf:ro
+    environment:
+      TZ: "${TIMEZONE:-Europe/Berlin}"
+      MARIADB_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MARIADB_DATABASE: "${MYSQL_DATABASE:-wcf}"
+      MARIADB_USER: "${MYSQL_USER}"
+      MARIADB_PASSWORD: "${MYSQL_PASSWORD}"
+      MARIADB_MYSQL_LOCALHOST_USER: "true"
+      #MARIADB_AUTO_UPGRADE: 1
+    #ports:
+    #  - 127.0.0.1:9306:3306/tcp
+    healthcheck:
+      test:  mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD || exit 1
+      #test:  mysqladmin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD || exit 1
+      #start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      wsc-net:
+        aliases:
+        - wsc-database
+        - wsc-mysql
+        - wsc-mariadb
+
+networks:
+  wsc-net:
+    name: wsc-net
+  traefik:
+    name: traefik
+    external: true

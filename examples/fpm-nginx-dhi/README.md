@@ -28,7 +28,7 @@ If you don't want to use it, make adjustments in the NGINX configuration file in
     * `mkdir ./html && chown 65532:65532 ./html`
     * `mkdir ./data-db && chown 65532:65532 ./data-db`
 5. Start the container setup with:  
-   `docker-compose up -d`
+   `docker compose up -d`
 6. Create MySQL Databse and User:
    ```sh
    # create database
