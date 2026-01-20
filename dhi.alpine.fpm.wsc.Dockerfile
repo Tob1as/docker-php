@@ -37,6 +37,20 @@ RUN apk add --no-cache \
     imagemagick-dev
 
 # =========================
+# Preparation:
+# - move existing extensions, such as opcache, so that 
+#   they are not copied into the final image (again).
+# =========================
+
+RUN mkdir -p /tmp/extension/ \
+    #&& ls ${PHP_PREFIX}/etc/php/conf.d/ \
+    && mv ${PHP_PREFIX}/etc/php/conf.d/* /tmp/extension/ \
+    && VAR_PHP_EXTENSION_DIR=$(php -r "echo ini_get('extension_dir');") \
+    #&& ls ${VAR_PHP_EXTENSION_DIR} \
+    && mv ${VAR_PHP_EXTENSION_DIR}/* /tmp/extension/ \
+    && ls /tmp/extension/
+
+# =========================
 # Core PHP Extensions
 # =========================
 
@@ -80,7 +94,7 @@ RUN cd $PHP_SRC_DIR/ext/exif \
 # =========================
 WORKDIR /tmp
 
-# Redis
+# Redis <https://github.com/phpredis/phpredis/>
 RUN pecl download redis \
     && tar xzf redis-*.tgz \
 	&& rm redis-*.tgz \
@@ -91,7 +105,7 @@ RUN pecl download redis \
     && make install \
     && cd ..
 
-## Imagick
+# Imagick <https://github.com/Imagick/imagick>
 RUN pecl download imagick \
     && tar xzf imagick-*.tgz \
     && rm imagick-*.tgz \
@@ -112,13 +126,6 @@ RUN echo "" \
     && echo "extension=redis.so" > $PHP_INI_DIR/conf.d/docker-php-ext-redis.ini \
     && echo "extension=imagick.so" > $PHP_INI_DIR/conf.d/docker-php-ext-imagick.ini \
     && echo ""
-
-## create symlinks
-#RUN ls -lah ${PHP_PREFIX}/lib/php/extensions/no-debug-non-zts-20240924/ \
-#	&& mkdir -p /usr/local/lib/php \
-#	&& ln -s $(php -r "echo ini_get('extension_dir');") /usr/local/lib/php/extensions \
-#	&& ls -lah $PHP_INI_DIR/conf.d/ \
-#	&& ln -s $PHP_INI_DIR/conf.d /usr/local/lib/php/conf.d
 
 # =========================
 # Stage 2: Package extractor
@@ -153,7 +160,8 @@ RUN find /apkroot -mindepth 1 \
     ! -path '/apkroot/usr' \
     ! -path '/apkroot/usr/lib' \
     ! -path '/apkroot/usr/lib/*' \
-    -exec rm -rf {} +
+    -exec rm -rf {} + \
+    && find /apkroot -type f \( -name '*.a' -o -name '*.la' \) -exec rm -f {} +
 
 # List directory and file structure
 RUN tree /apkroot
@@ -176,6 +184,6 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
       org.opencontainers.image.source="https://github.com/Tob1as/docker-php"
 # Copy php extensions
 COPY --from=builder ${PHP_PREFIX}/lib/php/extensions/ ${PHP_PREFIX}/lib/php/extensions/
-COPY --from=builder ${PHP_PREFIX}/etc/php/conf.d/docker-php-ext-* ${PHP_PREFIX}/etc/php/conf.d/
+COPY --from=builder ${PHP_PREFIX}/etc/php/conf.d/ ${PHP_PREFIX}/etc/php/conf.d/
 # Copy the libraries from the extractor stage into root
 COPY --from=apk-extractor /apkroot /
