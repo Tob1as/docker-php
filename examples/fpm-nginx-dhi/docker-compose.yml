@@ -88,10 +88,39 @@ services:
     # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
     # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
 
+#  # https://dhi.io/catalog/mysqld-exporter
+#  # (Docs: https://github.com/prometheus/mysqld_exporter)
+#  wsc-db-exporter:
+#    image: dhi.io/mysqld-exporter:0.18-debian13
+#    container_name: wsc-db-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9104
+#      - --web.telemetry-path=/metrics
+#      - --mysqld.address=wsc-db:3306
+#      - --mysqld.username=${MYSQL_EXPORTER_USER}
+#    environment:
+#      MYSQLD_EXPORTER_PASSWORD: ${MYSQL_EXPORTER_PASSWORD}
+#    ports:
+#      - 127.0.0.1:9104:9104/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-db:
+#        condition: service_started
+#    # TODO: only do this commands after first start (create exporter user and permission)
+#    # MYSQL_EXPORTER_USER=$(grep '^MYSQL_EXPORTER_USER=' .env | cut -d= -f2-)
+#    # MYSQL_EXPORTER_PASSWORD=$(grep '^MYSQL_EXPORTER_PASSWORD=' .env | cut -d= -f2-)
+#    # docker exec -it wsc-db bash -c "mysql -uroot -e \"CREATE USER '${MYSQL_EXPORTER_USER}'@'%' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}'; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO '${MYSQL_EXPORTER_USER}'@'%';\""
+#    # Test: curl http://localhost:9104/metrics
 
 networks:
   wsc-net:
     name: wsc-net
+  #monitoring-net:
+  #  name: monitoring-net
+  #  external: true
   traefik:
     name: traefik
     external: true
