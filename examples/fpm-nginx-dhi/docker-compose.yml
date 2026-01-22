@@ -34,11 +34,11 @@ services:
         condition: service_started
     networks:
       - wsc-net
-      - traefik
+      - traefik-net
     labels:
       # Explicitly tell Traefik to expose this container
       - "traefik.enable=true"
-      - "traefik.docker.network=traefik"
+      - "traefik.docker.network=traefik-net"
       # Tell Traefik to use the http port 8080 to connect to container
       - "traefik.http.services.wsc.loadbalancer.server.port=8080"
       - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
@@ -143,6 +143,6 @@ networks:
   #monitoring-net:
   #  name: monitoring-net
   #  external: true
-  traefik:
-    name: traefik
+  traefik-net:
+    name: traefik-net
     external: true
