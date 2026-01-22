@@ -8,6 +8,7 @@ This example docker-compose setup for [WSC (WoltLab Suite Core)](https://www.wol
   This DHI image has no shell and entrypoint.
 * [NGINX Image](https://dhi.io/catalog/nginx) from DHI
 * [MySQL Image](https://dhi.io/catalog/mysql) from DHI
+* optional Exporter Images from DHI: [MySQL/MariaDB](https://dhi.io/catalog/mysqld-exporter) and [NGINX](https://dhi.io/catalog/nginx-exporter)
 
   
 Notes:
