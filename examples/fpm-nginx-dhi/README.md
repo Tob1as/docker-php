@@ -16,6 +16,7 @@ If you don't want to use it, make adjustments in the NGINX configuration file in
 * **Important: To pull Images from DHI you must login with your docker account.** 
 * (Sourcecode from DH-Images can found here [https://github.com/docker-hardened-images](https://github.com/docker-hardened-images/catalog/tree/main/image).)
 * DHI images (mostly) have no shell and no entrypoint.
+* Images build for AMD64 (x86_64) and ARM64.
 
 ## Steps
 1. Important: Login to dhi.io (`docker login dhi.io`) and optional to docker.io (`docker login`) on your server, if not already done.

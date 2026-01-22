@@ -99,6 +99,7 @@ services:
 #      - --web.telemetry-path=/metrics
 #      - --mysqld.address=wsc-db:3306
 #      - --mysqld.username=${MYSQL_EXPORTER_USER}
+#      - --log.level=info
 #    environment:
 #      MYSQLD_EXPORTER_PASSWORD: ${MYSQL_EXPORTER_PASSWORD}
 #    ports:
@@ -114,6 +115,27 @@ services:
 #    # MYSQL_EXPORTER_PASSWORD=$(grep '^MYSQL_EXPORTER_PASSWORD=' .env | cut -d= -f2-)
 #    # docker exec -it wsc-db bash -c "mysql -uroot -e \"CREATE USER '${MYSQL_EXPORTER_USER}'@'%' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}'; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO '${MYSQL_EXPORTER_USER}'@'%';\""
 #    # Test: curl http://localhost:9104/metrics
+
+#  # https://dhi.io/catalog/nginx-exporter
+#  # (Docs: https://github.com/nginx/nginx-prometheus-exporter)
+#  wsc-nginx-exporter:
+#    image: dhi.io/nginx-exporter:1.5-debian13
+#    container_name: wsc-nginx-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9113
+#      - --web.telemetry-path=/metrics
+#      - --nginx.scrape-uri=http://wsc-nginx:8080/nginx_status
+#      - --log.level=info
+#    ports:
+#      - 127.0.0.1:9113:9113/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-nginx:
+#        condition: service_started
+#    # Test: curl http://127.0.0.1:9113/metrics
 
 networks:
   wsc-net:
