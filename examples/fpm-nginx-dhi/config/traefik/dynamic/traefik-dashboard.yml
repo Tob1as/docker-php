@@ -1,0 +1,34 @@
+http:
+
+  # Routers
+  routers:
+    # HTTP
+    traefik-http:
+      rule: "Host(`example.com`) && PathPrefix(`/traefik`)"
+      service: api@internal
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+        - traefik-auth
+        #- geoblock
+    # HTTPS
+    traefik-https:
+      rule: "Host(`example.com`) && PathPrefix(`/traefik`)"
+      service: api@internal
+      entryPoints:
+        - websecure
+      tls: true
+      middlewares:
+        - traefik-auth
+        #- geoblock
+
+  # Middlewares
+  middlewares:
+    # Auth (htpasswd)
+    traefik-auth:
+      # basic auth with htpasswd (You may need to escape any $ with another $ in password. create password: "docker run --rm tobi312/tools:htpasswd -bn admin 'passw0rd' | sed 's/\$/\$\$/g'"  OR  only for Password: "openssl passwd -apr1 'passw0rd' | sed 's/\$/\$\$/g'")
+      basicAuth:
+        users:
+          - "admin:$apr1$6Yq5UCPq$ZmXnIrJwqH0qfKRurLAiR1"
+          - "traefik:$apr1$zIohxmBm$TVYfYKcqYXOdONsU93L8w0"

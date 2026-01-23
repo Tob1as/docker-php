@@ -1,0 +1,33 @@
+http:
+
+  # Services
+  services:
+    wsc-service:
+      loadBalancer:
+        servers:
+          - url: "http://wsc-nginx:8080"
+        healthCheck:
+          path: "/php_fpm_ping"
+          interval: "10s"
+          timeout: "3s"
+  
+  # Routers
+  routers:
+    # HTTP
+    wsc-http:
+      rule: "Host(`example.com`) && PathPrefix(`/`)"
+      service: wsc-service
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+        #- geoblock
+    # HTTPS
+    wsc-https:
+      rule: "Host(`example.com`) && PathPrefix(`/`)"
+      service: wsc-service
+      entryPoints:
+        - websecure
+      tls: true
+      #middlewares:
+      #  - geoblock

@@ -9,15 +9,16 @@ This example docker-compose setup for [WSC (WoltLab Suite Core)](https://www.wol
 * [NGINX Image](https://dhi.io/catalog/nginx) from DHI
 * [MySQL Image](https://dhi.io/catalog/mysql) from DHI
 * optional Exporter Images from DHI: [MySQL/MariaDB](https://dhi.io/catalog/mysqld-exporter) and [NGINX](https://dhi.io/catalog/nginx-exporter)
+* [Traefik Image](https://dhi.io/catalog/traefik) from DHI
 
   
 Notes:
-* In this setup [Traefik](https://traefik.io/traefik) is use as Proxy, a example can find here [https://github.com/Tob1as/docker-kubernetes-collection](https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/traefik_v3.yml).  
+* In this setup [Traefik](https://traefik.io/traefik) is use as Proxy.  
 If you don't want to use it, make adjustments in the NGINX configuration file in "config" folder.  
 * **Important: To pull Images from DHI you must login with your docker account.** 
 * (Sourcecode from DH-Images can found here [https://github.com/docker-hardened-images](https://github.com/docker-hardened-images/catalog/tree/main/image).)
 * DHI images (mostly) have no shell and no entrypoint.
-* Images build for AMD64 (x86_64) and ARM64.
+* Images build for AMD64 (x86_64) and ARM64 with Linux.
 
 ## Steps
 1. Important: Login to dhi.io (`docker login dhi.io`) and optional to docker.io (`docker login`) on your server, if not already done.
@@ -29,21 +30,39 @@ If you don't want to use it, make adjustments in the NGINX configuration file in
 4. create some subfolder:
     * `mkdir ./html && chown 65532:65532 ./html`
     * `mkdir ./data-db && chown 65532:65532 ./data-db`
-5. Start the container setup with:  
+5. Configure Traefik, set your domains in `./config/traefik/dynamic/traefik-dashboard.yml` and `./config/traefik/dynamic/wsc.yml` or remove `Host(*) &&`. Also in `traefik-dashboard.yml`change basicAuth user and password. Additionally, create SSL certificates contains domain name(s) and set the path within the container in `./config/traefik/dynamic/ssl.yml` or use [Let's Encrypt](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/).  
+   * example command for replace domain in dynamic configs:
+     ```sh
+     find ./config/traefik/dynamic -type f -exec sed -i 's/example.com/mydomain.com/g' {} +
+     ```
+   * example for self sign cert:  
+     create folder:
+     ```sh
+     mkdir ./ssl-certs
+     ```
+     create cert (change domain name):
+     ```sh
+     openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes -subj "/C=DE/ST=none/L=Town/O=Linux Community/CN=example.com" -keyout ./ssl-certs/ssl.key -out ./ssl-certs/ssl.crt -addext "subjectAltName=DNS:example.com,DNS:*.example.com" -addext "basicConstraints=CA:FALSE" -addext "keyUsage=digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
+     ```  
+     Check:  
+     ```sh
+     openssl x509  -text -noout -in ./ssl-certs/ssl.crt
+     ```
+6. Start the container setup with:  
    `docker compose up -d`
-6. Create MySQL Databse and User:
+7. Create MySQL Databse and User:
    ```sh
    # create database
    docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
    # create user and set permissions
    docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
    ```
-7. [Download WSC](https://www.woltlab.com/en/woltlab-suite-download/) and unzip archive and copy all files from "upload" folder in "html" folder on your server.
-8. Call your domain and file test.php, example: `http://example.com/test.php`
-9. Now follows the installation setup of the WSC.  
+8. [Download WSC](https://www.woltlab.com/en/woltlab-suite-download/) and unzip archive and copy all files from "upload" folder in "html" folder on your server.
+9. Call your domain and file test.php, example: `http://example.com/test.php`
+10. Now follows the installation setup of the WSC.  
    Manual/Help: https://manual.woltlab.com/en/installation/  
    (Notice: Database Host is `wsc-db`!)
-10. Installation complete.
+11. Installation complete.
 
 If necessary, make further configurations for nginx or php in the files in the "config" folder.  
   

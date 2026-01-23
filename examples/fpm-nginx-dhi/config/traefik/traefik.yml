@@ -1,0 +1,74 @@
+# in docker-compose file use "command" or "use volume mount for this file"
+
+# Entrypoints and Ports
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+    http3: {}
+    #  advertisedport: "443"
+  traefik:
+    address: ":8080"
+  metrics:
+    address: ":8082"
+
+# Monitoring (Prometheus and Ping)
+metrics:
+  prometheus:
+    entryPoint: metrics
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+ping:
+  entryPoint: metrics
+
+# API and Dashboard
+api:
+  dashboard: true
+  basepath: "/traefik"
+  #insecure: true 
+
+# Log and AccessLog
+log:
+  level: ERROR    # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, and PANIC
+  format: common  # common, json
+accessLog:
+  format: common  # common, genericCLF , json
+  addInternals: true
+  fields:
+    names:
+      StartUTC: drop # TimeZone (set to "drop", for use from env)
+ 
+# ServersTransport (internal/backend CA-Cert/SSL)
+serversTransport:
+  insecureSkipVerify: true
+  #rootcas: 
+  #  - "/config/certs/ca.crt"
+
+# Dynamic Configs
+providers:
+  file:
+    directory: "/config/dynamic"
+    watch: true
+    
+## Optional: Plugins <https://plugins.traefik.io/plugins>
+#experimental:
+#  plugins:
+#    # https://plugins.traefik.io/plugins/62947307108ecc83915d7783/rewrite-body
+#    rewrite:
+#      moduleName: "github.com/traefik/plugin-rewritebody"
+#      version: "v0.3.1"
+#    # https://plugins.traefik.io/plugins/62947354108ecc83915d778e/block-path
+#    block:
+#      moduleName: "github.com/traefik/plugin-blockpath"
+#      version: "v0.2.1"
+#    # https://plugins.traefik.io/plugins/62947302108ecc83915d7781/geoblock
+#    geoblock:
+#      moduleName: "github.com/nscuro/traefik-plugin-geoblock"
+#      version: "v0.14.0"

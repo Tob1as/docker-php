@@ -35,6 +35,7 @@ services:
     networks:
       - wsc-net
       - traefik-net
+    # Labels for Traefik, works only with offical image and not with DHI, then use dynamic config files.
     labels:
       # Explicitly tell Traefik to expose this container
       - "traefik.enable=true"
@@ -137,6 +138,84 @@ services:
 #        condition: service_started
 #    # Test: curl http://127.0.0.1:9113/metrics
 
+
+  # https://dhi.io/catalog/traefik
+  # (Docs: https://doc.traefik.io/traefik/ )
+  # Note: Traefik DHI has no permission as non-root user for docker.socket, use dynamic config files!
+  traefik:
+    image: dhi.io/traefik:3-debian13
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+      - TZ="${TIMEZONE:-Europe/Berlin}"
+    ports:
+      - "80:80/tcp"                # http
+      - "443:443/tcp"              # https (tcp)
+      - "443:443/udp"              # https (udp) / HTTP3
+      - "127.0.0.1:8082:8082/tcp"  # Traefik Metrics
+      #- "127.0.0.1:8080:8080/tcp" # Traefik Dashboard (if insecure enabled)
+    # use "command" or static config file "traefik.yml" in volumes
+    command:
+      # Entrypoints and Ports
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.websecure.http3"
+      #- "--entryPoints.websecure.http3.advertisedport=443"
+      - "--entryPoints.traefik.address=:8080"
+      - "--entryPoints.metrics.address=:8082"
+      # Monitoring (Prometheus and Ping)
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.entryPoint=metrics"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addrouterslabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--ping=true"
+      - "--ping.entryPoint=metrics"
+      # API and Dashboard
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--api.basePath=/traefik"
+      #- "--api.insecure=true"
+      # Log and AccessLog
+      - "--log.level=ERROR"         # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, and PANIC
+      - "--log.format=common"       # common, json
+      - "--accesslog=true"
+      - "--accesslog.format=common" # common, genericCLF , json
+      - "--accesslog.addinternals"
+      - "--accesslog.fields.names.StartUTC=drop"  # TimeZone (set to "drop", for use from env)
+      # ServersTransport (internal/backend CA-Cert/SSL)
+      - "--serversTransport.insecureSkipVerify=true"
+      #- "--serversTransport.rootCAs=/config/certs/ca.crt"
+      # Dynamic Configs
+      - "--providers.file.directory=/config/dynamic"
+      - "--providers.file.watch=true"
+      # Optional: Plugins <https://plugins.traefik.io/plugins>
+      # https://plugins.traefik.io/plugins/62947307108ecc83915d7783/rewrite-body
+      #- "--experimental.plugins.rewrite.modulename=github.com/traefik/plugin-rewritebody"
+      #- "--experimental.plugins.rewrite.version=v0.3.1"
+      # https://plugins.traefik.io/plugins/62947354108ecc83915d778e/block-path
+      #- "--experimental.plugins.block.modulename=github.com/traefik/plugin-blockpath"
+      #- "--experimental.plugins.block.version=v0.2.1"
+      # https://plugins.traefik.io/plugins/62947302108ecc83915d7781/geoblock
+      #- "--experimental.plugins.geoblock.modulename=github.com/nscuro/traefik-plugin-geoblock"
+      #- "--experimental.plugins.geoblock.version=v0.14.0"
+    volumes:
+      #- ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro  # static config file or use "command" in docker-compose
+      - ./config/traefik/dynamic/:/config/dynamic/:ro              # dynamic config files
+      - ./ssl-certs/:/config/certs/:ro                             # ssl certs files
+      # TODO for plugins: mkdir -p ./data-traefik/plugins && chown 65532:65532 ./data-traefik/plugins
+      #- ./data-traefik/plugins/:/plugins-storage:rw                # plugin folder (will be downloaded by traefik)
+    networks:
+      - traefik-net
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping', "--entryPoints.ping.address=:8082", "--ping.entryPoint=ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    # check with: "docker inspect --format='{{json .State.Health}}' traefik | jq"
+
 networks:
   wsc-net:
     name: wsc-net
@@ -145,4 +224,4 @@ networks:
   #  external: true
   traefik-net:
     name: traefik-net
-    external: true
+    #external: true
