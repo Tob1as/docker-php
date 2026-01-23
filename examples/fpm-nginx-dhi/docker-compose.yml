@@ -85,6 +85,14 @@ services:
         - wsc-database
         - wsc-mysql
         - wsc-mariadb
+    healthcheck:
+      test:  mysqladmin ping -h 127.0.0.1 -P 3306 -u root || exit 1
+      #test:  mysqladmin ping -h 127.0.0.1 -P 3306 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD || exit 1
+      #start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # check with: "docker inspect --format='{{json .State.Health}}' wsc-db | jq"
     # TODO: only do this commands after first start when using dhi mysql image (create database and user with password form environment vars):
     # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
     # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
@@ -211,7 +219,8 @@ services:
       - traefik-net
     healthcheck:
       test: ['CMD', 'traefik', 'healthcheck', '--ping', "--entryPoints.ping.address=:8082", "--ping.entryPoint=ping"]
-      interval: 10s
+      #start_period: 10s
+      interval: 30s
       timeout: 5s
       retries: 3
     # check with: "docker inspect --format='{{json .State.Health}}' traefik | jq"
