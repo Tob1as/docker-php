@@ -26,37 +26,56 @@ If you don't want to use it, make adjustments in the NGINX configuration file in
 2. Copy this folder to your server and move into it.
 3. Rename `.env.example` to `.env` and configure your  domain and database settings.  
    (Password generator: [randompasswordgenerator.com](https://randompasswordgenerator.com))
-    * `mv .env.example .env`
-    * `nano .env`
+   * `mv .env.example .env`
+   * `nano .env`
 4. create some subfolder:
-    * `mkdir ./html && chown 65532:65532 ./html`
-    * `mkdir ./data-db && chown 65532:65532 ./data-db`
-5. Configure Traefik, set your domains in `./config/traefik/dynamic/traefik-dashboard.yml` and `./config/traefik/dynamic/wsc.yml` or remove `Host(*) &&`. Also in `traefik-dashboard.yml`change basicAuth user and password. Additionally, create SSL certificates contains domain name(s) and set the path within the container in `./config/traefik/dynamic/ssl.yml` or use [Let's Encrypt](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/).  
-   * example command for replace domain in dynamic configs:
+   * `mkdir ./html && chown 65532:65532 ./html`
+   * `mkdir ./data-db && chown 65532:65532 ./data-db`
+5. Configure **Traefik**, set your domains in `./config/traefik/dynamic/traefik-dashboard.yml` and `./config/traefik/dynamic/wsc.yml` or remove `Host(*) &&`. Also in `traefik-dashboard.yml`change basicAuth user and password. Additionally, create SSL certificates contains domain name(s) and set the path within the container in `./config/traefik/dynamic/ssl.yml` or use [Let's Encrypt](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/).  
+   * (1) set domain as variable from `.env`:  
      ```sh
-     find ./config/traefik/dynamic -type f -exec sed -i 's/example.com/mydomain.com/g' {} +
+     DOMAIN=$(grep '^DOMAIN=' .env | cut -d= -f2-)
      ```
-   * example for self sign cert:  
+   * (2) replace domain in dynamic configs:
+     ```sh
+     find ./config/traefik/dynamic -type f -exec sed -i "s/example.com/${DOMAIN}/g" {} +
+     ```
+   * (3) example SSL Cert (self sign):  
      create folder:
      ```sh
      mkdir ./ssl-certs
      ```
      create cert (change domain name):
      ```sh
-     openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes -subj "/C=DE/ST=none/L=Town/O=Linux Community/CN=example.com" -keyout ./ssl-certs/ssl.key -out ./ssl-certs/ssl.crt -addext "subjectAltName=DNS:example.com,DNS:*.example.com" -addext "basicConstraints=CA:FALSE" -addext "keyUsage=digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
+     openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes -subj "/C=DE/ST=none/L=Town/O=Linux Community/CN=${DOMAIN}" -keyout ./ssl-certs/ssl.key -out ./ssl-certs/ssl.crt -addext "subjectAltName=DNS:${DOMAIN},DNS:*.${DOMAIN}" -addext "basicConstraints=CA:FALSE" -addext "keyUsage=digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
      ```  
      Check:  
      ```sh
      openssl x509  -text -noout -in ./ssl-certs/ssl.crt
+     ```  
+     Change permissions:
+     ```sh
+     chown 65532:65532 ./ssl-certs/*
+     ```
+6. optional:
+   * update timezone in php conf:
+     ```sh
+     sed -i "s|^date\.timezone=.*|date.timezone=$(grep '^TIMEZONE=' .env | cut -d= -f2-)|" ./config/php_wsc.ini
+     ```
+   * check docker-compose.yml:
+     ```sh
+     docker-compose config
      ```
 6. Start the container setup with:  
-   `docker compose up -d`
+   ```sh
+   docker compose up -d
+   ```
 7. Create MySQL Databse and User:
    ```sh
    # create database
-   docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
+   docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
    # create user and set permissions
-   docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
+   docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
    ```
 8. [Download WSC](https://www.woltlab.com/en/woltlab-suite-download/) and unzip archive and copy all files from "upload" folder in "html" folder on your server.
 9. Call your domain and file test.php, example: `http://example.com/test.php`

@@ -205,7 +205,7 @@ services:
       #- ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro  # static config file or use "command" in docker-compose
       - ./config/traefik/dynamic/:/config/dynamic/:ro              # dynamic config files
       - ./ssl-certs/:/config/certs/:ro                             # ssl certs files
-      # TODO for plugins: mkdir -p ./data-traefik/plugins && chown 65532:65532 ./data-traefik/plugins
+      # TODO for plugins: "mkdir -p ./data-traefik/plugins && chown 65532:65532 ./data-traefik/plugins"
       #- ./data-traefik/plugins/:/plugins-storage:rw                # plugin folder (will be downloaded by traefik)
     networks:
       - traefik-net
@@ -215,6 +215,7 @@ services:
       timeout: 5s
       retries: 3
     # check with: "docker inspect --format='{{json .State.Health}}' traefik | jq"
+    # URL for Webbrowser: https://example.com/traefik
 
 networks:
   wsc-net:
@@ -224,4 +225,16 @@ networks:
   #  external: true
   traefik-net:
     name: traefik-net
+    # external, script? https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/docker_network_create.sh
     #external: true
+    # not external, but with IPv4 and IPv6:
+    #driver: bridge
+    #attachable: true
+    #enable_ipv6: true
+    #labels:
+    #  created.by: "docker-compose_WSC"
+    #ipam:
+    #  driver: default
+    #  config:
+    #    - subnet: 172.20.0.0/24        # IPv4 Subnet
+    #    - subnet: fd00:dead:beef::/48  # IPv6 Subnet
