@@ -49,7 +49,7 @@ services:
       - "traefik.http.routers.wsc-https.entrypoints=websecure"
       - "traefik.http.routers.wsc-https.service=wsc"
       # load middlewares for routes
-      - "traefik.http.routers.wsc-http.middlewares=wsc-https"
+      - "traefik.http.routers.wsc-http.middlewares=wsc-https@docker"
       #- "traefik.http.routers.wsc-https.middlewares="
       # http to https redirect      
       - "traefik.http.middlewares.wsc-https.redirectscheme.scheme=https"
@@ -66,6 +66,7 @@ services:
     volumes:
       - ./data-db:/var/lib/mysql:rw
       - ./config/mysql_wsc.cnf:/etc/mysql/conf.d/70-wsc.cnf:ro
+      - ./config/mysql_exporter-user.sh:/docker-entrypoint-initdb.d/20_exporter-user.sh:ro
     environment:
       TZ: "${TIMEZONE:-Europe/Berlin}"
       MARIADB_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
@@ -74,11 +75,15 @@ services:
       MARIADB_PASSWORD: "${MYSQL_PASSWORD}"
       MARIADB_MYSQL_LOCALHOST_USER: "true"
       #MARIADB_AUTO_UPGRADE: 1
+      # Exporter (mounted by script)
+      EXPORTER_USER: "${MYSQL_EXPORTER_USER}"
+      EXPORTER_PASSWORD: "${MYSQL_EXPORTER_PASSWORD}"
+      #EXPORTER_MAXUSERCONNECTIONS: "3"
     #ports:
     #  - 127.0.0.1:3306:3306/tcp
     healthcheck:
-      test:  mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD || exit 1
-      #test:  mysqladmin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD || exit 1
+      test:  mariadb-admin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD || exit 1
+      #test:  mariadb-admin ping -h 127.0.0.1 -u $$MARIADB_USER --password=$$MARIADB_PASSWORD || exit 1
       #start_period: 10s
       interval: 30s
       timeout: 5s
@@ -89,10 +94,173 @@ services:
         - wsc-database
         - wsc-mysql
         - wsc-mariadb
+    # check with: "docker inspect --format='{{json .State.Health}}' wsc-db | jq"
+  
+#  # https://github.com/prometheus/mysqld_exporter
+#  wsc-db-exporter:
+#    image: docker.io/prom/mysqld-exporter:latest  # quay.io/prometheus/mysqld-exporter:latest
+#    container_name: wsc-db-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9104
+#      - --web.telemetry-path=/metrics
+#      - --mysqld.address=wsc-db:3306
+#      - --mysqld.username=${MYSQL_EXPORTER_USER}
+#      - --log.level=info
+#    environment:
+#      MYSQLD_EXPORTER_PASSWORD: ${MYSQL_EXPORTER_PASSWORD}
+#    ports:
+#      - 127.0.0.1:9104:9104/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-db:
+#        condition: service_started   # service_started or service_healthy
+#    # Test: curl http://localhost:9104/metrics
+#  
+#  # https://github.com/Lusitaniae/apache_exporter
+#  wsc-apache-exporter:
+#    image: docker.io/lusotycoon/apache-exporter:latest  # quay.io/lusitaniae/apache-exporter:latest
+#    container_name: wsc-apache-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9117
+#      - --telemetry.endpoint=/metrics
+#      - --scrape_uri='http://wsc-php:80/server-status?auto'
+#      - --log.level=info
+#    ports:
+#      - 127.0.0.1:9117:9117/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-php:
+#        condition: service_started
+#    # Test: curl http://127.0.0.1:9117/metrics
+    
+  # https://hub.docker.com/_/traefik
+  # https://github.com/traefik/traefik/
+  # Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: docker.io/library/traefik:3
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+      - TZ="${TIMEZONE:-Europe/Berlin}"
+    ports:
+      - "80:80/tcp"                # http
+      - "443:443/tcp"              # https (tcp)
+      - "443:443/udp"              # https (udp) / HTTP3
+      - "127.0.0.1:8082:8082/tcp"  # Traefik Metrics
+      #- "127.0.0.1:8080:8080/tcp" # Traefik Dashboard (if insecure enabled)
+    command:
+      # Entrypoints and Ports
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.websecure.http3"
+      #- "--entryPoints.websecure.http3.advertisedport=443"
+      - "--entryPoints.traefik.address=:8080"
+      - "--entryPoints.metrics.address=:8082"
+      # Monitoring (Prometheus and Ping)
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.entryPoint=metrics"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addrouterslabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--ping=true"
+      - "--ping.entryPoint=metrics"
+      # API and Dashboard
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--api.basePath=/traefik"
+      #- "--api.insecure=true"
+      # Log and AccessLog
+      - "--log.level=ERROR"         # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, and PANIC
+      - "--log.format=common"       # common, json
+      - "--accesslog=true"
+      - "--accesslog.format=common" # common, genericCLF , json
+      - "--accesslog.addinternals"
+      - "--accesslog.fields.names.StartUTC=drop"  # TimeZone (set to "drop", for use from env)
+      # ServersTransport (internal/backend CA-Cert/SSL)
+      - "--serversTransport.insecureSkipVerify=true"
+      #- "--serversTransport.rootCAs=/config/certs/ca.crt"
+      # Dynamic Configs
+      - "--providers.file.directory=/config/dynamic"
+      - "--providers.file.watch=true"
+      # Optional: Plugins <https://plugins.traefik.io/plugins>
+      # https://plugins.traefik.io/plugins/62947307108ecc83915d7783/rewrite-body
+      #- "--experimental.plugins.rewrite.modulename=github.com/traefik/plugin-rewritebody"
+      #- "--experimental.plugins.rewrite.version=v0.3.1"
+      # https://plugins.traefik.io/plugins/62947354108ecc83915d778e/block-path
+      #- "--experimental.plugins.block.modulename=github.com/traefik/plugin-blockpath"
+      #- "--experimental.plugins.block.version=v0.2.1"
+      # https://plugins.traefik.io/plugins/62947302108ecc83915d7781/geoblock
+      #- "--experimental.plugins.geoblock.modulename=github.com/nscuro/traefik-plugin-geoblock"
+      #- "--experimental.plugins.geoblock.version=v0.14.0"
+      # Docker Provider (Traefik must run as root)
+      - "--providers.docker=true"
+      #- "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      #- "--providers.docker.network=traefik"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro                # docker.sock for read labels
+      - ./config/traefik/dynamic/:/config/dynamic/:ro               # dynamic config files
+      - ./ssl-certs/:/config/certs/:ro                              # ssl certs files
+    networks:
+      - traefik-net
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping', "--entryPoints.ping.address=:8082", "--ping.entryPoint=ping"]
+      #start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    # check with: "docker inspect --format='{{json .State.Health}}' traefik | jq"
+    labels:
+      # Explicitly tell Traefik to expose this container
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      # http
+      - "traefik.http.routers.traefik-http.rule=Host(`${DOMAIN}`) && PathPrefix(`/traefik`)"
+      - "traefik.http.routers.traefik-http.entrypoints=web"
+      - "traefik.http.routers.traefik-http.service=api@internal"
+      # https
+      - "traefik.http.routers.traefik-https.tls=true"
+      - "traefik.http.routers.traefik-https.rule=Host(`${DOMAIN}`) && PathPrefix(`/traefik`)"
+      - "traefik.http.routers.traefik-https.entrypoints=websecure"
+      - "traefik.http.routers.traefik-https.service=api@internal"
+      # load middlewares for routes
+      - "traefik.http.routers.traefik-http.middlewares=traefik-https@docker,traefik-auth@docker"
+      - "traefik.http.routers.traefik-https.middlewares=traefik-auth@docker"
+      # Middleware: http to https redirect      
+      - "traefik.http.middlewares.traefik-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.traefik-https.redirectscheme.permanent=true"
+      #- "traefik.http.middlewares.traefik-https.redirectscheme.port=443"
+      # Middleware: auth
+      # basic auth with htpasswd (You may need to escape any $ with another $ in password. create password: "docker run --rm tobi312/tools:htpasswd -bn admin 'passw0rd' | sed 's/\$/\$\$/g'"  OR  only for Password: "openssl passwd -apr1 'passw0rd' | sed 's/\$/\$\$/g'")
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$6Yq5UCPq$$ZmXnIrJwqH0qfKRurLAiR1,traefik:$$apr1$$zIohxmBm$$TVYfYKcqYXOdONsU93L8w0"
+    # URL for Webbrowser: https://example.com/traefik
 
 networks:
   wsc-net:
     name: wsc-net
+  #monitoring-net:
+  #  name: monitoring-net
+  #  external: true
   traefik-net:
     name: traefik-net
-    external: true
+    # external, script? https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/docker_network_create.sh
+    #external: true
+    # not external, but with IPv4 and IPv6:
+    #driver: bridge
+    #attachable: true
+    #enable_ipv6: true
+    #labels:
+    #  created.by: "docker-compose_WSC"
+    #ipam:
+    #  driver: default
+    #  config:
+    #    - subnet: 172.20.0.0/24        # IPv4 Subnet
+    #    - subnet: fd00:dead:beef::/48  # IPv6 Subnet

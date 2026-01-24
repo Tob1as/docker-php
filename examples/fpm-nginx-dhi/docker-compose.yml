@@ -15,7 +15,7 @@ services:
       - ./config/php_fpm_status.conf:/opt/php/etc/php-fpm.d/y-status.conf:ro
     #depends_on:
     #  wsc-db:
-    #    condition: service_started
+    #    condition: service_started   # service_started or service_healthy
     networks:
       - wsc-net
 
@@ -35,30 +35,30 @@ services:
     networks:
       - wsc-net
       - traefik-net
-    # Labels for Traefik, works only with offical image and not with DHI, then use dynamic config files.
-    labels:
-      # Explicitly tell Traefik to expose this container
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-net"
-      # Tell Traefik to use the http port 8080 to connect to container
-      - "traefik.http.services.wsc.loadbalancer.server.port=8080"
-      - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
-      # http
-      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.wsc-http.entrypoints=web"
-      - "traefik.http.routers.wsc-http.service=wsc"
-      # https
-      - "traefik.http.routers.wsc-https.tls=true"
-      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.wsc-https.entrypoints=websecure"
-      - "traefik.http.routers.wsc-https.service=wsc"
-      # load middlewares for routes
-      - "traefik.http.routers.wsc-http.middlewares=wsc-https"
-      #- "traefik.http.routers.wsc-https.middlewares="
-      # http to https redirect      
-      - "traefik.http.middlewares.wsc-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.wsc-https.redirectscheme.permanent=true"
-      #- "traefik.http.middlewares.wsc-https.redirectscheme.port=443"
+    ## Labels for Traefik, it works only with offical image and not with DHI, then use dynamic config files.
+    #labels:
+    #  # Explicitly tell Traefik to expose this container
+    #  - "traefik.enable=true"
+    #  - "traefik.docker.network=traefik-net"
+    #  # Tell Traefik to use the http port 8080 to connect to container
+    #  - "traefik.http.services.wsc.loadbalancer.server.port=8080"
+    #  - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
+    #  # http
+    #  - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`)"
+    #  - "traefik.http.routers.wsc-http.entrypoints=web"
+    #  - "traefik.http.routers.wsc-http.service=wsc"
+    #  # https
+    #  - "traefik.http.routers.wsc-https.tls=true"
+    #  - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`)"
+    #  - "traefik.http.routers.wsc-https.entrypoints=websecure"
+    #  - "traefik.http.routers.wsc-https.service=wsc"
+    #  # load middlewares for routes
+    #  - "traefik.http.routers.wsc-http.middlewares=wsc-https@docker"
+    #  #- "traefik.http.routers.wsc-https.middlewares="
+    #  # http to https redirect      
+    #  - "traefik.http.middlewares.wsc-https.redirectscheme.scheme=https"
+    #  - "traefik.http.middlewares.wsc-https.redirectscheme.permanent=true"
+    #  #- "traefik.http.middlewares.wsc-https.redirectscheme.port=443"
 
   # https://dhi.io/catalog/mysql
   # command: mkdir ./data-db && chown 65532:65532 ./data-db
@@ -94,8 +94,8 @@ services:
       retries: 3
       # check with: "docker inspect --format='{{json .State.Health}}' wsc-db | jq"
     # TODO: only do this commands after first start when using dhi mysql image (create database and user with password form environment vars):
-    # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
-    # docker exec -it wsc-mysql bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
+    # docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
+    # docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
 
 #  # https://dhi.io/catalog/mysqld-exporter
 #  # (Docs: https://github.com/prometheus/mysqld_exporter)
@@ -118,7 +118,7 @@ services:
 #      #- monitoring-net
 #    depends_on:
 #      wsc-db:
-#        condition: service_started
+#        condition: service_started   # service_started or service_healthy
 #    # TODO: only do this commands after first start (create exporter user and permission)
 #    # MYSQL_EXPORTER_USER=$(grep '^MYSQL_EXPORTER_USER=' .env | cut -d= -f2-)
 #    # MYSQL_EXPORTER_PASSWORD=$(grep '^MYSQL_EXPORTER_PASSWORD=' .env | cut -d= -f2-)
