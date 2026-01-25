@@ -30,6 +30,7 @@ ENV CFLAGS="-I/usr/src/php"
 #		#git \
 #		#zip unzip \
 #		#patch \
+#       #netcat-openbsd \
 #	; \
 #	rm -rf /var/lib/apt/lists/*
 
