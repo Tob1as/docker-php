@@ -56,4 +56,4 @@ RUN \
     php -m
 
 # opcache config
-COPY conf/php_70-opcache.ini /usr/local/etc/php/conf.d/70-opcache.ini
+#COPY conf/php_55-opcache.ini /usr/local/etc/php/conf.d/55-opcache.ini

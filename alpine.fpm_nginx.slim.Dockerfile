@@ -108,24 +108,22 @@ RUN apk --no-cache add \
 	} > /etc/nginx/nginx.conf \
     ; \
 	{ \
+		echo '##REPLACE_WITH_REMOTEIP_CONFIG##'; \
+		echo ''; \
 		echo 'server {'; \
 		echo '  listen 80 default_server;'; \
 		echo '  listen [::]:80 default_server;'; \
 		echo '  #server_name _;'; \
 		echo ' '; \
-		echo '  ##REPLACE_WITH_REMOTEIP_CONFIG##'; \
-		echo ' '; \
-		echo '  #client_max_body_size 64M;'; \
-		echo ' '; \
-		echo '  ##REPLACE_WITH_NGINXSTATUS_CONFIG##'; \
-		echo ' '; \
-		echo '  ##REPLACE_WITH_PHPFPMSTATUS_CONFIG##'; \
+		echo '  # disable any limits to avoid HTTP 413 for large image uploads'; \
+		echo '  client_max_body_size 0;'; \
 		echo ' '; \
 		echo '  root /var/www/html;'; \
-		echo '  index index.html index.htm index.php;'; \
+		echo '  index index.php index.html;'; \
 		echo ' '; \
 		echo '  location / {'; \
 		echo '    try_files $uri $uri/ =404;'; \
+		echo '    #try_files $uri $uri/ /index.php?$query_string;'; \
 		echo '  }'; \
 		echo '  '; \
 		echo '  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000'; \
@@ -140,6 +138,13 @@ RUN apk --no-cache add \
 		echo '    include fastcgi_params;'; \
 		echo '  }'; \
 		echo ' '; \
+		echo '  ##REPLACE_WITH_NGINXSTATUS_CONFIG##'; \
+		echo ' '; \
+		echo '  ##REPLACE_WITH_PHPFPMSTATUS_CONFIG##'; \
+		echo ' '; \
+		echo '  location ~ /\.ht {'; \
+		echo '    deny all;'; \
+		echo '  }'; \
 		echo ' '; \
 		echo '  location = /favicon.ico { log_not_found off; access_log off; }'; \
 		echo '  location = /robots.txt { log_not_found off; access_log off; }'; \

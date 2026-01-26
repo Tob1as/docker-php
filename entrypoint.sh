@@ -12,7 +12,11 @@ set -eu
 : "${PHP_POST_MAX_SIZE:=""}"                  # set Value in MB, example: 250
 : "${PHP_UPLOAD_MAX_FILESIZE:=""}"            # set Value in MB, example: 250
 : "${PHP_MAX_FILE_UPLOADS:=""}"               # set number, example: 20
+: "${PHP_MAX_EXECUTION_TIME:=""}"             # set time
+: "${PHP_SET_OPCACHE_SETTINGS:="0"}"          # opcache settings
+: "${PHP_FPM_STATUS_PORT:="9001"}"            # PHP-FPM Status/Ping Port (default: 9000 but here use 9001)
 : "${PHP_FPM_STATUS_PATH:="/php_fpm_status"}" # (default: /status but here use /php_fpm_status)
+: "${PHP_FPM_PING_PATH:="/php_fpm_ping"}"     # (default: /ping but here use /php_fpm_ping)
 : "${ENABLE_PHP_FPM_STATUS:="0"}"             # set 1 to enable
 : "${CREATE_PHPINFO_FILE:="0"}"               # set 1 to enable
 : "${CREATE_INDEX_FILE:="0"}"                 # set 1 to enable
@@ -35,7 +39,8 @@ PHP_INI_FILE_NAME="50-php.ini"
 lsb_dist="$(. /etc/os-release && echo "$ID")" # get os (example: debian or alpine) - do not change!
 
 ## check if php-fpm in this container image exists
-if [ -d "/usr/local/etc/php-fpm.d" -a -f "/usr/local/etc/php-fpm.d/www.conf" ]; then
+PHP_FPM_CONF_DIR_PATH="/usr/local/etc/php-fpm.d"
+if [ -d "${PHP_FPM_CONF_DIR_PATH}" -a -f "${PHP_FPM_CONF_DIR_PATH}/www.conf" ]; then
 	PHP_FPM_IS_EXISTS="1"
 else 
 	PHP_FPM_IS_EXISTS="0"
@@ -121,19 +126,51 @@ if [ -n "$PHP_MAX_EXECUTION_TIME" ]; then
 	echo "max_execution_time = ${PHP_MAX_EXECUTION_TIME}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 fi
 
+# Status/Ping
+if [ -f "/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini" -a "$PHP_SET_OPCACHE_SETTINGS" -eq "1" ]; then
+	echo ">> set opcache settings"
+	cat > /usr/local/etc/php/conf.d/55-opcache.ini <<'EOF'
+; https://www.php.net/manual/en/opcache.configuration.php
+[opcache]
+opcache.enable=1
+;opcache.enable_cli=0
+opcache.memory_consumption=192
+opcache.interned_strings_buffer=16
+opcache.max_accelerated_files=10000
+opcache.max_wasted_percentage=10
+opcache.validate_timestamps=1
+opcache.revalidate_freq=2
+opcache.save_comments=1
+EOF
+fi
+
 ####################################################
 ##################### PHP-FPM ######################
 ####################################################
 
-PHP_FPM_CONF_FILE="/usr/local/etc/php-fpm.d/www.conf"
-
+# Status/Ping
 if [ "$PHP_FPM_IS_EXISTS" -eq "1" -a "$ENABLE_PHP_FPM_STATUS" -eq "1" ]; then
 	echo ">> enabling php-fpm status!"
-	#echo -e "[www]\npm.status_path = /status\nping.path = /ping" > /usr/local/etc/php-fpm.d/y-status.conf
-	#echo -e "[www]\npm.status_path = ${PHP_FPM_STATUS_PATH}\nping.path = /ping" > /usr/local/etc/php-fpm.d/y-status.conf
-    #sed -i "s|;pm.status_path.*|pm.status_path = /status|g" ${PHP_FPM_CONF_FILE}
-	sed -i "s|;pm.status_path.*|pm.status_path = ${PHP_FPM_STATUS_PATH}|g" ${PHP_FPM_CONF_FILE}
-    sed -i "s|;ping.path.*|ping.path = /ping|g" ${PHP_FPM_CONF_FILE}
+
+	cat > ${PHP_FPM_CONF_DIR_PATH}/y-status.conf <<EOF
+[www]
+; status page (example: http://localhost:${PHP_FPM_STATUS_PORT}${PHP_FPM_STATUS_PATH}?json&full)
+pm.status_path = ${PHP_FPM_STATUS_PATH}
+pm.status_listen = ${PHP_FPM_STATUS_PORT}
+; ping (healtcheck)
+ping.path = ${PHP_FPM_PING_PATH}
+;ping.response = pong
+EOF
+
+fi
+
+# Settings (Log, ...)
+if [ "$PHP_FPM_IS_EXISTS" -eq "1" ]; then
+	cat > ${PHP_FPM_CONF_DIR_PATH}/y-settings.conf <<'EOF'
+[www]
+access.format = "%R - %u %t \"%m %r%Q%q\" %s"
+EOF
+
 fi
 
 ####################################################
@@ -359,20 +396,68 @@ NGINX_CONF_FILE="/etc/nginx/conf.d/default.conf"
 
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_STATUS" -eq "1" ]; then
 	echo ">> enabling nginx status!"
-	nginx_status_string="location /nginx_status {\n    stub_status on;\n    access_log off;\n    allow 127.0.0.1;\n    allow ::1;\n    allow 10.0.0.0/8;\n    allow 172.16.0.0/12;\n    allow 192.168.0.0/16;\n    deny all;\n  }"
-	sed -i "s|##REPLACE_WITH_NGINXSTATUS_CONFIG##|${nginx_status_string}|g" ${NGINX_CONF_FILE}
+	sed -i '/##REPLACE_WITH_NGINXSTATUS_CONFIG##/{
+r /dev/stdin
+d
+}' "${NGINX_CONF_FILE}" <<EOF
+  # nginx status
+  location /nginx_status {
+    stub_status on;
+    access_log off;
+    allow 127.0.0.1;
+    allow 10.0.0.0/8;
+    allow 172.16.0.0/12;
+    allow 192.168.0.0/16;
+    allow ::1;
+    allow fd00::/8;
+    deny all;
+  }
+  
+  # nginx ping
+  location /nginx_ping {
+    add_header Content-Type text/plain;
+    return 200 'pong';
+    access_log off;
+    allow 127.0.0.1;
+    allow 10.0.0.0/8;
+    allow 172.16.0.0/12;
+    allow 192.168.0.0/16;
+    allow ::1;
+    allow fd00::/8;
+    deny all;
+  }
+EOF
 fi
 
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_PHP_FPM_STATUS" -eq "1" ]; then
 	echo ">> enabling php-fpm status in nginx!"
-    php_fpm_status_string="location ${PHP_FPM_STATUS_PATH} {\n    access_log off;\n    allow 127.0.0.1;\n    allow ::1;\n    allow 10.0.0.0/8;\n    allow 172.16.0.0/12;\n    allow 192.168.0.0/16;\n    deny all;\n    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n    include fastcgi_params;\n    fastcgi_pass 127.0.0.1:9000;\n  }\n\n  location /ping {\n    access_log off;\n    allow 127.0.0.1;\n    allow ::1;\n    allow 10.0.0.0/8;\n    allow 172.16.0.0/12;\n    allow 192.168.0.0/16;\n    deny all;\n    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n    include fastcgi_params;\n    fastcgi_pass 127.0.0.1:9000;\n  }" ; \
-    sed -i "s|##REPLACE_WITH_PHPFPMSTATUS_CONFIG##|${php_fpm_status_string}|g" ${NGINX_CONF_FILE}
+	PHP_FPM_STATUS_LOCATIONNAME=${PHP_FPM_STATUS_PATH#/}
+	PHP_FPM_PING_LOCATIONNAME=${PHP_FPM_PING_PATH#/}
+	sed -i '/##REPLACE_WITH_PHPFPMSTATUS_CONFIG##/{
+r /dev/stdin
+d
+}' "${NGINX_CONF_FILE}" <<EOF
+  # php-fpm status/ping
+  location ~ ^/(${PHP_FPM_STATUS_LOCATIONNAME}|${PHP_FPM_PING_LOCATIONNAME})\$ {
+    fastcgi_pass 127.0.0.1:${PHP_FPM_STATUS_PORT};
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    include fastcgi_params;
+    access_log off;
+    allow 127.0.0.1;
+    allow 10.0.0.0/8;
+    allow 172.16.0.0/12;
+    allow 192.168.0.0/16;
+    allow ::1;
+    allow fd00::/8;
+    deny all;
+  }
+EOF
 fi
 
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_REMOTEIP" -eq "1" ]; then
 	# https://nginx.org/en/docs/http/ngx_http_realip_module.html
 	echo ">> enabling remoteip support, use this only behind a proxy!"
-	nginx_remoteip_string="set_real_ip_from 172.20.0.0/8;\n  #set_real_ip_from fd00:dead:beef::/48;\n  set_real_ip_from fd00::/8;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
+	nginx_remoteip_string="set_real_ip_from 172.16.0.0/12;\n  set_real_ip_from fd00::/8;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
 	sed -i "s|##REPLACE_WITH_REMOTEIP_CONFIG##|${nginx_remoteip_string}|g" ${NGINX_CONF_FILE}
 fi
 
