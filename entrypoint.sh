@@ -126,8 +126,8 @@ if [ -n "$PHP_MAX_EXECUTION_TIME" ]; then
 	echo "max_execution_time = ${PHP_MAX_EXECUTION_TIME}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 fi
 
-# Status/Ping
-if [ -f "/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini" -a "$PHP_SET_OPCACHE_SETTINGS" -eq "1" ]; then
+# OPCACHE Settings
+if [ "$PHP_SET_OPCACHE_SETTINGS" -eq "1" ]; then
 	echo ">> set opcache settings"
 	cat > /usr/local/etc/php/conf.d/55-opcache.ini <<'EOF'
 ; https://www.php.net/manual/en/opcache.configuration.php
@@ -151,7 +151,6 @@ fi
 # Status/Ping
 if [ "$PHP_FPM_IS_EXISTS" -eq "1" -a "$ENABLE_PHP_FPM_STATUS" -eq "1" ]; then
 	echo ">> enabling php-fpm status!"
-
 	cat > ${PHP_FPM_CONF_DIR_PATH}/y-status.conf <<EOF
 [www]
 ; status page (example: http://localhost:${PHP_FPM_STATUS_PORT}${PHP_FPM_STATUS_PATH}?json&full)
@@ -316,7 +315,7 @@ if [ "$APACHE_IS_EXISTS" -eq "1" -a "$ENABLE_APACHE_STATUS" -eq "1" ]; then
         Require ip 10.0.0.0/8
         Require ip 172.16.0.0/12
         Require ip 192.168.0.0/16
-        #Require ip fd00::/7
+        Require ip fd00::/8
     </Location>
 </IfModule>
 
@@ -401,7 +400,7 @@ r /dev/stdin
 d
 }' "${NGINX_CONF_FILE}" <<EOF
   # nginx status
-  location /nginx_status {
+  location = /nginx_status {
     stub_status on;
     access_log off;
     allow 127.0.0.1;
@@ -414,7 +413,7 @@ d
   }
   
   # nginx ping
-  location /nginx_ping {
+  location = /nginx_ping {
     add_header Content-Type text/plain;
     return 200 'pong';
     access_log off;
@@ -457,8 +456,17 @@ fi
 if [ "$NGINX_IS_EXISTS" -eq "1" -a "$ENABLE_NGINX_REMOTEIP" -eq "1" ]; then
 	# https://nginx.org/en/docs/http/ngx_http_realip_module.html
 	echo ">> enabling remoteip support, use this only behind a proxy!"
-	nginx_remoteip_string="set_real_ip_from 172.16.0.0/12;\n  set_real_ip_from fd00::/8;\n  ##REPLACE_WITH_MORE_REAL_IP##\n  real_ip_header X-Forwarded-For;\n  #real_ip_recursive on;\n"
-	sed -i "s|##REPLACE_WITH_REMOTEIP_CONFIG##|${nginx_remoteip_string}|g" ${NGINX_CONF_FILE}
+	sed -i '/##REPLACE_WITH_REMOTEIP_CONFIG##/{
+r /dev/stdin
+d
+}' "${NGINX_CONF_FILE}" <<'EOF'
+# enable ONLY behind PROXY (Traefik, other NGINX, Caddy, lighttpd, K8s Ingress, ...) (ngx_http_realip_module)
+set_real_ip_from 172.16.0.0/12
+set_real_ip_from fd00::/8;
+##REPLACE_WITH_MORE_REAL_IP##
+real_ip_header X-Forwarded-For;
+#real_ip_recursive on;
+EOF
 fi
 
 ####################################################
