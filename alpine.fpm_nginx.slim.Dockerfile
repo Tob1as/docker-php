@@ -26,6 +26,7 @@ RUN apk --no-cache add \
 		tzdata \
 		supervisor \
 		nginx \
+		fcgi \
 	; \
 	#mkdir -p /run/nginx ; \
 	mkdir -p /etc/ssl/nginx ; \

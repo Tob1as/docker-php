@@ -23,16 +23,16 @@ ENV TERM=xterm
 ENV CFLAGS="-I/usr/src/php"
 
 # TOOLS
-#RUN apt-get update; \
-#	apt-get install -y --no-install-recommends \
-#		curl \
-#		wget \
-#		#git \
-#		#zip unzip \
-#		#patch \
-#       #netcat-openbsd \
-#	; \
-#	rm -rf /var/lib/apt/lists/*
+RUN apt-get update; \
+	apt-get install -y --no-install-recommends \
+		#curl \
+		wget \
+		#unzip \
+		#patch \
+		netcat-openbsd \
+		libfcgi-bin \
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 # PHP-EXTENSION-INSTALLER
 RUN \

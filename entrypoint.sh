@@ -151,16 +151,26 @@ fi
 # Status/Ping
 if [ "$PHP_FPM_IS_EXISTS" -eq "1" -a "$ENABLE_PHP_FPM_STATUS" -eq "1" ]; then
 	echo ">> enabling php-fpm status!"
+	
+	PHP_FPM_PING_RESPONSE="pong"
+
 	cat > ${PHP_FPM_CONF_DIR_PATH}/y-status.conf <<EOF
 [www]
-; status page (example: http://localhost:${PHP_FPM_STATUS_PORT}${PHP_FPM_STATUS_PATH}?json&full)
+; status page
 pm.status_path = ${PHP_FPM_STATUS_PATH}
 pm.status_listen = ${PHP_FPM_STATUS_PORT}
 ; ping (healtcheck)
 ping.path = ${PHP_FPM_PING_PATH}
-;ping.response = pong
+;ping.response = ${PHP_FPM_PING_RESPONSE}
 EOF
 
+	echo ">> ... and create php-fpm-healthcheck.sh"
+	cat > /usr/local/bin/php-fpm-healthcheck.sh <<EOF
+#!/bin/sh
+# required: fcgi (alpine) or libfcgi-bin (debian)
+SCRIPT_NAME="${PHP_FPM_PING_PATH}" SCRIPT_FILENAME="${PHP_FPM_PING_PATH}" REQUEST_METHOD=GET cgi-fcgi -bind -connect "127.0.0.1:${PHP_FPM_STATUS_PORT}" | grep ${PHP_FPM_PING_RESPONSE}
+EOF
+	chmod +x /usr/local/bin/php-fpm-healthcheck.sh
 fi
 
 # Settings (Log, ...)
@@ -169,7 +179,6 @@ if [ "$PHP_FPM_IS_EXISTS" -eq "1" ]; then
 [www]
 access.format = "%R - %u %t \"%m %r%Q%q\" %s"
 EOF
-
 fi
 
 ####################################################

@@ -22,7 +22,8 @@ ENV CFLAGS="-I/usr/src/php"
 
 # tzdata to set the timezones through the environment variables
 RUN apk --no-cache add \
-		tzdata
+		tzdata \
+		fcgi
 
 # PHP-EXTENSION-INSTALLER
 RUN \
