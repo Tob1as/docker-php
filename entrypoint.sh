@@ -470,7 +470,7 @@ r /dev/stdin
 d
 }' "${NGINX_CONF_FILE}" <<'EOF'
 # enable ONLY behind PROXY (Traefik, other NGINX, Caddy, lighttpd, K8s Ingress, ...) (ngx_http_realip_module)
-set_real_ip_from 172.16.0.0/12
+set_real_ip_from 172.16.0.0/12;
 set_real_ip_from fd00::/8;
 ##REPLACE_WITH_MORE_REAL_IP##
 real_ip_header X-Forwarded-For;
