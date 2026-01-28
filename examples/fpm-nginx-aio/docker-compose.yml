@@ -4,7 +4,7 @@ services:
   # based on: https://hub.docker.com/_/php (https://github.com/docker-library/php)
   # command: mkdir ./html && chown 33:33 ./html
   wsc-php:
-    image: docker.io/tobi312/php:8.4-apache-wsc
+    image: docker.io/tobi312/php:8.4-fpm-nginx-alpine-wsc
     container_name: wsc-php
     restart: unless-stopped
     #ports:
@@ -19,17 +19,14 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
       PHP_MAX_EXECUTION_TIME: 120
+      ENABLE_PHP_FPM_STATUS: 1
       PHP_SET_OPCACHE_SETTINGS: 1
-      ## next env only with apache
-      ENABLE_APACHE_REWRITE: 1
-      ENABLE_APACHE_ALLOWOVERRIDE: 1
-      ENABLE_APACHE_REMOTEIP: 1
-      ENABLE_APACHE_STATUS: 1
-      #APACHE_SERVER_NAME: "${DOMAIN}"
-      #APACHE_SERVER_ADMIN: "webmaster@${DOMAIN}"
+      # nginx
+      ENABLE_NGINX_REMOTEIP: 1
+      ENABLE_NGINX_STATUS: 1
     #depends_on:
-    #  wsc-mariadb:
-    #    condition: service_started # service_started or service_healthy
+    #  wsc-db:
+    #    condition: service_started   # service_started or service_healthy
     networks:
       - wsc-net
       - traefik-net
@@ -37,7 +34,7 @@ services:
       # Explicitly tell Traefik to expose this container
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-      # Tell Traefik to use the http port 80 to connect to container
+      # Tell Traefik to use the http port to connect to container
       - "traefik.http.services.wsc.loadbalancer.server.port=80"
       - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
       # http
@@ -57,6 +54,13 @@ services:
       #- "traefik.http.middlewares.wsc-https.redirectscheme.scheme=https"
       #- "traefik.http.middlewares.wsc-https.redirectscheme.permanent=true"
       #- "traefik.http.middlewares.wsc-https.redirectscheme.port=443"
+    healthcheck:
+      test: curl --silent --fail --insecure http://localhost:80/php_fpm_ping || exit 1
+      #start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # check with: "docker inspect --format='{{json .State.Health}}' wsc-php | jq"
 
   # https://hub.docker.com/_/mariadb
   # https://github.com/MariaDB/mariadb-docker
@@ -121,26 +125,48 @@ services:
 #        condition: service_started   # service_started or service_healthy
 #    # Test: curl http://localhost:9104/metrics
 #  
-#  # https://github.com/Lusitaniae/apache_exporter
-#  wsc-apache-exporter:
-#    image: docker.io/lusotycoon/apache-exporter:latest  # quay.io/lusitaniae/apache-exporter:latest
-#    container_name: wsc-apache-exporter
+#  # https://github.com/nginx/nginx-prometheus-exporter
+#  wsc-nginx-exporter:
+#    image: docker.io/nginx/nginx-prometheus-exporter:latest
+#    container_name: wsc-nginx-exporter
 #    restart: unless-stopped
 #    command:
-#      - --web.listen-address=:9117
-#      - --telemetry.endpoint=/metrics
-#      - --scrape_uri='http://wsc-php:80/server-status?auto'
+#      - --web.listen-address=:9113
+#      - --web.telemetry-path=/metrics
+#      - --nginx.scrape-uri=http://wsc-php:80/nginx_status
+#      #- --no-nginx.ssl-verify
 #      - --log.level=info
 #    ports:
-#      - 127.0.0.1:9117:9117/tcp
+#      - 127.0.0.1:9113:9113/tcp
 #    networks:
 #      - wsc-net
 #      #- monitoring-net
 #    depends_on:
 #      wsc-php:
-#        condition: service_started
-#    # Test: curl http://127.0.0.1:9117/metrics
-    
+#        condition: service_started   # service_started or service_healthy
+#    # Test: curl http://127.0.0.1:9113/metrics
+#
+#  # https://github.com/hipages/php-fpm_exporter
+#  wsc-php-fpm-exporter:
+#    image: docker.io/hipages/php-fpm_exporter:latest  # ghcr.io/hipages/php-fpm_exporter:latest
+#    container_name: wsc-php-fpm-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9253
+#      - --web.telemetry-path=/metrics
+#      - --phpfpm.scrape-uri=tcp://wsc-php:9001/php_fpm_status
+#      - --phpfpm.fix-process-count=false
+#      - --log.level=info
+#    ports:
+#      - 127.0.0.1:9253:9253/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-php:
+#        condition: service_started   # service_started or service_healthy
+#    # Test: curl http://127.0.0.1:9253/metrics
+
   # https://hub.docker.com/_/traefik
   # https://github.com/traefik/traefik/
   # Docs: https://doc.traefik.io/traefik/
