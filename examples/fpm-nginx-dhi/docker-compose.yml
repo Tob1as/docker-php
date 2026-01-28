@@ -146,6 +146,27 @@ services:
 #        condition: service_started
 #    # Test: curl http://127.0.0.1:9113/metrics
 
+#  # https://github.com/hipages/php-fpm_exporter
+#  # (Dockerfile: https://github.com/Tob1as/docker-tools -> php-fpm-exporter.scratch.Dockerfile)
+#  wsc-php-fpm-exporter:
+#    image: docker.io/tobi312/tools:php-fpm-exporter  # not DHI image, but in scratch image without shell and nobody user
+#    container_name: wsc-php-fpm-exporter
+#    restart: unless-stopped
+#    command:
+#      - --web.listen-address=:9253
+#      - --web.telemetry-path=/metrics
+#      - --phpfpm.scrape-uri=tcp://wsc-php:9001/php_fpm_status
+#      - --phpfpm.fix-process-count=false
+#      - --log.level=info
+#    ports:
+#      - 127.0.0.1:9253:9253/tcp
+#    networks:
+#      - wsc-net
+#      #- monitoring-net
+#    depends_on:
+#      wsc-php:
+#        condition: service_started
+#    # Test: curl http://127.0.0.1:9253/metrics
 
   # https://dhi.io/catalog/traefik
   # (Docs: https://doc.traefik.io/traefik/ )
