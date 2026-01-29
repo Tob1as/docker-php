@@ -1,0 +1,243 @@
+# WSC-DB (MySQL-Database)
+# Source: https://github.com/Tob1as/docker-php
+# other konfig example: https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_k8s/mariadb.yaml
+# 
+# used Images:
+# - https://dhi.io/catalog/mysql
+# - https://dhi.io/catalog/mysqld-exporter (Docs: https://github.com/prometheus/mysqld_exporter)
+# 
+# TODO: only do this commands after first start when using dhi mysql image (create database and user with password from environment vars):
+# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
+# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
+# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MYSQL_EXPORTER_USER}\"@\"%\";"'
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wsc-db-env-config
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+data:
+  MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M" # only support in DHI (instead of own *.cnf file)
+  # the following variables require manual intervention in order to be used (kubectl exec command):
+  MYSQL_DATABASE: "woltlab_suite"
+  MYSQL_USER: "woltlab_suite"
+  MYSQL_EXPORTER_USER: "exporter"
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wsc-db-env-secret
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+stringData:
+  MYSQL_ROOT_PASSWORD: "my-secret-pw"    # required !
+  # the following variables require manual intervention in order to be used (kubectl exec command):
+  MYSQL_PASSWORD: "my-secret-pw"
+  MYSQL_EXPORTER_PASSWORD: "my-secret-pw"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wsc-db
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wsc-db
+      app.kubernetes.io/component: database
+      app.kubernetes.io/part-of: wsc
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wsc-db
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: wsc
+    spec:
+      imagePullSecrets:
+      - name: regcred-dockerhub
+      - name: regcred-dhi
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 65532
+      containers:
+      - name: mysql
+        image: dhi.io/mysql:8.4-debian13
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: wsc-db-env-config
+            optional: true
+        - secretRef:
+            name: wsc-db-env-secret
+            #optional: true
+        ports:
+        - containerPort: 3306
+          name: mysql
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 -u root || exit 1"]
+            #command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD || exit 1"]
+          #tcpSocket:
+          #  port: 3306
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        livenessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 -u root || exit 1"]
+            #command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD || exit 1"]
+          #tcpSocket:
+          #  port: 3306
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+          limits:
+            memory: "1Gi"
+            cpu: "1.0"
+        volumeMounts:
+        - name: wsc-db-data
+          mountPath: /var/lib/mysql
+      - name: exporter
+        image: dhi.io/mysqld-exporter:0.18-debian13
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9104
+          name: exporter
+          protocol: TCP
+        env:
+        - name: MYSQL_EXPORTER_USER
+          value: "root"
+        #- name: MYSQL_EXPORTER_USER
+        #  valueFrom:
+        #    configMapKeyRef:
+        #      name: wsc-db-env-config
+        #      key: MYSQL_EXPORTER_USER
+        #      #optional: true
+        #- name: MYSQLD_EXPORTER_PASSWORD
+        #  valueFrom:
+        #    secretKeyRef:
+        #      name: wsc-db-env-secret
+        #      key: MYSQL_EXPORTER_PASSWORD
+        #      optional: true
+        args:
+        - "--web.listen-address=:9104"
+        - "--web.telemetry-path=/metrics"
+        - "--mysqld.address=localhost:3306"
+        - "--mysqld.username=$(MYSQL_EXPORTER_USER)"
+        - "--log.level=info"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "0.1"
+          limits:
+            memory: "128Mi"
+            cpu: "0.5"
+      volumes:
+      - name: wsc-db-data
+        persistentVolumeClaim:
+          claimName: wsc-db-data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wsc-db
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+spec:
+  type: ClusterIP
+  ports:
+  - name: "mysql"
+    protocol: TCP
+    port: 3306
+    targetPort: 3306
+  - name: "exporter"
+    protocol: TCP
+    port: 9104
+    targetPort: 9104
+  selector: # deployment
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+
+# Port-Forward/Tunnel to localhost
+# kubectl -n wsc port-forward service/wsc-db 3306:3306
+# kubectl -n wsc port-forward service/wsc-db 9104:9104
+
+#---
+#
+### After this line ONLY for Monitoring !
+#
+#apiVersion: monitoring.coreos.com/v1
+#kind: ServiceMonitor
+#metadata:
+#  name: wsc-db
+#  namespace: wsc
+#  labels:
+#    app.kubernetes.io/name: wsc-db
+#    app.kubernetes.io/component: database
+#    app.kubernetes.io/part-of: wsc
+#spec:
+#  endpoints:
+#  - path: /metrics
+#    scheme: http
+#    port: exporter # 9104
+#    targetPort: 9104
+#  selector:
+#    matchLabels: # service
+#      app.kubernetes.io/name: wsc-db
+#      app.kubernetes.io/component: database
+#      app.kubernetes.io/part-of: wsc
+#
+#---
+#
+## Examples: https://samber.github.io/awesome-prometheus-alerts/rules#mysql
+#
+#apiVersion: monitoring.coreos.com/v1
+#kind: PrometheusRule
+#metadata:
+#  name: mysql
+#  namespace: wsc
+#  labels:
+#    app: mysql
+#spec:
+#  groups:
+#    - name: mysql.rules
+#      rules:
+#      - alert: {}
+#      - alert: {}
+#      - alert: {}
+ 

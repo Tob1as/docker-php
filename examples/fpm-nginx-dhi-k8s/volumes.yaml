@@ -1,0 +1,41 @@
+# https://github.com/rancher/local-path-provisioner
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wsc-db-data
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wsc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: local-path # set to your class
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wsc-web-data
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-web
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: wsc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: local-path # set to your class
+  resources:
+    requests:
+      storage: 15Gi

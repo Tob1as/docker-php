@@ -93,7 +93,7 @@ services:
       timeout: 5s
       retries: 3
       # check with: "docker inspect --format='{{json .State.Health}}' wsc-db | jq"
-    # TODO: only do this commands after first start when using dhi mysql image (create database and user with password form environment vars):
+    # TODO: only do this commands after first start when using dhi mysql image (create database and user with password from environment vars):
     # docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
     # docker exec -it wsc-db bash -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
 
