@@ -1,10 +1,13 @@
 # PHP - Examples: PHP-FPM & NGINX & MySQL (using DHI) for K8s/Kubernetes
 
+(see also folder: `fpm-nginx-dhi`)  
+
 ## Steps:
 1. ```kubectl apply -f namespace.yaml```
 2. Registry Login (needed for DHI), see below.
 3. Preparation:
     * Change `ConfigMap` and `Secret` (Passwords) in `wsc-db.yaml` and `wsc-db.yaml`.
+    * Set Domain/Host(s) in `Ingress` in `wsc-db.yaml` and set ssl-cert.
     * Set `storageClassName` in `volumes.yaml`.
 4. ```kubectl apply -f volumes.yaml```
 5. ```kubectl apply -f wsc-db.yaml```
