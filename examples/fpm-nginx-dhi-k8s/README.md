@@ -3,8 +3,11 @@
 ## Steps:
 1. ```kubectl apply -f namespace.yaml```
 2. Registry Login (needed for DHI), see below.
-2. ```kubectl apply -f volumes.yaml```
-3. ```kubectl apply -f wsc-db.yaml```
+3. Preparation:
+    * Change `ConfigMap` and `Secret` (Passwords) in `wsc-db.yaml` and `wsc-db.yaml`.
+    * Set `storageClassName` in `volumes.yaml`.
+4. ```kubectl apply -f volumes.yaml```
+5. ```kubectl apply -f wsc-db.yaml```
     * create database and user and set permission:
       ```sh
       # Database
@@ -21,10 +24,10 @@
       kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT user, host, max_user_connections FROM mysql.user;"'
       kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT host, user, db FROM mysql.db;"'
       ```
-    * Now you can edit `wsc-db.yaml` and use `MYSQL_EXPORTER_USER` and `MYSQLD_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck.
-4. ```kubectl apply -f wsc-web.yaml```
-5. copy wsc files to html folder in wsc-web deployment: ```kubectl cp ....```
-6. ...
+    * Now you can edit `wsc-db.yaml` and use `MYSQL_EXPORTER_USER` and `MYSQLD_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
+6. ```kubectl apply -f wsc-web.yaml```
+7. copy wsc files to html folder in wsc-web deployment: ```kubectl cp ....```
+8. ...
 
 ## Registry Login
 
