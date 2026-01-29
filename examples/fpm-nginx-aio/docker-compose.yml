@@ -38,12 +38,12 @@ services:
       - "traefik.http.services.wsc.loadbalancer.server.port=80"
       - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
       # http
-      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`) && PathPrefix(`/`)"
       - "traefik.http.routers.wsc-http.entrypoints=web"
       - "traefik.http.routers.wsc-http.service=wsc"
       # https
       - "traefik.http.routers.wsc-https.tls=true"
-      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`) && PathPrefix(`/`)"
       - "traefik.http.routers.wsc-https.entrypoints=websecure"
       - "traefik.http.routers.wsc-https.service=wsc"
       # load middlewares for routes

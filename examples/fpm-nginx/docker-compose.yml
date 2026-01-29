@@ -38,8 +38,8 @@ services:
   # https://hub.docker.com/_/nginx + https://github.com/nginxinc/docker-nginx
   # https://hub.docker.com/r/nginxinc/nginx-unprivileged + https://github.com/nginx/docker-nginx-unprivileged
   wsc-nginx:
-    image: docker.io/library/nginx:1.29
-    #image: docker.io/nginxinc/nginx-unprivileged:1.29
+    image: docker.io/library/nginx:1.28
+    #image: docker.io/nginxinc/nginx-unprivileged:1.28
     container_name: wsc-nginx
     restart: unless-stopped
     #ports:
@@ -61,12 +61,12 @@ services:
       - "traefik.http.services.wsc.loadbalancer.server.port=8080"
       - "traefik.http.services.wsc.loadbalancer.server.scheme=http"  # when "https" then set "--serversTransport.insecureSkipVerify=true" for traefik
       # http
-      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-http.rule=Host(`${DOMAIN}`) && PathPrefix(`/`)"
       - "traefik.http.routers.wsc-http.entrypoints=web"
       - "traefik.http.routers.wsc-http.service=wsc"
       # https
       - "traefik.http.routers.wsc-https.tls=true"
-      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.wsc-https.rule=Host(`${DOMAIN}`) && PathPrefix(`/`)"
       - "traefik.http.routers.wsc-https.entrypoints=websecure"
       - "traefik.http.routers.wsc-https.service=wsc"
       # load middlewares for routes
