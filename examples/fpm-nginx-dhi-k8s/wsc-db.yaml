@@ -97,6 +97,9 @@ spec:
         - containerPort: 3306
           name: mysql
           protocol: TCP
+        - containerPort: 33306
+          name: mysqlx
+          protocol: TCP
         readinessProbe:
           exec:
             command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 -u root || exit 1"]
@@ -187,6 +190,10 @@ spec:
     protocol: TCP
     port: 3306
     targetPort: 3306
+  - name: "mysqlx"
+    protocol: TCP
+    port: 33306
+    targetPort: 33306
   - name: "exporter"
     protocol: TCP
     port: 9104

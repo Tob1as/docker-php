@@ -9,6 +9,7 @@
     * Change `ConfigMap` and `Secret` (Passwords) in `wsc-db.yaml` and `wsc-db.yaml`.
     * Set Domain/Host(s) in `Ingress` in `wsc-db.yaml` and set ssl-cert.
     * Set `storageClassName` in `volumes.yaml`.
+    * check rest of yaml`s/configs ...
 4. ```kubectl apply -f volumes.yaml```
 5. ```kubectl apply -f wsc-db.yaml```
     * create database and user and set permission:
@@ -29,8 +30,19 @@
       ```
     * Now you can edit `wsc-db.yaml` and use `MYSQL_EXPORTER_USER` and `MYSQLD_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
 6. ```kubectl apply -f wsc-web.yaml```
-7. copy wsc files to html folder in wsc-web deployment: ```kubectl cp ....```
-8. ...
+7. check:
+   ```sh
+   kubectl -n wsc get secrets,configmaps,ingresses,services,pods,deployments,pvc,pv
+   ```
+8. [Download WSC](https://www.woltlab.com/en/woltlab-suite-download/) and unzip archive and copy wsc files form upload-folder to html-folder in wsc-web deployment: 
+   ```sh
+   kubectl -n wsc cp ./upload/. $(kubectl -n wsc get pod -l app.kubernetes.io/name=wsc-web -o jsonpath="{.items[0].metadata.name}"):/var/www/html/ -c helper
+   ```
+9. Call your domain and file test.php, example: `http://example.com/test.php`
+10. Now follows the installation setup of the WSC.  
+   Manual/Help: https://manual.woltlab.com/en/installation/  
+   (Notice: Database Host is `wsc-db`!)
+11. Installation complete.
 
 ## Registry Login
 

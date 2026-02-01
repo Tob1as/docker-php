@@ -93,6 +93,7 @@ spec:
         volumeMounts:
         - name: wsc-web-data
           mountPath: /var/www/html
+          #readOnly: true
         - name: nginx-config
           subPath: default.conf
           mountPath: /etc/nginx/conf.d/default.conf
@@ -193,6 +194,24 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "0.5"
+      # helper (for "kubectl cp", tar-backups from "html"-folder, ... when using ReadWriteOnce-PVC)
+      - name: helper
+        image: dhi.io/alpine-base:3.23 # or: docker.io/tobi312/php:dhi-helper-alpine
+        imagePullPolicy: Always
+        args: [ "tail", "-f", "/dev/null" ]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "0.1"
+          limits:
+            memory: "128Mi"
+            cpu: "0.5"
+        volumeMounts:
+        - name: wsc-web-data
+          mountPath: /var/www/html
+          #readOnly: true
+        - name: wsc-web-helper
+          mountPath: /data
       volumes:
       - name: wsc-web-data
         persistentVolumeClaim:
@@ -203,6 +222,9 @@ spec:
       - name: php-fpm-config
         configMap:
           name: wsc-web-file-config-php-fpm
+      # helper
+      - name: wsc-web-helper
+        emptyDir: {}
 
 ---
 
@@ -424,7 +446,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     ## Traefik
-    #traefik.ingress.kubernetes.io/router.middlewares: 'default-https-redirectscheme@kubernetescrd'
+    #traefik.ingress.kubernetes.io/router.middlewares: 'wsc-https-redirectscheme@kubernetescrd'
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/service.serversscheme: http
 spec:
@@ -460,6 +482,20 @@ spec:
 #data:
 #  tls.crt: <ssl.crt>
 #  tls.key: <ssl.key
+
+#---
+## redirect http to https
+#
+#apiVersion: traefik.io/v1alpha1
+#kind: Middleware
+#metadata:
+#  name: https-redirectscheme
+#  namespace: wsc
+#spec:
+#  redirectScheme:
+#    scheme: https
+#    #port: "443"
+#    #permanent: true
 
 #---
 #
