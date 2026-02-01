@@ -198,7 +198,8 @@ spec:
       - name: helper
         image: dhi.io/alpine-base:3.23 # or: docker.io/tobi312/php:dhi-helper-alpine
         imagePullPolicy: Always
-        args: [ "tail", "-f", "/dev/null" ]
+        #args: [ "tail", "-f", "/dev/null" ]
+        args: ["/bin/sh", "-c", "trap exit TERM INT; sleep infinity"]
         resources:
           requests:
             memory: "64Mi"
