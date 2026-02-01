@@ -129,10 +129,10 @@ jobs:
             BUILD_DATE=${{ env.BUILD_DATE }}
             VCS_REF=${{ env.COMMIT_HASH }}
           tags: |
-            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-helper-alpine
-            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-helper-alpine-${{env.COMMIT_HASH}}
-          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-helper-alpine
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-helper-alpine
+            docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine
+            docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine
+          #  quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine
 
 
   # --------------------------------------------------
@@ -196,7 +196,7 @@ jobs:
             BUILD_DATE=${{ env.BUILD_DATE }}
             VCS_REF=${{ env.COMMIT_HASH }}
           tags: |
-            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-helper-debian
-            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-helper-debian-${{env.COMMIT_HASH}}
-          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-helper-debian
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-helper-debian
+            docker.io/${{env.DOCKER_REPO}}:dhi-helper-debian
+            docker.io/${{env.DOCKER_REPO}}:dhi-helper-debian-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-debian
+          #  quay.io/${{env.QUAY_REPO}}:dhi-helper-debian
