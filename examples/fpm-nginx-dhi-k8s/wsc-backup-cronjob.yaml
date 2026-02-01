@@ -1,0 +1,290 @@
+# WSC Backup Cronjob with Shell-Script
+# using: Toolbox Image from https://github.com/Tob1as/docker-tools
+# Requirements: kubectl, jq, tar, gzip, mariadb-client/mysql-client
+
+
+# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
+
+
+# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
+
+
+# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup
+  namespace: wsc
+#imagePullSecrets:
+#  - name: regcred-dhi
+#  - name: regcred-dockerhub
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: backup
+  namespace: wsc
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backup
+  namespace: wsc
+subjects:
+  - kind: ServiceAccount
+    name: backup
+    namespace: wsc
+roleRef:
+  kind: Role
+  name: backup
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wsc-backup-data
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-backup
+    app.kubernetes.io/component: cronjob
+    app.kubernetes.io/part-of: wsc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: local-path # set to your class
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wsc-backup
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-backup
+    app.kubernetes.io/component: cronjob
+    app.kubernetes.io/part-of: wsc
+spec:
+  suspend: true  # set true for disable cronjob
+  schedule: "0 4 * * 0-6" # Mon-Sun at 4am UTC
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  startingDeadlineSeconds: 120
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wsc-backup
+        app.kubernetes.io/component: cronjob
+        app.kubernetes.io/part-of: wsc
+    spec:
+      template:
+        spec:
+          serviceAccountName: backup
+          imagePullSecrets:
+          - name: regcred-dockerhub
+          restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+          containers:
+          - name: backup
+            image: docker.io/tobi312/tools:toolbox-extended
+            imagePullPolicy: Always
+            command:
+            #- /bin/sh
+            #- -c
+            - /usr/local/bin/backup-script.sh
+            args:
+            - /bin/sh
+            - -c
+            - "sleep 5; exit 0"
+            envFrom:
+            - configMapRef:
+                name: wsc-backup-env-config
+                optional: true
+            - secretRef:
+                name: wsc-backup-env-secret
+                optional: true
+            env:
+            - name: TZ
+              value: "Europe/Berlin"
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Script need config/secrets from wsc-db
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: wsc-db-env-config
+                  key: MYSQL_DATABASE
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wsc-db-env-config
+                  key: MYSQL_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wsc-db-env-secret
+                  key: MYSQL_PASSWORD
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "0.1"
+              limits:
+                memory: "256Mi"
+                cpu: "0.5"
+            volumeMounts:
+            - name: backup-script
+              subPath: backup-script.sh
+              mountPath: /usr/local/bin/backup-script.sh
+              readOnly: true
+            - name: backups
+              mountPath: /backups
+          volumes:
+          - name: backup-script
+            configMap:
+              name: wsc-backup-file-script
+              defaultMode: 0555
+          - name: backups
+            #emptyDir: {}
+            persistentVolumeClaim:
+              claimName: wsc-backup-data
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wsc-backup-file-script
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-backup
+    app.kubernetes.io/component: cronjob
+    app.kubernetes.io/part-of: wsc
+data:
+  backup-script.sh: |-
+    #!/bin/sh
+    
+    # Requirements: kubectl, jq, tar, gzip, mariadb-client (mysql-client)
+    
+    set -eu
+    
+    # Variables (change Values)
+    
+    # BASE
+    : "${TZ:="Europe/Berlin"}"                                   # timezone, default: "Europe/Berlin"
+    : "${BACKUP_PATH_LOCAL:="/backups"}"                         # local backup path, default: "/backups"
+    # Kubernetes
+    : "${CONTEXT:=""}"                                           # context, only for local debug, set then to "--context <clustername>"
+    : "${NAMESPACE:="wsc"}"                                      # namespace, example: "wsc"
+    : "${WEB_DEPLOYMENT_NAME:="wsc-web"}"                        # name of Webserver deployment from WSC
+    : "${DB_DEPLOYMENT_NAME:="wsc-db"}"                          # name of Databaserver deployment from WSC
+    # Database
+    : "${DB_HOST:="wsc-db"}"                                     # DB Host, example: "wsc-db"
+    : "${DB_PORT:="3306"}"                                       # DB Port, default: "3306"
+    : "${DB_USERNAME:="woltlab_suite"}"                          # DB User, default: "woltlab_suite"
+    : "${DB_PASSWORD:=""}"                                       # DB Passwort
+    : "${DB_DATABASE:="woltlab_suite"}"                          # DB Database, default: "woltlab_suite"
+    # Webserver / Files
+    : "${WEB_CONTAINER_HELPER_NAME:="helper"}"                   # WEB Container Helper Name (with shell and tar/gzip and access to webfolder)
+    : "${WEB_CONTAINER_HELPER_BACKUP_PATH:="/data"}"             # WEB Container Helper Backup Path
+    
+    # -----------------------------------------------------
+    
+    # No changes from here on!
+    
+    # Date for backup file
+    BACKUP_DATE=$(date '+%Y%m%d-%H%M')
+    #echo ">> BACKUP_DATE=${BACKUP_DATE}"
+    
+    # create backup folder if not exists
+    if [ ! -d "${BACKUP_PATH_LOCAL}" ]; then
+    	mkdir -p ${BACKUP_PATH_LOCAL}
+    fi
+    
+    # -----------------------------------------------------
+    
+    # get namespace
+    NAMESPACE=${NAMESPACE:-$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)}
+    
+    # get Pod Labels from Deployment
+    DB_LABEL_SELECTOR=$(kubectl ${CONTEXT} -n ${NAMESPACE} get deployment ${DB_DEPLOYMENT_NAME} -o json | jq -r '.spec.selector.matchLabels | to_entries | map("\(.key)=\(.value)") | join(",")')
+    WEB_LABEL_SELECTOR=$(kubectl ${CONTEXT} -n ${NAMESPACE} get deployment ${WEB_DEPLOYMENT_NAME} -o json | jq -r '.spec.selector.matchLabels | to_entries | map("\(.key)=\(.value)") | join(",")')
+    
+    # get Pod Name (using Labels)
+    DB_POD_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get pod -l "${DB_LABEL_SELECTOR}" -o jsonpath="{.items[0].metadata.name}")
+    WEB_POD_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get pod -l "${WEB_LABEL_SELECTOR}" -o jsonpath="{.items[0].metadata.name}")
+    echo ">> set WSC Pods to ${DB_POD_NAME} and ${WEB_POD_NAME}"
+    
+    # get (first) Containername from Pod
+    DB_CONTAINER_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get pod ${DB_POD_NAME} -o jsonpath="{.spec.containers[0].name}")
+    #WEB_CONTAINER_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get pod ${WEB_POD_NAME} -o jsonpath="{.spec.containers[0].name}")
+    
+    # get Service Name (using Labels)
+    DB_SERVICE_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get service -l "${DB_LABEL_SELECTOR}" -o jsonpath="{.items[0].metadata.name}")
+    #WEB_SERVICE_NAME=$(kubectl ${CONTEXT} -n ${NAMESPACE} get service -l "${WEB_LABEL_SELECTOR}" -o jsonpath="{.items[0].metadata.name}")
+    
+    # set vars if empty
+    DB_HOST=${DB_HOST:-$DB_SERVICE_NAME}
+    DB_PORT=${DB_PORT:-$(kubectl ${CONTEXT} -n ${NAMESPACE} get service -l "${DB_LABEL_SELECTOR}" -o jsonpath="{.items[0].spec.ports[0].port}")}
+
+    # BACKUPS
+    echo ">> Backup process is started ..."
+    if [ -n "$DB_DEPLOYMENT_NAME" -a -n "$DB_HOST" -a -n "$DB_PORT" -a -n "$DB_USERNAME" -a -n "$DB_PASSWORD" -a -n "$DB_DATABASE" ]; then
+        echo ">> Database Backup process is started ..."
+        DB_DUMP_OPTIONS="--skip-ssl-verify-server-cert" # --skip-ssl
+        mariadb-dump --host=${DB_HOST} --port=${DB_PORT} --user=${DB_USERNAME} --password=${DB_PASSWORD} ${DB_DUMP_OPTIONS} --databases ${DB_DATABASE} | gzip -9 > ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_db.sql.gz
+        #mariadb-dump --host=${DB_HOST} --port=${DB_PORT} --user=${DB_USERNAME} --password=${DB_PASSWORD} ${DB_DUMP_OPTIONS} --databases ${DB_DATABASE} > ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_db.sql
+        echo ">> Database Backup process is complete!"
+    else
+        echo ">> WARNING: Database Backup process is skipped!"
+    fi
+    if [ -n "$WEB_DEPLOYMENT_NAME" -a -n "$WEB_CONTAINER_HELPER_NAME" -a -n "$WEB_CONTAINER_HELPER_BACKUP_PATH" ]; then
+        echo ">> Files (Web) Backup process is started ..."
+        kubectl ${CONTEXT} -n ${NAMESPACE} exec "${WEB_POD_NAME}" -c "${WEB_CONTAINER_HELPER_NAME}" -- tar cvpzf ${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz -C /var/www/html .
+        kubectl ${CONTEXT} -n ${NAMESPACE} -c "${WEB_CONTAINER_HELPER_NAME}" cp "${WEB_POD_NAME}:${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz" ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_files.tar.gz
+        kubectl ${CONTEXT} -n ${NAMESPACE} exec "${WEB_POD_NAME}" -c "${WEB_CONTAINER_HELPER_NAME}" -- sh -c "rm ${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz"
+        echo ">> Files Backup process is complete!"
+    else
+        echo ">> WARNING: Files Backup process is skipped!"
+    fi
+    
+    # list backups
+    echo ">> list ${BACKUP_PATH_LOCAL}"
+    ls -lahR ${BACKUP_PATH_LOCAL}
+    
+    # exec CMD
+    echo ">> exec CMD: \"$@\""
+    exec "$@"
