@@ -95,7 +95,7 @@ metadata:
     app.kubernetes.io/component: cronjob
     app.kubernetes.io/part-of: wsc
 spec:
-  suspend: true  # set true for disable cronjob
+  #suspend: true  # set true for disable cronjob
   schedule: "0 4 * * 0-6" # Mon-Sun at 4am UTC
   concurrencyPolicy: "Forbid"
   successfulJobsHistoryLimit: 3

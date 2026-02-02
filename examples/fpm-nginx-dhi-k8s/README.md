@@ -43,6 +43,7 @@
    Manual/Help: https://manual.woltlab.com/en/installation/  
    (Notice: Database Host is `wsc-db`!)
 11. Installation complete.
+12. Optional: example Backup-Script `kubectl apply -f wsc-backup-cronjob.yaml` (Please Test Backup and Recovery!)
 
 ## Registry Login
 
