@@ -123,8 +123,8 @@ RUN apk --no-cache add \
 		echo '  index index.php index.html;'; \
 		echo ' '; \
 		echo '  location / {'; \
-		echo '    try_files $uri $uri/ =404;'; \
-		echo '    #try_files $uri $uri/ /index.php?$query_string;'; \
+		echo '    #try_files $uri $uri/ =404;'; \
+		echo '    try_files $uri $uri/ /index.php?$query_string;'; \
 		echo '  }'; \
 		echo '  '; \
 		echo '  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000'; \
