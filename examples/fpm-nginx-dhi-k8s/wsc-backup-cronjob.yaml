@@ -1,6 +1,5 @@
 # WSC Backup Cronjob for Database and Files with simple Shell-Script
 #
-# Docker Image: Toolbox from https://github.com/Tob1as/docker-tools
 # Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client)
 #
 # Docs (WSC Backup):
@@ -120,7 +119,8 @@ spec:
             fsGroup: 65534
           containers:
           - name: backup
-            image: docker.io/tobi312/tools:toolbox-extended
+            image: docker.io/tobi312/php:dhi-helper-alpine
+            #image: docker.io/tobi312/tools:toolbox-extended # source: https://github.com/Tob1as/docker-tools
             imagePullPolicy: Always
             command:
             #- /bin/sh
