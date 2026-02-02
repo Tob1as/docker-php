@@ -28,12 +28,15 @@ WORKDIR /tmp
 ENV PACKAGE_LIST_CURL=""
 ENV PACKAGE_LIST_NANO=""
 ENV PACKAGE_LIST_DB=""
+ENV PACKAGE_LIST_Q=""
 # example package extractor: https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile#L131
 # List of packages for download separated by spaces.
 ENV PACKAGE_LIST_CURL="curl libcurl zlib c-ares nghttp3 nghttp2-libs libidn2 libpsl libssl3 libcrypto3 zstd-libs brotli-libs libunistring"
 #ENV PACKAGE_LIST_NANO="nano libncursesw ncurses-terminfo-base"
-#ENV PACKAGE_LIST_DB="mysql-client mariadb-client mariadb-backup libstdc++ libgcc"
-ENV PACKAGE_LIST="fcgi unzip ${PACKAGE_LIST_CURL} ${PACKAGE_LIST_NANO} ${PACKAGE_LIST_DB}"
+ENV PACKAGE_LIST_DB="mysql-client mariadb-client libstdc++ libgcc mariadb-connector-c"
+#ENV PACKAGE_LIST_DB="${PACKAGE_LIST_DB} mariadb-backup pcre2 libaio"
+ENV PACKAGE_LIST_Q="jq oniguruma yq-go"
+ENV PACKAGE_LIST="fcgi unzip kubectl ${PACKAGE_LIST_CURL} ${PACKAGE_LIST_NANO} ${PACKAGE_LIST_DB} ${PACKAGE_LIST_Q}"
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
     #apk fetch --no-cache --recursive $PACKAGE_LIST && \
@@ -95,7 +98,10 @@ RUN apt-get update && \
         wget \
         netcat-openbsd \
         #nano \
-        #mariadb-client \
+        mariadb-client \
+        jq \
+        #yq \
+        kubectl \
     && \
     rm -rf /var/lib/apt/lists/*
 
