@@ -1,15 +1,17 @@
-# WSC Backup Cronjob with Shell-Script
-# using: Toolbox Image from https://github.com/Tob1as/docker-tools
-# Requirements: kubectl, jq, tar, gzip, mariadb-client/mysql-client
-
-
-# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
-
-
-# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
-
-
-# DO NOT USE - DATABASE BACKUP is NOT ready !!!!!!!!!!!!!
+# WSC Backup Cronjob for Database and Files with simple Shell-Script
+#
+# Docker Image: Toolbox from https://github.com/Tob1as/docker-tools
+# Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client)
+#
+# Docs (WSC Backup):
+# * https://manual.woltlab.com/en/backup/
+# * https://manual.woltlab.com/de/backup/
+#
+# NOTE: 
+# * The script below is just an example. Adapt it to your requirements and TEST backup and recovery!! 
+# * NO guarantee!
+# * This script does NOT make remote backups! (via SSH/SFTP, ...)
+#
 
 ---
 
@@ -61,7 +63,7 @@ roleRef:
 
 ---
 
----
+# Recommended: After the initial installation, comment PVC out to protect it (and backups) from deletion by mistake.
 
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -128,13 +130,13 @@ spec:
             - /bin/sh
             - -c
             - "sleep 5; exit 0"
-            envFrom:
-            - configMapRef:
-                name: wsc-backup-env-config
-                optional: true
-            - secretRef:
-                name: wsc-backup-env-secret
-                optional: true
+            #envFrom:
+            #- configMapRef:
+            #    name: wsc-backup-env-config
+            #    optional: true
+            #- secretRef:
+            #    name: wsc-backup-env-secret
+            #    optional: true
             env:
             - name: TZ
               value: "Europe/Berlin"
@@ -197,7 +199,7 @@ data:
   backup-script.sh: |-
     #!/bin/sh
     
-    # Requirements: kubectl, jq, tar, gzip, mariadb-client (mysql-client)
+    # Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client)
     
     set -eu
     
@@ -263,20 +265,20 @@ data:
     # BACKUPS
     echo ">> Backup process is started ..."
     if [ -n "$DB_DEPLOYMENT_NAME" -a -n "$DB_HOST" -a -n "$DB_PORT" -a -n "$DB_USERNAME" -a -n "$DB_PASSWORD" -a -n "$DB_DATABASE" ]; then
-        echo ">> Database Backup process is started ..."
-        DB_DUMP_OPTIONS="--skip-ssl-verify-server-cert" # --skip-ssl
+        echo ">> [$(date '+%H:%M:%S')] Database Backup process is started ..."
+        DB_DUMP_OPTIONS="--single-transaction --skip-lock-tables --net_buffer_length 16384 --no-tablespaces --skip-ssl-verify-server-cert" # --skip-ssl-verify-server-cert or --skip-ssl
         mariadb-dump --host=${DB_HOST} --port=${DB_PORT} --user=${DB_USERNAME} --password=${DB_PASSWORD} ${DB_DUMP_OPTIONS} --databases ${DB_DATABASE} | gzip -9 > ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_db.sql.gz
         #mariadb-dump --host=${DB_HOST} --port=${DB_PORT} --user=${DB_USERNAME} --password=${DB_PASSWORD} ${DB_DUMP_OPTIONS} --databases ${DB_DATABASE} > ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_db.sql
-        echo ">> Database Backup process is complete!"
+        echo ">> [$(date '+%H:%M:%S')] Database Backup process is complete!"
     else
         echo ">> WARNING: Database Backup process is skipped!"
     fi
     if [ -n "$WEB_DEPLOYMENT_NAME" -a -n "$WEB_CONTAINER_HELPER_NAME" -a -n "$WEB_CONTAINER_HELPER_BACKUP_PATH" ]; then
-        echo ">> Files (Web) Backup process is started ..."
+        echo ">> [$(date '+%H:%M:%S')] Files (Web) Backup process is started ..."
         kubectl ${CONTEXT} -n ${NAMESPACE} exec "${WEB_POD_NAME}" -c "${WEB_CONTAINER_HELPER_NAME}" -- tar cvpzf ${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz -C /var/www/html .
         kubectl ${CONTEXT} -n ${NAMESPACE} -c "${WEB_CONTAINER_HELPER_NAME}" cp "${WEB_POD_NAME}:${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz" ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}_files.tar.gz
         kubectl ${CONTEXT} -n ${NAMESPACE} exec "${WEB_POD_NAME}" -c "${WEB_CONTAINER_HELPER_NAME}" -- sh -c "rm ${WEB_CONTAINER_HELPER_BACKUP_PATH}/wsc_backup_${BACKUP_DATE}_files.tar.gz"
-        echo ">> Files Backup process is complete!"
+        echo ">> [$(date '+%H:%M:%S')] Files Backup process is complete!"
     else
         echo ">> WARNING: Files Backup process is skipped!"
     fi
