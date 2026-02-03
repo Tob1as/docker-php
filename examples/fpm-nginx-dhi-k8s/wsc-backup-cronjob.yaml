@@ -138,8 +138,6 @@ spec:
             #    name: wsc-backup-env-secret
             #    optional: true
             env:
-            - name: TZ
-              value: "Europe/Berlin"
             - name: NAMESPACE
               valueFrom:
                 fieldRef:
