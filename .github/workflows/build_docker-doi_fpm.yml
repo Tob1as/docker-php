@@ -138,7 +138,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
-          target: production
+          #target: production
           build-args: |
             BUILD_DATE=${{ env.BUILD_DATE }}
             VCS_REF=${{ env.COMMIT_HASH }}
@@ -213,7 +213,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
-          target: production
+          #target: production
           build-args: |
             BUILD_DATE=${{ env.BUILD_DATE }}
             VCS_REF=${{ env.COMMIT_HASH }}
