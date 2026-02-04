@@ -27,8 +27,7 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 # Note: Some PHP Extensions/Modules are installed by default, so these have been commented out.
 
 # PHP
-RUN \
-	PHP_EXTENSIONS_LIST_BASE=" \
+RUN PHP_EXTENSIONS_LIST=" \
 	#	ctype \
 	#	curl \
 	#	dom \
@@ -37,23 +36,15 @@ RUN \
 		gmp \
 		imagick \
 		intl \
+		ldap \
 	#	libxml \
 	#	mbstring \
+	#	opcache \
 	#	openssl \
 	##  PDO \
 		pdo_mysql \
+		redis \
 	#	zlib \
  	" ; \
-	PHP_EXTENSIONS_LIST_OPTIONAL=" \
-	#	opcache \
-	#	curl \
-		ldap \
-		redis \
-	" ; \
-	PHP_EXTENSIONS_LIST="$PHP_EXTENSIONS_LIST_BASE $PHP_EXTENSIONS_LIST_OPTIONAL" ; \
-    \
     install-php-extensions $PHP_EXTENSIONS_LIST ; \
     php -m
-
-# opcache config
-#COPY conf/php_55-opcache.ini /usr/local/etc/php/conf.d/55-opcache.ini
