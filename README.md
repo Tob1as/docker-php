@@ -34,6 +34,8 @@ PHP is a server-side scripting language designed for web development, but which 
 
 ### About these images:
 * based on Docker Official Images (DOI): [DockerHub](https://hub.docker.com/_/php/) / [GitHub](https://github.com/docker-library/php)
+* For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
+* For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
 * The official base Images have the following PHP extensions enabled by default (check with: ```php -m```): ```Core ctype curl date dom fileinfo filter hash iconv json libxml mbstring mysqlnd openssl pcre PDO pdo_sqlite Phar posix random readline Reflection session SimpleXML sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter 'Zend OPcache' zlib```
 * These images extend the basic images with additional PHP extensions, for example: SQL-Databases, gd, imagick, ldap and more. For details see in dockerfiles.  
   * *Images with `-slim` suffix have only the PHP extensions like offical base image, but with entrypoint script for some settings and other adjustments. This is the base image for all others.* 
@@ -44,11 +46,14 @@ PHP is a server-side scripting language designed for web development, but which 
   * *Images containing `debian` or `alpine` specify the operating system.*
   * *Images containing `doi` based on [DOI (Docker Official Images)](https://github.com/docker-library/php) like the other images in this repository, but without an entrypoint script, so the environment variables from this README are not supported. Mount your configuration file(s)
   * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and NOT based on Docker Offical Images (from Community). This DHI do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not supported here. Mount your configuration file(s). A example docker-compose setup you can find [here](https://github.com/Tob1as/docker-php/tree/master/examples/fpm-nginx-dhi).*
-* For easy install the extensions and get a smaller images it use [php-extension-installer](https://github.com/mlocati/docker-php-extension-installer).
-* For information about PHP and extensions see here: [php.net](https://php.net) and [pecl.php.net](https://pecl.php.net).
+* UID:GID: 
+  * Alpine: 82 (www-data)
+  * Debian: 33 (www-data)
+  * DHI (Alpine/Debian): 65532 (nonroot)
+  * When switching from one Version/OS to another, execute `chown -R <UID>:<GID> <FOLDER>` before starting the respective container.
 
 ### How to use these images:
-* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p PORT:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.4-apache```
+* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p 8080:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.4-apache```
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
