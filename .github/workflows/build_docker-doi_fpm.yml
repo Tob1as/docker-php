@@ -135,7 +135,7 @@ jobs:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
           file: ./doi.alpine.fpm.wsc.Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
           push: true
           #target: production
@@ -210,7 +210,7 @@ jobs:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
           file: ./doi.debian.fpm.wsc.Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
           push: true
           #target: production
