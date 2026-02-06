@@ -148,8 +148,10 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-slim-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian-slim-${{env.COMMIT_HASH}}
 
 
   # --------------------------------------------------
@@ -214,8 +216,10 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian-${{env.COMMIT_HASH}}
 
 
   # --------------------------------------------------
@@ -280,5 +284,7 @@ jobs:
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-wsc-${{env.COMMIT_HASH}}
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-debian-wsc

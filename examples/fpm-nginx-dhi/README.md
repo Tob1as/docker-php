@@ -84,7 +84,7 @@ If you don't want to use it, make adjustments in the NGINX configuration file in
    (Notice: Database Host is `wsc-db`!)
 11. Installation complete.
 
-If necessary, make further configurations for nginx or php in the files in the "config" folder.  
+If necessary, make further configurations for nginx (e.g. [rewrites](https://manual.woltlab.com/en/url-rewrites/#nginx)) or php in the files in the "config" folder.  
   
 > If you want to migrate from another PHP image, e.g. the official community image or other images in this repository, then adjust the folder and file permissions for the html folder:  
 `chown 65532:65532 ./html`

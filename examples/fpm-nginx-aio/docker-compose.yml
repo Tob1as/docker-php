@@ -148,7 +148,7 @@ services:
 #
 #  # https://github.com/hipages/php-fpm_exporter
 #  wsc-php-fpm-exporter:
-#    image: docker.io/hipages/php-fpm_exporter:latest  # ghcr.io/hipages/php-fpm_exporter:latest
+#    image: docker.io/hipages/php-fpm_exporter:latest  # ghcr.io/hipages/php-fpm_exporter:latest # or: docker.io/tobi312/tools:php-fpm-exporter
 #    container_name: wsc-php-fpm-exporter
 #    restart: unless-stopped
 #    command:

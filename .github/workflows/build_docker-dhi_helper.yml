@@ -131,8 +131,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine
+            quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine
-          #  quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
 
 
   # --------------------------------------------------
@@ -198,5 +200,7 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-debian
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-debian-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:dhi-helper-debian
+            quay.io/${{env.QUAY_REPO}}:dhi-helper-debian-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-debian
-          #  quay.io/${{env.QUAY_REPO}}:dhi-helper-debian
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-debian-${{env.COMMIT_HASH}}

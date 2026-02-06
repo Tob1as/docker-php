@@ -146,8 +146,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-alpine-wsc-${{env.COMMIT_HASH}}
 
 
 
@@ -221,5 +223,7 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc-${{env.COMMIT_HASH}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc
-          #  quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-dhi-fpm-debian-wsc-${{env.COMMIT_HASH}}

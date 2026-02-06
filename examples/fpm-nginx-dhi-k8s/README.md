@@ -45,6 +45,8 @@
 11. Installation complete.
 12. Optional: example Backup-Script `kubectl apply -f wsc-backup-cronjob.yaml` (Please Test Backup and Recovery!)
 
+If necessary, make further configurations for nginx (e.g. [rewrites](https://manual.woltlab.com/en/url-rewrites/#nginx)) or php in the files in the "config" folder. 
+
 ## Registry Login
 
 Login to docker.io and dhi.io Registries!
