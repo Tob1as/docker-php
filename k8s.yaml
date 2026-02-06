@@ -1,0 +1,270 @@
+# Website (PHP)
+# Source: https://github.com/Tob1as/docker-php
+
+# upload/copy your files to webfolder:
+# kubectl -n website cp ./upload/. $(kubectl -n website get pod -l app.kubernetes.io/name=website -o jsonpath="{.items[0].metadata.name}"):/var/www/html/ -c website
+
+---
+
+# Recommended: After the initial installation, comment Namespace out to protect it from deletion by mistake.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: website
+
+---
+
+# Recommended: After the initial installation, comment PVC out to protect it from deletion by mistake.
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: website-data
+  namespace: website
+  labels:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: local-path # set to your class
+  resources:
+    requests:
+      storage: 15Gi
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: website-env-config
+  namespace: website
+  labels:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+data:
+  TZ: "Europe/Berlin"
+  PHP_ERRORS: "1"
+  PHP_MEM_LIMIT: "128"
+  PHP_POST_MAX_SIZE: "250"
+  PHP_UPLOAD_MAX_FILESIZE: "250"
+  PHP_MAX_FILE_UPLOADS: "20"
+  PHP_MAX_EXECUTION_TIME: "120"
+  PHP_SET_OPCACHE_SETTINGS: "0"
+  CREATE_PHPINFO_FILE: "0"
+  CREATE_INDEX_FILE: "0"
+  ## next env only with php-fpm
+  #ENABLE_PHP_FPM_STATUS: "1"
+  ## next env only with apache
+  ENABLE_APACHE_REWRITE: "1"
+  ENABLE_APACHE_ACTIONS: "0"
+  ENABLE_APACHE_SSL: "0"
+  ENABLE_APACHE_HEADERS: "0"
+  ENABLE_APACHE_ALLOWOVERRIDE: "1"
+  ENABLE_APACHE_REMOTEIP: "1"
+  ENABLE_APACHE_STATUS: "1"
+  #ENABLE_APACHE_SSL_REDIRECT: "0"
+  #APACHE_SERVER_NAME: ""
+  #APACHE_SERVER_ALIAS: ""
+  #APACHE_SERVER_ADMIN: ""
+  DISABLE_APACHE_DEFAULTSITES: "0"
+  ## next env only with nginx
+  #ENABLE_NGINX_REMOTEIP: "1"
+  #ENABLE_NGINX_STATUS: "1"
+
+#---
+#
+## when you want using "data" instead "stringData" then ...
+## convert string to base64 in Linux: "echo -n 'value' | base64"
+#
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: website-env-secret
+#  namespace: website
+#  labels:
+#    app.kubernetes.io/name: website
+#    app.kubernetes.io/component: server
+#    app.kubernetes.io/part-of: website
+#stringData:
+#  MY_SECRET_ENV: "my-secret"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website
+  namespace: website
+  labels:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: website
+      app.kubernetes.io/component: server
+      app.kubernetes.io/part-of: website
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: website
+        app.kubernetes.io/component: server
+        app.kubernetes.io/part-of: website
+    spec:
+      #hostname: website
+      #imagePullSecrets:
+      #- name: regcred-dockerhub
+      restartPolicy: Always
+      #securityContext:
+      #  fsGroup: 33  # 33 for apache or 82 for alpine
+      containers:
+      - name: website
+        image: docker.io/tobi312/php:8.4-apache            # or: docker.io/tobi312/php:8.4-apache-debian-wsc
+        #image: docker.io/tobi312/php:8.4-fpm-nginx-alpine # or: docker.io/tobi312/php:8.4-fpm-nginx-alpine-wsc
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: website-env-config
+            #optional: true
+        - secretRef:
+            name: website-env-secret
+            optional: true
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          #httpGet:
+          #  path: /server-status # /server-status or /nginx_ping
+          #  port: 80
+          #  scheme: HTTP
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        livenessProbe:
+          #httpGet:
+          #  path: /server-status # /server-status or /nginx_ping
+          #  port: 80
+          #  scheme: HTTP
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+          limits:
+            memory: "1Gi"
+            cpu: "1.0"
+        volumeMounts:
+        - name: website-data
+          mountPath: /var/www/html
+      initContainers:
+      # volume-mount-chmod only for first startup  or set securityContext->fsGroup
+      - name: volume-mount-chmod
+        image: busybox
+        command: ["sh", "-c", "mkdir -p /var/www/html; chmod 777 /var/www/html; exit"]
+        volumeMounts:
+        - name: website-data
+          mountPath: /var/www/html
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "0.1"
+          limits:
+            memory: "128Mi"
+            cpu: "0.1"
+      volumes:
+      - name: website-data
+        persistentVolumeClaim:
+          claimName: website-data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: website
+  namespace: website
+  labels:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    #- name: https
+    #  protocol: TCP
+    #  port: 443
+    #  targetPort: 443
+  selector:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: website
+  namespace: website
+  labels:
+    app.kubernetes.io/name: website
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: website
+  annotations:
+    ## https://cert-manager.io/docs/
+    #cert-manager.io/cluster-issuer: ingress-tls-secret
+    #cert-manager.io/acme-challenge-type: http01
+    ## NGINX
+    #nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    #nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    ## Traefik
+    #traefik.ingress.kubernetes.io/router.middlewares: 'website-https-redirectscheme@kubernetescrd'
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  #ingressClassName: nginx # nginx or traefik or in future "Kubernetes Gateway API"
+  tls:
+  - hosts:
+    - example.com
+    secretName: ingress-tls-secret
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: website
+            port:
+              #name: http
+              number: 80

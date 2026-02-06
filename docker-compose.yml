@@ -2,20 +2,20 @@ version: "2.4"
 
 services:
   
-  php:  # or: website
+  website:
     #build:
     #  context: ./
     #  dockerfile: debian.apache.Dockerfile
-    image: tobi312/php:8.4-apache-debian
-    #image: tobi312/php:8.4-fpm-nginx-alpine
-    container_name: phpcontainer  # or: website
-    #restart: unless-stopped
+    image: docker.io/tobi312/php:8.4-apache-debian      # or: docker.io/tobi312/php:8.4-apache-debian-wsc
+    #image: docker.io/tobi312/php:8.4-fpm-nginx-alpine  # or: docker.io/tobi312/php:8.4-fpm-nginx-alpine-wsc
+    container_name: website
+    restart: unless-stopped
     ## ports ONLY with apache/nginx:
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      #- apache-data:/var/www/html:rw
+      #- website-data:/var/www/html:rw
       - ./html:/var/www/html:rw
       ## optional: folder with own entrypoint-file(s) mount:
       #- ./entrypoint.d:/entrypoint.d:ro
@@ -32,6 +32,7 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 250
       PHP_MAX_FILE_UPLOADS: 20
       PHP_MAX_EXECUTION_TIME: 120
+      PHP_SET_OPCACHE_SETTINGS: 0
       CREATE_PHPINFO_FILE: 0
       CREATE_INDEX_FILE: 0
       ## next env only with php-fpm
@@ -101,4 +102,4 @@ networks:
 
   
 #volumes:
-#  apache-data:
+#  website-data:
