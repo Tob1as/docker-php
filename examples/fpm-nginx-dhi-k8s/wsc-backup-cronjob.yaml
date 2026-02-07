@@ -1,15 +1,14 @@
 # WSC Backup Cronjob for Database and Files with simple Shell-Script
 #
-# Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client)
+# Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client), openssh-client + sshpass
 #
 # Docs (WSC Backup):
 # * https://manual.woltlab.com/en/backup/
 # * https://manual.woltlab.com/de/backup/
 #
 # NOTE: 
-# * The script below is just an example. Adapt it to your requirements and TEST backup and recovery!! 
+# * The script below is just an EXAMPLE. Adapt it to your requirements and TEST backup and recovery!! 
 # * NO guarantee!
-# * This script does NOT make remote backups! (via SSH/SFTP, ...)
 #
 
 ---
@@ -82,6 +81,46 @@ spec:
     requests:
       storage: 20Gi
 
+#---
+#
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: wsc-backup-env-config
+#  namespace: wsc
+#  labels:
+#    app.kubernetes.io/name: wsc-backup
+#    app.kubernetes.io/component: cronjob
+#    app.kubernetes.io/part-of: wsc
+#data:
+#  # Backup CleanUp
+#  BACKUP_CLEANUP_ENABLED: "0"
+#  BACKUP_CLEANUP_DAYS: "14"
+#  # Backup to Remote Storage (SSH/SFTP)
+#  SSH_ENABLED: "0"
+#  SSH_HOST: ""
+#  SSH_PORT: "22"
+#  SSH_BACKUP_PATH: "./"
+#
+#---
+#
+## when you want using "data" instead "stringData" then ...
+## convert string to base64 in Linux: "echo -n 'value' | base64"
+#
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: wsc-backup-env-secret
+#  namespace: wsc
+#  labels:
+#    app.kubernetes.io/name: wsc-backup
+#    app.kubernetes.io/component: cronjob
+#    app.kubernetes.io/part-of: wsc
+#stringData:
+#  # Backup to Remote Storage (SSH/SFTP)
+#  SSH_USERNAME: ""
+#  SSH_PASSWORD: ""
+
 ---
 
 apiVersion: batch/v1
@@ -130,13 +169,13 @@ spec:
             - /bin/sh
             - -c
             - "sleep 5; exit 0"
-            #envFrom:
-            #- configMapRef:
-            #    name: wsc-backup-env-config
-            #    optional: true
-            #- secretRef:
-            #    name: wsc-backup-env-secret
-            #    optional: true
+            envFrom:
+            - configMapRef:
+                name: wsc-backup-env-config
+                optional: true
+            - secretRef:
+                name: wsc-backup-env-secret
+                optional: true
             env:
             - name: NAMESPACE
               valueFrom:
@@ -197,7 +236,7 @@ data:
   backup-script.sh: |-
     #!/bin/sh
     
-    # Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client)
+    # Requirements: kubectl, jq, tar, gzip, mariadb-connector-c, mariadb-client (mysql-client), openssh-client + sshpass
     
     set -eu
     
@@ -220,6 +259,17 @@ data:
     # Webserver / Files
     : "${WEB_CONTAINER_HELPER_NAME:="helper"}"                   # WEB Container Helper Name (with shell and tar/gzip and access to webfolder)
     : "${WEB_CONTAINER_HELPER_BACKUP_PATH:="/data"}"             # WEB Container Helper Backup Path
+    # Backup CleanUp
+    : "${BACKUP_CLEANUP_ENABLED:=0}"
+    : "${BACKUP_CLEANUP_DAYS:=30}"
+    # Backup to Remote Storage (SSH/SFTP)
+    : "${SSH_ENABLED:="0"}"                                      # Enabled SSH/SFTP Backup, default: 0 for disabled
+    : "${SSH_HOST:=""}"                                          # SSH Host, example: u123456.your-storagebox.de
+    : "${SSH_PORT:="22"}"                                        # SSH Port (default: 22)
+    : "${SSH_USERNAME:=""}"                                      # SSH Username, example: u123456-sub11
+    : "${SSH_PASSWORD:=""}"                                      # SSH Password
+    : "${SSH_BACKUP_PATH:="./"}"                                 # SSH Backup Path Remote
+
     
     # -----------------------------------------------------
     
@@ -281,9 +331,25 @@ data:
         echo ">> WARNING: Files Backup process is skipped!"
     fi
     
-    # list backups
+    # list local backups
     echo ">> list ${BACKUP_PATH_LOCAL}"
     ls -lahR ${BACKUP_PATH_LOCAL}
+
+    if [ "$(find "${BACKUP_PATH_LOCAL}" -type f -name "wsc_backup_${BACKUP_DATE}*.gz" -print 2>/dev/null)" -a "$SSH_ENABLED" -eq "1" -a -n "$SSH_HOST" -a -n "$SSH_PORT" -a -n "$SSH_USERNAME" -a -n "$SSH_PASSWORD" -a -n "$SSH_BACKUP_PATH" ]; then
+        echo ">> Copy wsc_backup_${BACKUP_DATE}*.gz files to ${SSH_HOST} ..."
+        SSH_VERIFY_HOST_KEY_STRING="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q"
+        sshpass -p "${SSH_PASSWORD}" sftp -P ${SSH_PORT} ${SSH_VERIFY_HOST_KEY_STRING} -r ${SSH_USERNAME}@${SSH_HOST}:${SSH_BACKUP_PATH} << SFTPCOMMANDS
+    put ${BACKUP_PATH_LOCAL}/wsc_backup_${BACKUP_DATE}*
+    SFTPCOMMANDS
+    fi
+
+    if [ "$BACKUP_CLEANUP_ENABLED" -eq "1" -a "$BACKUP_CLEANUP_DAYS" -ge 0 ]; then
+        echo ">> Backups older than $BACKUP_CLEANUP_DAYS days will be deleted ..."
+        find "$BACKUP_PATH_LOCAL" -type f -mtime +"$BACKUP_CLEANUP_DAYS" -print -delete
+        # list local backups
+        echo ">> list ${BACKUP_PATH_LOCAL} after CleanUp"
+        ls -lahR ${BACKUP_PATH_LOCAL}
+    fi
     
     # exec CMD
     echo ">> exec CMD: \"$@\""
