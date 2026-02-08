@@ -71,7 +71,7 @@ RUN cd $PHP_SRC_DIR/ext/pdo_mysql \
 # ldap
 RUN cd $PHP_SRC_DIR/ext/ldap \
     && phpize \
-    && ./configure --with-ldap \
+    && ./configure \
     && make -j$(nproc) \
     && make install
 
