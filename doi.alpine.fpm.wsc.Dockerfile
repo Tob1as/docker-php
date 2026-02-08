@@ -49,6 +49,7 @@ RUN \
     #   zlib \
     " ; \
     install-php-extensions $PHP_EXTENSIONS_LIST ; \
+    rm /usr/local/bin/install-php-extensions ; \
     php -m ; \
     apk --no-cache add \
         tzdata \

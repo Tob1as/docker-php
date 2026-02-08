@@ -49,6 +49,7 @@ RUN \
     #   zlib \
     " ; \
     install-php-extensions $PHP_EXTENSIONS_LIST ; \
+    rm /usr/local/bin/install-php-extensions ; \
     php -m ; \
     RUN apt-get update; \
     apt-get install -y --no-install-recommends \
