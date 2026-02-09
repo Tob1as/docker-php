@@ -54,7 +54,8 @@ PHP is a server-side scripting language designed for web development, but which 
   * When switching from one Version/OS to another, execute `chown -R <UID>:<GID> <FOLDER>` before starting the respective container.
 
 ### How to use these images:
-* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p 8080:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.4-apache```
+
+> Note: Only works with Images with entrypoint script!
 
 * Environment Variables:  
   * `TZ` (set timezone, example: "Europe/Berlin")
@@ -89,6 +90,8 @@ PHP is a server-side scripting language designed for web development, but which 
 * Ports:
   * php with apache/nginx: `80` (http), optional: `443` (https)
   * php with fpm: `9000`
+
+* ``` $ docker run --name phpcontainer -v $(pwd)/html:/var/www/html:rw -p 8080:80 -e PHP_ERRORS=1 -e PHP_UPLOAD_MAX_FILESIZE=250 -d tobi312/php:8.4-apache```
 
 * An own Dockerfile?, then here an example with copy additional own entrypoint-file(s) in apache image:  
   ``` $ echo -e "FROM tobi312/php:8.4-apache-debian\nCOPY *.sh /entrypoint.d/" > Dockerfile```
