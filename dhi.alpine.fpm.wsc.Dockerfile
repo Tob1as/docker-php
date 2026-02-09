@@ -1,7 +1,19 @@
 # build: docker build --no-cache --progress=plain --build-arg PHP_VERSION=8.4 -t docker.io/tobi312/php:8.4-dhi-fpm-alpine-wsc -f dhi.alpine.fpm.wsc.Dockerfile .
-# check: docker run --rm --name phptest -it docker.io/tobi312/php:8.4-dhi-fpm-alpine-wsc -m
+# check: docker run --rm --name phpcheck -it docker.io/tobi312/php:8.4-dhi-fpm-alpine-wsc -m
+# https://github.com/Tob1as/docker-php
+# 
 # https://hub.docker.com/hardened-images/catalog/dhi/php | short: https://dhi.io/catalog/php
 # https://github.com/docker-hardened-images/catalog
+#
+# WSC = WoltLab Suite Core <https://www.woltlab.com/en/>
+# PHP Extensions Requirements:
+# - https://manual.woltlab.com/en/requirements/#php-extensions
+# - https://manual.woltlab.com/en/elasticsearch/#system-requirements
+# - https://manual.woltlab.com/en/ldap/#system-requirements
+# Note: Some PHP Extensions/Modules are installed by default:
+#       ctype curl dom intl libxml mbstring openssl opcache PDO zlib
+# These are still needed: exif gd gmp imagick ldap pdo_mysql redis
+#
 ARG PHP_VERSION=8.4
 ARG BUILD_PHP_VERSION=${PHP_VERSION}
 ARG BUILD_OS=alpine3.22
@@ -21,20 +33,20 @@ WORKDIR /tmp
 
 # Install required system libraries for building PHP extensions
 RUN apk add --no-cache \
-    git \
-    unzip \
-    autoconf \
-    build-base \
-    linux-headers \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    libwebp-dev \
-    libxpm-dev \
-    freetype-dev \
-    icu-dev \
-    openldap-dev \
-    gmp-dev \
-    imagemagick-dev
+        git \
+        unzip \
+        autoconf \
+        build-base \
+        linux-headers \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        libwebp-dev \
+        libxpm-dev \
+        freetype-dev \
+        icu-dev \
+        openldap-dev \
+        gmp-dev \
+        imagemagick-dev
 
 # =========================
 # Preparation:
@@ -54,15 +66,27 @@ RUN echo "" \
 # Core PHP Extensions
 # =========================
 
-# gd
-RUN cd $PHP_SRC_DIR/ext/gd \
+# exif
+RUN cd $PHP_SRC_DIR/ext/exif \
     && phpize \
-    && ./configure --with-webp --with-jpeg --with-xpm --with-freetype \
+    && ./configure \
     && make -j$(nproc) \
     && make install
 
-# pdo_mysql
-RUN cd $PHP_SRC_DIR/ext/pdo_mysql \
+# gd
+RUN cd $PHP_SRC_DIR/ext/gd \
+    && phpize \
+    && ./configure \
+        #--with-avif \
+        --with-freetype \
+        --with-jpeg \
+        --with-webp \
+        #--with-xpm \
+    && make -j$(nproc) \
+    && make install
+
+# gmp
+RUN cd $PHP_SRC_DIR/ext/gmp \
     && phpize \
     && ./configure \
     && make -j$(nproc) \
@@ -75,15 +99,8 @@ RUN cd $PHP_SRC_DIR/ext/ldap \
     && make -j$(nproc) \
     && make install
 
-# gmp
-RUN cd $PHP_SRC_DIR/ext/gmp \
-    && phpize \
-    && ./configure \
-    && make -j$(nproc) \
-    && make install
-
-# exif
-RUN cd $PHP_SRC_DIR/ext/exif \
+# pdo_mysql
+RUN cd $PHP_SRC_DIR/ext/pdo_mysql \
     && phpize \
     && ./configure \
     && make -j$(nproc) \
@@ -93,6 +110,17 @@ RUN cd $PHP_SRC_DIR/ext/exif \
 # PECL Extensions
 # =========================
 WORKDIR /tmp
+
+# Imagick <https://github.com/Imagick/imagick>
+RUN pecl download imagick \
+    && tar xzf imagick-*.tgz \
+    && rm imagick-*.tgz \
+    && cd imagick-* \
+    && phpize \
+    && ./configure \
+    && make -j$(nproc) \
+    && make install \
+    && cd ..
 
 # Redis <https://github.com/phpredis/phpredis/>
 RUN pecl download redis \
@@ -105,26 +133,17 @@ RUN pecl download redis \
     && make install \
     && cd ..
 
-# Imagick <https://github.com/Imagick/imagick>
-RUN pecl download imagick \
-    && tar xzf imagick-*.tgz \
-    && rm imagick-*.tgz \
-    && cd imagick-* \
-    && phpize \
-    && ./configure \
-    && make -j$(nproc) \
-    && make install \
-    && cd ..
-	
+# =========================
 # Enable all extensions
+# =========================
 RUN echo "" \
-    && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/docker-php-ext-gd.ini \
-    && echo "extension=pdo_mysql.so" > $PHP_INI_DIR/conf.d/docker-php-ext-pdo_mysql.ini \
-    && echo "extension=ldap.so" > $PHP_INI_DIR/conf.d/docker-php-ext-ldap.ini \
-    && echo "extension=gmp.so" > $PHP_INI_DIR/conf.d/docker-php-ext-gmp.ini \
     && echo "extension=exif.so" > $PHP_INI_DIR/conf.d/docker-php-ext-exif.ini \
-    && echo "extension=redis.so" > $PHP_INI_DIR/conf.d/docker-php-ext-redis.ini \
+    && echo "extension=gd.so" > $PHP_INI_DIR/conf.d/docker-php-ext-gd.ini \
+    && echo "extension=gmp.so" > $PHP_INI_DIR/conf.d/docker-php-ext-gmp.ini \
+    && echo "extension=ldap.so" > $PHP_INI_DIR/conf.d/docker-php-ext-ldap.ini \
+    && echo "extension=pdo_mysql.so" > $PHP_INI_DIR/conf.d/docker-php-ext-pdo_mysql.ini \
     && echo "extension=imagick.so" > $PHP_INI_DIR/conf.d/docker-php-ext-imagick.ini \
+    && echo "extension=redis.so" > $PHP_INI_DIR/conf.d/docker-php-ext-redis.ini \
     && echo ""
 
 # =========================
