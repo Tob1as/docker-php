@@ -152,7 +152,6 @@ jobs:
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-doi-fpm-alpine-wsc-${{env.COMMIT_HASH}}
 
 
-
   # --------------------------------------------------
   # JOB: DOI Debian PHP-FPM WSC
   # --------------------------------------------------
