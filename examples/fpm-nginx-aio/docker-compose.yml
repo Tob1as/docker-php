@@ -2,7 +2,7 @@ services:
 
   # https://github.com/Tob1as/docker-php
   # based on: https://hub.docker.com/_/php (https://github.com/docker-library/php)
-  # command: mkdir ./html && chown 33:33 ./html
+  # command: mkdir ./html && chown 82:82 ./html
   wsc-php:
     image: docker.io/tobi312/php:8.4-fpm-nginx-alpine-wsc
     container_name: wsc-php

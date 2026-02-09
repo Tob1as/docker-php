@@ -4,31 +4,26 @@ services:
   # based on: https://hub.docker.com/_/php (https://github.com/docker-library/php)
   # command: mkdir ./html && chmod 777 ./html
   wsc-php:
-    image: docker.io/tobi312/php:8.4-fpm-debian-wsc
-    #image: docker.io/tobi312/php:8.4-fpm-alpine-wsc
+    image: docker.io/tobi312/php:8.4-doi-fpm-debian-wsc
+    #image: docker.io/tobi312/php:8.4-doi-fpm-alpine-wsc
     container_name: wsc-php
     restart: unless-stopped
     #ports:
     #  - 80:80/tcp
     volumes:
       - ./html:/var/www/html:rw
+      - ./config/php_wsc.ini:/usr/local/etc/php/conf.d/60-wsc.ini:ro
+      - ./config/php_fpm_settings.conf:/usr/local/etc/php-fpm.d/y-settings.conf:ro
+      - ./config/php_fpm_status.conf:/usr/local/etc/php-fpm.d/y-status.conf:ro
     environment:
       TZ: "${TIMEZONE:-Europe/Berlin}"
-      PHP_ERRORS: 0
-      PHP_MEM_LIMIT: 256
-      PHP_POST_MAX_SIZE: 250
-      PHP_UPLOAD_MAX_FILESIZE: 250
-      PHP_MAX_FILE_UPLOADS: 20
-      PHP_MAX_EXECUTION_TIME: 120
-      ENABLE_PHP_FPM_STATUS: 1
-      PHP_SET_OPCACHE_SETTINGS: 1
     #depends_on:
     #  wsc-db:
     #    condition: service_started   # service_started or service_healthy
     networks:
       - wsc-net
     healthcheck:
-      test: php-fpm-healthcheck.sh || exit 1
+      test: SCRIPT_NAME="/php_fpm_ping" SCRIPT_FILENAME="/php_fpm_ping" REQUEST_METHOD=GET cgi-fcgi -bind -connect "127.0.0.1:9001" >/dev/null 2>&1
       #start_period: 10s
       interval: 30s
       timeout: 5s
