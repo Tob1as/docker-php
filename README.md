@@ -16,6 +16,7 @@
 - [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
 - [`8.X-doi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.alpine.fpm.wsc.Dockerfile) (No entrypoint!)
 - [`8.X-doi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.fpm.wsc.Dockerfile) (No entrypoint!)
+- [`8.X-doi-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.apache.wsc.Dockerfile) (No entrypoint!)
 - [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
 - [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
 
