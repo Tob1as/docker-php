@@ -1,24 +1,27 @@
 # PHP (with Apache2 or FPM or NGINX) on x86_64 and ARM
 
 ### Supported tags and respective `Dockerfile` links
-- [`8.X-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.slim.Dockerfile)
-- [`8.X-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.Dockerfile)
-- [`8.X-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.wsc.Dockerfile)
-- [`8.X-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
-- [`8.X-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
-- [`8.X-fpm-nginx-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.wsc.Dockerfile)
-- [`8.X-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
-- [`8.X-apache-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
-- [`8.X-apache-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
-- [`8.X-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.wsc.Dockerfile)
-- [`8.X-fpm-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
-- [`8.X-fpm-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
-- [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
-- [`8.X-doi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.alpine.fpm.wsc.Dockerfile) (No entrypoint!)
-- [`8.X-doi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.fpm.wsc.Dockerfile) (No entrypoint!)
-- [`8.X-doi-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.apache.wsc.Dockerfile) (No entrypoint!)
-- [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
-- [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
+* based on [DOI (Docker Official Images)](https://github.com/docker-library/php) expanded with PHP Extensions and Entrypoint Script for ENV Variables:  
+  - [`8.X-fpm-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.slim.Dockerfile)
+  - [`8.X-fpm-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.Dockerfile)
+  - [`8.X-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm.wsc.Dockerfile)
+  - [`8.X-fpm-nginx-alpine-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.slim.Dockerfile)
+  - [`8.X-fpm-nginx-alpine` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.Dockerfile)
+  - [`8.X-fpm-nginx-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.wsc.Dockerfile)
+  - [`8.X-fpm-nginx-alpine-extended` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/alpine.fpm_nginx.extended.Dockerfile)
+  - [`8.X-apache-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.slim.Dockerfile)
+  - [`8.X-apache-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.Dockerfile)
+  - [`8.X-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.apache.wsc.Dockerfile)
+  - [`8.X-fpm-debian-slim` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.slim.Dockerfile)
+  - [`8.X-fpm-debian` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.Dockerfile)
+  - [`8.X-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/debian.fpm.wsc.Dockerfile)
+* based on [DOI (Docker Official Images)](https://github.com/docker-library/php) expanded with PHP Extensions but without Entrypoint Script:
+  - [`8.X-doi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.alpine.fpm.wsc.Dockerfile) (No entrypoint!)
+  - [`8.X-doi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.fpm.wsc.Dockerfile) (No entrypoint!)
+  - [`8.X-doi-apache-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/doi.debian.apache.wsc.Dockerfile) (No entrypoint!)
+* based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) expanded with PHP Extensions but without Entrypoint Script:
+  - [`8.X-dhi-fpm-alpine-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
+  - [`8.X-dhi-fpm-debian-wsc` (*Dockerfile*)](https://github.com/Tob1as/docker-php/blob/master/dhi.debian.fpm.wsc.Dockerfile) (No entrypoint, no shell and nonroot!)
 
 **All container images are available in versions `8.3`, `8.4` and `8.5`.** ;-)   
   
