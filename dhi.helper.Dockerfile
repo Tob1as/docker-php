@@ -30,7 +30,7 @@ ENV PACKAGE_LIST_NANO=""
 ENV PACKAGE_LIST_DB=""
 ENV PACKAGE_LIST_Q=""
 ENV PACKAGE_LIST_SSH=""
-# example package extractor: https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile#L131
+# example package extractor: https://github.com/Tob1as/docker-php/blob/master/dhi.alpine.fpm.wsc.Dockerfile#L150
 # List of packages for download separated by spaces.
 ENV PACKAGE_LIST_CURL="curl libcurl zlib c-ares nghttp3 nghttp2-libs libidn2 libpsl libssl3 libcrypto3 zstd-libs brotli-libs libunistring"
 ENV PACKAGE_LIST_NANO="nano libncursesw ncurses-terminfo-base"

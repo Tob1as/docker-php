@@ -149,6 +149,7 @@ RUN echo "" \
 # =========================
 # Stage 2: Package extractor
 # =========================
+# Inspired by: https://github.com/GoogleContainerTools/distroless/issues/863#issuecomment-986062361
 # more see: https://github.com/Tob1as/docker-build-example/blob/main/distroless.debian.Dockerfile#L54-L100
 FROM dev AS apk-extractor
 
