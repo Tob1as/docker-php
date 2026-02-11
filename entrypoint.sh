@@ -76,7 +76,9 @@ fi
 ####################################################
 
 ## create php ini file with comment
-echo "; ${PHP_INI_FILE_NAME} create by entrypoint.sh in container image" > /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
+if [ "$(id -u)" -eq 0 ]; then
+	echo "; ${PHP_INI_FILE_NAME} create by entrypoint.sh in container image" > /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
+fi
 
 ## set TimeZone
 if [ -n "$TZ" ]; then
@@ -479,6 +481,10 @@ EOF
 fi
 
 ####################################################
+
+if [ "$(id -u)" -eq 0 ]; then
+	[ -d "/entrypoint.d/" ] || mkdir /entrypoint.d/
+fi
 
 ## more entrypoint-files
 find "/entrypoint.d/" -follow -type f -print | sort -n | while read -r f; do
