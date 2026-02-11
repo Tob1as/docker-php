@@ -85,9 +85,11 @@ PHP is a server-side scripting language designed for web development, but which 
     * `APACHE_SERVER_ALIAS` (set server name, example: 'www.example.com *.example.com')
     * `APACHE_SERVER_ADMIN` (set server admin, example: admin@example.com)
     * `DISABLE_APACHE_DEFAULTSITES` (set 1 to disable default sites, then add or mount your own conf in /etc/apache2/sites-enabled)
+    * `APACHE_DOCUMENT_ROOT` (set DocumentRoot, default: /var/www/html)
   * NGINX (only):
     * `ENABLE_NGINX_REMOTEIP` (set 1 to enable (X-Forwarded-For), use this only behind a proxy/loadbalancer!)
     * `ENABLE_NGINX_STATUS` (set 1 to enable)
+    * `NGINX_DOCUMENT_ROOT` (set DocumentRoot, default: /var/www/html)
     * or mount own config to `/etc/nginx/conf.d/default.conf`
 
 * Ports:
