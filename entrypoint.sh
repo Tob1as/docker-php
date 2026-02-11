@@ -31,9 +31,11 @@ set -eu
 : "${APACHE_SERVER_NAME:=""}"                 # set server name, example: example.com
 : "${APACHE_SERVER_ALIAS:=""}"                # set server name, example: 'www.example.com *.example.com'
 : "${APACHE_SERVER_ADMIN:=""}"                # set server admin, example: admin@example.com
+: "${APACHE_DOCUMENT_ROOT:=""}"               # when unset it use default: /var/www/html
 : "${DISABLE_APACHE_DEFAULTSITES:="0"}"       # set 1 to disable default sites (add or mount your own conf in /etc/apache2/sites-enabled)
 : "${ENABLE_NGINX_REMOTEIP:="0"}"             # set 1 to enable (use this only behind a proxy/loadbalancer)
 : "${ENABLE_NGINX_STATUS:="0"}"               # set 1 to enable
+: "${NGINX_DOCUMENT_ROOT:=""}"                # when unset it use default: /var/www/html
 
 PHP_INI_FILE_NAME="50-php.ini"
 lsb_dist="$(. /etc/os-release && echo "$ID")" # get os (example: debian or alpine) - do not change!
@@ -398,6 +400,13 @@ if [ "$APACHE_IS_EXISTS" -eq "1" -a "$DISABLE_APACHE_DEFAULTSITES" -eq "1" ]; th
 	fi
 fi
 
+if [ "$APACHE_IS_EXISTS" -eq "1" -a -n "$APACHE_DOCUMENT_ROOT" ]; then
+    echo ">> setting Apache root to: ${APACHE_DOCUMENT_ROOT}"
+    find "/etc/apache2/sites-available" -type f -name "*.conf" -print | while read -r f; do
+        sed -ri "s#^(\s*DocumentRoot\s+)/var/www/html#\1${APACHE_DOCUMENT_ROOT}#g" "$f"
+    done
+fi
+
 ####################################################
 ##################### NGINX ########################
 ####################################################
@@ -478,6 +487,11 @@ set_real_ip_from fd00::/8;
 real_ip_header X-Forwarded-For;
 #real_ip_recursive on;
 EOF
+fi
+
+if [ "$NGINX_IS_EXISTS" -eq "1" -a -n "$NGINX_DOCUMENT_ROOT" ]; then
+	echo ">> setting NGINX root to: ${NGINX_DOCUMENT_ROOT}"
+	sed -ri "s#^(\s*root\s+).*;#\1${NGINX_DOCUMENT_ROOT};#g" "$NGINX_CONF_FILE"
 fi
 
 ####################################################
