@@ -76,7 +76,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       # only support in DHI (instead of own *.cnf file)
-      MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M"
+      MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M --skip-name-resolve"
       # not supported in DHI, but for commands to create database and user
       MYSQL_DATABASE: "${MYSQL_DATABASE:-wcf}"
       MYSQL_USER: "${MYSQL_USER}"

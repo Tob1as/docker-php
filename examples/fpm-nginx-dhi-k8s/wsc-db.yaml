@@ -23,7 +23,7 @@ metadata:
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: wsc
 data:
-  MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M" # only support in DHI (instead of own *.cnf file)
+  MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M --skip-name-resolve" # only support in DHI (instead of own *.cnf file)
   # the following variables require manual intervention in order to be used (kubectl exec command):
   MYSQL_DATABASE: "woltlab_suite"
   MYSQL_USER: "woltlab_suite"
