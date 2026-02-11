@@ -1,0 +1,14 @@
+tls:
+  #stores:
+  #  default:
+  #    defaultCertificate:
+  #      certFile: /config/certs/ssl.crt
+  #      keyFile: /config/certs/ssl.key
+  certificates:
+    # first certificate
+    - certFile: /config/certs/ssl.crt
+      keyFile: /config/certs/ssl.key
+    # second certificate
+    #- certFile: /config/certs/other.crt
+    #  keyFile: /config/certs/other.key
+    # and more ...
