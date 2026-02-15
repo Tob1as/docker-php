@@ -8,7 +8,7 @@ All examples for [WSC (WoltLab Suite Core)](https://www.woltlab.com/en/woltlab-s
 * DOI (Docker Official Images) without entrypoint script:
     * `doi-apache`: apache2 with php, mariadb, traefik, prometheus-exporters.
     * `doi-fpm-nginx`: php-fpm, nginx, mariadb, traefik, prometheus-exporters.
-* DOI (Docker Official Images) with entrypoint script:
+* DOI (Docker Official Images) with entrypoint script from this repository and using php-extension-installer:
     * `apache`: apache2 with php, mariadb, traefik, prometheus-exporters.
     * `fpm-nginx`: php-fpm, nginx, mariadb, traefik, prometheus-exporters.
     * `fpm-nginx-aio`: like fpm-nginx, but php-fpm and nginx in single container/image.
