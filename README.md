@@ -49,7 +49,7 @@ PHP is a server-side scripting language designed for web development, but which 
   * *Images containing `apache` or `nginx` are integrated with the web server.*
   * *Images containing `debian` or `alpine` specify the operating system.*
   * *Images containing `doi` based on [DOI (Docker Official Images)](https://github.com/docker-library/php) like the other images in this repository, but without an entrypoint script, so the environment variables from this README are not supported. Mount your configuration file(s)*
-  * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and NOT based on Docker Offical Images (from Community). This DHI run as nonroot user, do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not supported here. Mount your configuration file(s). A example setup for docker-compose you can find [here](https://github.com/Tob1as/docker-php/tree/master/examples/fpm-nginx-dhi) and for K8s [here](https://github.com/Tob1as/docker-php/tree/master/examples/fpm-nginx-dhi-k8s).*
+  * *Images containing `dhi` based on [DHI (Docker Hardened Images)](https://dhi.io/catalog/php) and NOT based on Docker Offical Images (from Community). This DHI run as nonroot user, do not have a shell and therefore NO entrypoint script. The environment variables listed in the README therefore do not supported here. Mount your configuration file(s). A example setup for docker-compose you can find [here](https://github.com/Tob1as/docker-php/tree/master/examples/dhi-fpm-nginx) and for K8s [here](https://github.com/Tob1as/docker-php/tree/master/examples/dhi-fpm-nginx-k8s).*
 * UID:GID: 
   * Alpine: 82 (www-data)
   * Debian: 33 (www-data)
