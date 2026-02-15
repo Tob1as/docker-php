@@ -17,6 +17,15 @@ services:
       - ./config/php_fpm_status.conf:/usr/local/etc/php-fpm.d/y-status.conf:ro
     environment:
       TZ: "${TIMEZONE:-Europe/Berlin}"
+      # For an almost unattended installation:
+      # https://www.woltlab.com/community/thread/272530-wsc-im-conatiner/?postID=1708708#post1708708
+      # https://www.woltlab.com/community/thread/218145-smalltalk-labern-reden-diskutieren/?postID=1695560#post1695560
+      # https://github.com/WoltLab/WCF/blob/6.2/wcfsetup/install/files/lib/system/WCFSetup.class.php#L455-L459
+      #WCFSETUP_DBHOST: "wsc-db"
+      #WCFSETUP_DBNAME: "${MYSQL_DATABASE:-wcf}"
+      #WCFSETUP_DBUSER: "${MYSQL_USER}"
+      #WCFSETUP_DBPASSWORD: "${MYSQL_PASSWORD}"
+      ##WCFSETUP_USEDEFAULTWCFDIR: "1"
     #depends_on:
     #  wsc-db:
     #    condition: service_started   # service_started or service_healthy
