@@ -12,7 +12,8 @@ set -eu
 : "${PHP_POST_MAX_SIZE:=""}"                  # set Value in MB, example: 250
 : "${PHP_UPLOAD_MAX_FILESIZE:=""}"            # set Value in MB, example: 250
 : "${PHP_MAX_FILE_UPLOADS:=""}"               # set number, example: 20
-: "${PHP_MAX_EXECUTION_TIME:=""}"             # set time
+: "${PHP_MAX_EXECUTION_TIME:=""}"             # set execute time
+: "${PHP_SET_VARIABLES_ORDER:=""}"            # set variables_order from GPCS to EGPCS, use only for dev!
 : "${PHP_SET_OPCACHE_SETTINGS:="0"}"          # opcache settings
 : "${PHP_FPM_STATUS_PORT:="9001"}"            # PHP-FPM Status/Ping Port (default: 9000 but here use 9001)
 : "${PHP_FPM_STATUS_PATH:="/php_fpm_status"}" # (default: /status but here use /php_fpm_status)
@@ -128,6 +129,12 @@ fi
 if [ -n "$PHP_MAX_EXECUTION_TIME" ]; then
 	echo ">> set max_execution_time"
 	echo "max_execution_time = ${PHP_MAX_EXECUTION_TIME}" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
+fi
+
+## changes the variables_order (add E)
+if [ "$PHP_SET_VARIABLES_ORDER" -eq "1" ]; then
+	echo ">> set variables_order=EGPCS"
+	echo "variables_order = EGPCS" >> /usr/local/etc/php/conf.d/${PHP_INI_FILE_NAME}
 fi
 
 # OPCACHE Settings
