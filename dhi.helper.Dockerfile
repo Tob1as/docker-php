@@ -16,7 +16,7 @@ SCRIPT_NAME="${PHP_FPM_PING_PATH}" SCRIPT_FILENAME="${PHP_FPM_PING_PATH}" REQUES
 echo $?
 EOF
 
-COPY conf/wsc-setup-preparation.sh /usr/local/bin/php-fpm-healthcheck.sh
+COPY conf/wsc-setup-preparation.sh /usr/local/bin/wsc-setup-preparation.sh
 
 RUN chmod +x /usr/local/bin/*.sh
 
