@@ -1,7 +1,6 @@
 # build: docker build --no-cache --progress=plain --target=production-alpine -t docker.io/tobi312/php:dhi-helper-alpine -f dhi.helper.Dockerfile .
-ARG ALPINE_OS_VERSION=3.23
-ARG DEBIAN_OS_VERSION=trixie
-FROM dhi.io/alpine-base:${ALPINE_OS_VERSION}-dev AS dev-alpine
+ARG BUILD_OS=3.23
+FROM dhi.io/alpine-base:${BUILD_OS}-dev AS dev-alpine
 
 SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
@@ -59,7 +58,7 @@ COPY --from=dev-alpine /usr/local/bin/wsc-setup-preparation.sh /apkroot/usr/loca
 RUN tree /apkroot
 
 
-FROM dhi.io/alpine-base:${ALPINE_OS_VERSION} AS production-alpine
+FROM dhi.io/alpine-base:${BUILD_OS} AS production-alpine
 ARG BUILD_PHP_VERSION
 ARG VCS_REF
 ARG BUILD_DATE
@@ -76,44 +75,4 @@ LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
 COPY --from=builder-alpine /apkroot /
 WORKDIR /tmp
 #USER nonroot
-CMD [ "tail", "-f", "/dev/null" ]
-
-
-FROM dhi.io/debian-base:${DEBIAN_OS_VERSION} AS production-debian
-ARG BUILD_PHP_VERSION
-ARG VCS_REF
-ARG BUILD_DATE
-#ENV TERM=xterm
-LABEL org.opencontainers.image.authors="Tobias Hargesheimer <docker@ison.ws>" \
-      org.opencontainers.image.title="Helper tools (dhi debian)" \
-      org.opencontainers.image.description="DHI (Docker Hardened Images): Helper tools on Debian" \
-      org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.revision="${VCS_REF}" \
-      org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.url="https://hub.docker.com/r/tobi312/php" \
-      org.opencontainers.image.source="https://github.com/Tob1as/docker-php"
-
-#USER root
-
-RUN apt-get update && \
-    apt-get install -y \
-        libfcgi-bin \
-        unzip \
-        curl \
-        wget \
-        netcat-openbsd \
-        nano \
-        mariadb-client \
-        jq \
-        #yq \
-        kubectl \
-        sshpass openssh-client \
-    && \
-    rm -rf /var/lib/apt/lists/*
-
-COPY --from=dev-alpine /usr/local/bin/php-fpm-healthcheck.sh /usr/local/bin/php-fpm-healthcheck.sh
-COPY --from=dev-alpine /usr/local/bin/wsc-setup-preparation.sh /usr/local/bin/wsc-setup-preparation.sh
-
-WORKDIR /tmp
-USER nonroot
 CMD [ "tail", "-f", "/dev/null" ]
