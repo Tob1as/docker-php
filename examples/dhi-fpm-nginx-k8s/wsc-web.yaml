@@ -213,6 +213,28 @@ spec:
           #readOnly: true
         - name: wsc-web-helper
           mountPath: /data
+      #initContainers:
+      #- name: wsc-setup
+      #  image: docker.io/tobi312/php:dhi-helper-alpine
+      #  imagePullPolicy: Always
+      #  env:
+      #  - name: "WSC_SETUP_ENABLED"
+      #    value: "1"
+      #  - name: "WSC_VERSION"
+      #    value: "6.2"
+      #  - name: "WSC_DEV_INSTALL_ENABLED"
+      #    value: "0"
+      #  args: [ "/bin/sh", "-c", "sleep 5 && /usr/local/bin/wsc-setup-preparation.sh" ]
+      #  resources:
+      #    requests:
+      #      memory: "128Mi"
+      #      cpu: "0.1"
+      #    limits:
+      #      memory: "128Mi"
+      #      cpu: "0.1"
+      #  volumeMounts:
+      #  - name: wsc-test-data
+      #    mountPath: /var/www/html
       volumes:
       - name: wsc-web-data
         persistentVolumeClaim:
