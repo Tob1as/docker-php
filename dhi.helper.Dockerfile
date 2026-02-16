@@ -16,6 +16,8 @@ SCRIPT_NAME="${PHP_FPM_PING_PATH}" SCRIPT_FILENAME="${PHP_FPM_PING_PATH}" REQUES
 echo $?
 EOF
 
+COPY conf/wsc-setup-preparation.sh /usr/local/bin/php-fpm-healthcheck.sh
+
 RUN chmod +x /usr/local/bin/*.sh
 
 
@@ -52,6 +54,7 @@ RUN \
 #RUN tree /apkroot
 
 COPY --from=dev-alpine /usr/local/bin/php-fpm-healthcheck.sh /apkroot/usr/local/bin/php-fpm-healthcheck.sh
+COPY --from=dev-alpine /usr/local/bin/wsc-setup-preparation.sh /apkroot/usr/local/bin/wsc-setup-preparation.sh
 
 RUN tree /apkroot
 
@@ -109,6 +112,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=dev-alpine /usr/local/bin/php-fpm-healthcheck.sh /usr/local/bin/php-fpm-healthcheck.sh
+COPY --from=dev-alpine /usr/local/bin/wsc-setup-preparation.sh /usr/local/bin/wsc-setup-preparation.sh
 
 WORKDIR /tmp
 USER nonroot
