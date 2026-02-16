@@ -13,7 +13,7 @@ set -eu
 : "${PHP_UPLOAD_MAX_FILESIZE:=""}"            # set Value in MB, example: 250
 : "${PHP_MAX_FILE_UPLOADS:=""}"               # set number, example: 20
 : "${PHP_MAX_EXECUTION_TIME:=""}"             # set execute time
-: "${PHP_SET_VARIABLES_ORDER:="0"}"            # set variables_order from GPCS to EGPCS, use only for dev!
+: "${PHP_SET_VARIABLES_ORDER:="0"}"           # set variables_order from GPCS to EGPCS, use only for dev!
 : "${PHP_SET_OPCACHE_SETTINGS:="0"}"          # opcache settings
 : "${PHP_FPM_STATUS_PORT:="9001"}"            # PHP-FPM Status/Ping Port (default: 9000 but here use 9001)
 : "${PHP_FPM_STATUS_PATH:="/php_fpm_status"}" # (default: /status but here use /php_fpm_status)
