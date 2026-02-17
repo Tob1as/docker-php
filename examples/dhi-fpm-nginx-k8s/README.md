@@ -12,27 +12,30 @@
     * check rest of yaml`s/configs ...
 4. ```kubectl apply -f volumes.yaml```
 5. ```kubectl apply -f wsc-db.yaml```
-    * create database and user and set permission:
-      ```sh
-      # Database
-      kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
-      # User with Password and Permission for Database
-      kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
-      ```
-    * create exporter user with password and set permission:
-      ```sh
-      kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MYSQL_EXPORTER_USER}\"@\"%\";"'
-      ```
-    * check:
-      ```sh
-      kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT user, host, max_user_connections FROM mysql.user;"'
-      kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT host, user, db FROM mysql.db;"'
-      ```
+    * and then start Job for Database post setup, that create users for wsc and exporter:  
+      ```kubectl apply -f wsc-db-postsetup.yaml```
+    * or setup manually:
+      * create database and user and set permission:
+        ```sh
+        # Database
+        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
+        # User with Password and Permission for Database
+        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
+        ```
+      * create exporter user with password and set  permission:
+        ```sh
+        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MYSQL_EXPORTER_USER}\"@\"%\";"'
+        ```
+      * check:
+        ```sh
+        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT user, host, max_user_connections FROM mysql.user;"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT host, user, db FROM mysql.db;"'
+        ```
     * Now you can edit `wsc-db.yaml` and use `MYSQL_EXPORTER_USER` and `MYSQLD_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
 6. ```kubectl apply -f wsc-web.yaml```
 7. check:
    ```sh
-   kubectl -n wsc get secrets,configmaps,ingresses,services,pods,deployments,pvc,pv
+   kubectl -n wsc get secrets,configmaps,ingresses,services,pods,deployments,jobs,pvc,pv
    ```
 8. [Download WSC](https://www.woltlab.com/en/woltlab-suite-download/) and unzip archive and copy wsc files form upload-folder to html-folder in wsc-web deployment: 
    ```sh

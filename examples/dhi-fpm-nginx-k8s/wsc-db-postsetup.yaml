@@ -1,0 +1,48 @@
+# WSC-DB-PostSetup Job
+# Source: https://github.com/Tob1as/docker-php
+# Script: https://github.com/Tob1as/docker-php/raw/refs/heads/master/conf/mysql-setup-preparation.sh
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wsc-db-postsetup
+  namespace: wsc
+  labels:
+    app.kubernetes.io/name: wsc-db-postsetup
+    app.kubernetes.io/component: script
+    app.kubernetes.io/part-of: wsc
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600  # delete job after 10min
+  template:
+    spec:
+      imagePullSecrets:
+      - name: regcred-dockerhub
+      #- name: regcred-dhi
+      restartPolicy: Never
+      securityContext:
+        fsGroup: 65532
+      containers:
+      - name: mysql-setup
+        image: docker.io/tobi312/php:dhi-helper-alpine
+        imagePullPolicy: Always
+        env:
+        - name: "MYSQL_SETUP_ENABLED"
+          value: "1"
+        - name: "MYSQL_HOST"
+          value: "wsc-db"
+        envFrom:
+        - configMapRef:
+            name: wsc-db-env-config
+        - secretRef:
+            name: wsc-db-env-secret
+        args: [ "/bin/sh", "-c", "/usr/local/bin/mysql-setup-preparation.sh" ]
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "0.1"
+          limits:
+            memory: "128Mi"
+            cpu: "0.1"
