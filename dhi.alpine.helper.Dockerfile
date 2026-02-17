@@ -16,6 +16,7 @@ echo $?
 EOF
 
 COPY conf/wsc-setup-preparation.sh /usr/local/bin/wsc-setup-preparation.sh
+COPY conf/mysql-setup-preparation.sh /usr/local/bin/mysql-setup-preparation.sh
 
 RUN chmod +x /usr/local/bin/*.sh
 
@@ -52,8 +53,7 @@ RUN \
 # List directory and file structure
 #RUN tree /apkroot
 
-COPY --from=dev-alpine /usr/local/bin/php-fpm-healthcheck.sh /apkroot/usr/local/bin/php-fpm-healthcheck.sh
-COPY --from=dev-alpine /usr/local/bin/wsc-setup-preparation.sh /apkroot/usr/local/bin/wsc-setup-preparation.sh
+COPY --from=dev-alpine /usr/local/bin/ /apkroot/usr/local/bin/
 
 RUN tree /apkroot
 
