@@ -6,7 +6,7 @@ on:
   #    - 'main'
   #    - 'master'
   #  paths:
-  #    - 'dhi.helper.Dockerfile'
+  #    - 'dhi.alpine.helper.Dockerfile'
   #    - '.github/workflows/build_docker-dhi_helper.yml'
   workflow_dispatch:
   schedule:
@@ -131,7 +131,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine
             docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:dhi-helper-alpine-${{env.BUILD_DATE}}
             quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine
             quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:dhi-helper-alpine-${{env.BUILD_DATE}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:dhi-helper-alpine-${{env.BUILD_DATE}}
