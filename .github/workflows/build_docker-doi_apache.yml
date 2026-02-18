@@ -145,7 +145,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-doi-apache-debian-wsc-${{env.BUILD_DATE_NUMERIC}}

@@ -147,10 +147,13 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
 
 
   # --------------------------------------------------
@@ -213,10 +216,13 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-${{env.BUILD_DATE_NUMERIC}}
 
 
   # --------------------------------------------------
@@ -280,10 +286,13 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-extended-${{env.BUILD_DATE_NUMERIC}}
 
 
   # --------------------------------------------------
@@ -346,7 +355,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-nginx-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}

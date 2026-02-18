@@ -146,10 +146,13 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-slim-${{env.BUILD_DATE_NUMERIC}}
 
 
   # --------------------------------------------------
@@ -212,10 +215,13 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-${{env.BUILD_DATE_NUMERIC}}
 
 
   # --------------------------------------------------
@@ -278,7 +284,10 @@ jobs:
           tags: |
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc
             docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.COMMIT_HASH}}
+            docker.io/${{env.DOCKER_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc
             quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.COMMIT_HASH}}
+            quay.io/${{env.QUAY_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc
           #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.COMMIT_HASH}}
+          #  ${{env.GIT_URL}}/${{env.GIT_REPO}}:${{env.PHP_VERSION}}-fpm-alpine-wsc-${{env.BUILD_DATE_NUMERIC}}
