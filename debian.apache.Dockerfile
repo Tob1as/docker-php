@@ -81,7 +81,14 @@ RUN \
             echo ">> Applying libmemcachedutil2 → libmemcachedutil2t64 workaround"; \
             sed -i 's/libmemcachedutil2/libmemcachedutil2t64/g' /usr/local/bin/install-php-extensions; \
         else \
-            echo ">> Workaround not needed (already fixed upstream)"; \
+            echo ">> libmemcachedutil2 Workaround not needed (already fixed upstream)"; \
+        fi; \
+        if grep -q 'libssl3' /usr/local/bin/install-php-extensions && \
+           ! grep -q 'libssl3t64' /usr/local/bin/install-php-extensions; then \
+            echo ">> Applying libssl3 → libssl3t64 workaround"; \
+            sed -i 's/libssl3/libssl3t64/g' /usr/local/bin/install-php-extensions; \
+        else \
+            echo ">> libssl3 Workaround not needed (already fixed upstream)"; \
         fi; \
     fi; \
     install-php-extensions $PHP_EXTENSIONS_LIST ; \
