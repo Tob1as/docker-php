@@ -131,7 +131,7 @@ jobs:
           quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
 
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
@@ -202,7 +202,7 @@ jobs:
           quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
 
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
@@ -273,7 +273,7 @@ jobs:
           quay_password: ${{ secrets.REDHAT_QUAY_PASSWORD }}
 
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.docker-setup.outputs.builder_name }}
           context: .
