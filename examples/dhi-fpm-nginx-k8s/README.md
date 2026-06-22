@@ -31,7 +31,7 @@
         kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -h localhost -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "SELECT user, host, max_user_connections FROM mysql.user;"'
         kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -h localhost -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "SELECT host, user, db FROM mysql.db;"'
         ```
-    * Now you can edit `wsc-db.yaml` and use `MARIADB_EXPORTER_USER` and `MARIADB_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
+    * Now you can edit `wsc-db.yaml` and use `MARIADB_EXPORTER_USER` and `MARIADB_EXPORTER_PASSWORD`(`MYSQLD_EXPORTER_PASSWORD`) for exporter and optional use other user instead root for healtcheck. Then redeploy.
 6. ```kubectl apply -f wsc-web.yaml```
 7. check:
    ```sh
