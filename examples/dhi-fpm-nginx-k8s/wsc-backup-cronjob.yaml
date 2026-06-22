@@ -186,17 +186,17 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: wsc-db-env-config
-                  key: MYSQL_DATABASE
+                  key: MARIADB_DATABASE
             - name: DB_USERNAME
               valueFrom:
                 configMapKeyRef:
                   name: wsc-db-env-config
-                  key: MYSQL_USER
+                  key: MARIADB_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: wsc-db-env-secret
-                  key: MYSQL_PASSWORD
+                  key: MARIADB_PASSWORD
             resources:
               requests:
                 memory: "128Mi"

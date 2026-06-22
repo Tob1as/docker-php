@@ -1,5 +1,5 @@
 # build: docker build --no-cache --progress=plain --target=production-alpine -t docker.io/tobi312/php:dhi-helper-alpine -f dhi.alpine.helper.Dockerfile .
-ARG BUILD_OS=3.23
+ARG BUILD_OS=3.24
 FROM dhi.io/alpine-base:${BUILD_OS}-dev AS dev-alpine
 
 SHELL ["/bin/sh", "-o", "pipefail", "-c"]

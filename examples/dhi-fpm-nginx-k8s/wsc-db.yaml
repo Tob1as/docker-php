@@ -3,13 +3,13 @@
 # other konfig example: https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_k8s/mariadb.yaml
 # 
 # used Images:
-# - https://dhi.io/catalog/mysql
+# - https://dhi.io/catalog/mariadb
 # - https://dhi.io/catalog/mysqld-exporter (Docs: https://github.com/prometheus/mysqld_exporter)
 # 
-# TODO: only do this commands after first start when using dhi mysql image (create database and user with password from environment vars):
-# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
-# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
-# kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MYSQL_EXPORTER_USER}\"@\"%\";"'
+# TODO: only do this commands after first start when using dhi mariadb image (create database and user with password from environment vars):
+# kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot -p${MARIADB_ROOT_PASSWORD} -e "CREATE DATABASE ${MARIADB_DATABASE} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"'
+# kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot -p${MARIADB_ROOT_PASSWORD} -e "CREATE USER \"${MARIADB_USER}\"@\"%\" IDENTIFIED BY \"${MARIADB_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO \"${MARIADB_USER}\"@\"%\";"'
+# kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot -p${MARIADB_ROOT_PASSWORD} -e "CREATE USER \"${MARIADB_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MARIADB_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MARIADB_EXPORTER_USER}\"@\"%\";"'
 
 ---
 
@@ -23,11 +23,12 @@ metadata:
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: wsc
 data:
-  MYSQL_OPTIONS: "--innodb-buffer-pool-size=512M --skip-name-resolve" # only support in DHI (instead of own *.cnf file)
+  MARIADB_OPTIONS: "--innodb-buffer-pool-size=512M --skip-name-resolve"
   # the following variables require manual intervention in order to be used (kubectl exec command):
-  MYSQL_DATABASE: "woltlab_suite"
-  MYSQL_USER: "woltlab_suite"
-  MYSQL_EXPORTER_USER: "exporter"
+  MARIADB_DATABASE: "woltlab_suite"
+  MARIADB_USER: "woltlab_suite"
+  MARIADB_EXPORTER_USER: "exporter"
+  #MARIADB_DATA_DIR: "/var/lib/mysql"
 
 ---
 
@@ -44,10 +45,10 @@ metadata:
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: wsc
 stringData:
-  MYSQL_ROOT_PASSWORD: "my-secret-pw"    # required !
+  MARIADB_ROOT_PASSWORD: "my-secret-pw"    # required !
   # the following variables require manual intervention in order to be used (kubectl exec command):
-  MYSQL_PASSWORD: "my-secret-pw"
-  MYSQL_EXPORTER_PASSWORD: "my-secret-pw"
+  MARIADB_PASSWORD: "my-secret-pw"
+  MARIADB_EXPORTER_PASSWORD: "my-secret-pw"
 
 ---
 
@@ -83,8 +84,8 @@ spec:
       securityContext:
         fsGroup: 65532
       containers:
-      - name: mysql
-        image: dhi.io/mysql:8.4-debian13
+      - name: mariadb
+        image: dhi.io/mariadb:11.4-debian13 # 11.4.12-debian13
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
@@ -95,15 +96,12 @@ spec:
             #optional: true
         ports:
         - containerPort: 3306
-          name: mysql
-          protocol: TCP
-        - containerPort: 33306
-          name: mysqlx
+          name: mariadb
           protocol: TCP
         readinessProbe:
           exec:
-            command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 -u root || exit 1"]
-            #command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD || exit 1"]
+            command: ["/bin/sh", "-c", "mariadb-admin ping -h localhost -P 3306 -u root || exit 1"]
+            #command: ["/bin/sh", "-c", "mariadb-admin ping -h localhost -P 3306 --user=$MARIADB_USER --password=$MARIADB_PASSWORD || exit 1"]
           #tcpSocket:
           #  port: 3306
           initialDelaySeconds: 10
@@ -113,8 +111,8 @@ spec:
           successThreshold: 1
         livenessProbe:
           exec:
-            command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 -u root || exit 1"]
-            #command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -P 3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD || exit 1"]
+            command: ["/bin/sh", "-c", "mariadb-admin ping -h localhost -P 3306 -u root || exit 1"]
+            #command: ["/bin/sh", "-c", "mariadb-admin ping -h localhost -P 3306 --user=$MARIADB_USER --password=$MARIADB_PASSWORD || exit 1"]
           #tcpSocket:
           #  port: 3306
           initialDelaySeconds: 10
@@ -133,32 +131,32 @@ spec:
         - name: wsc-db-data
           mountPath: /var/lib/mysql
       - name: exporter
-        image: dhi.io/mysqld-exporter:0.18-debian13
+        image: dhi.io/mysqld-exporter:0.19-debian13
         imagePullPolicy: Always
         ports:
         - containerPort: 9104
           name: exporter
           protocol: TCP
         env:
-        - name: MYSQL_EXPORTER_USER
+        - name: MARIADB_EXPORTER_USER
           value: "root"
-        #- name: MYSQL_EXPORTER_USER
+        #- name: MARIADB_EXPORTER_USER
         #  valueFrom:
         #    configMapKeyRef:
         #      name: wsc-db-env-config
-        #      key: MYSQL_EXPORTER_USER
+        #      key: MARIADB_EXPORTER_USER
         #      #optional: true
         #- name: MYSQLD_EXPORTER_PASSWORD
         #  valueFrom:
         #    secretKeyRef:
         #      name: wsc-db-env-secret
-        #      key: MYSQL_EXPORTER_PASSWORD
+        #      key: MARIADB_EXPORTER_PASSWORD
         #      optional: true
         args:
         - "--web.listen-address=:9104"
         - "--web.telemetry-path=/metrics"
         - "--mysqld.address=localhost:3306"
-        - "--mysqld.username=$(MYSQL_EXPORTER_USER)"
+        - "--mysqld.username=$(MARIADB_EXPORTER_USER)"
         - "--log.level=info"
         resources:
           requests:
@@ -186,14 +184,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: "mysql"
+  - name: "mariadb"
     protocol: TCP
     port: 3306
     targetPort: 3306
-  - name: "mysqlx"
-    protocol: TCP
-    port: 33306
-    targetPort: 33306
   - name: "exporter"
     protocol: TCP
     port: 9104

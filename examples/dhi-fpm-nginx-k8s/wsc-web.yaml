@@ -46,7 +46,7 @@ spec:
         fsGroup: 65532
       containers:
       - name: nginx
-        image: dhi.io/nginx:1.28-debian13
+        image: dhi.io/nginx:1.31-debian13
         imagePullPolicy: Always
         #envFrom:
         #- configMapRef:
@@ -196,7 +196,7 @@ spec:
             cpu: "0.5"
       # helper (for "kubectl cp", tar-backups from "html"-folder, ... when using ReadWriteOnce-PVC)
       - name: helper
-        image: dhi.io/alpine-base:3.23 # or: docker.io/tobi312/php:dhi-helper-alpine
+        image: dhi.io/alpine-base:3.24 # or: docker.io/tobi312/php:helper-alpine
         imagePullPolicy: Always
         #args: [ "tail", "-f", "/dev/null" ]
         args: ["/bin/sh", "-c", "trap exit TERM INT; sleep infinity"]

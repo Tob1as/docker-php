@@ -1,4 +1,4 @@
-# PHP - Examples: PHP-FPM & NGINX & MySQL (using DHI) for K8s/Kubernetes
+# PHP - Examples: PHP-FPM & NGINX & MariaDB (using DHI) for K8s/Kubernetes
 
 (see also folder: `fpm-nginx-dhi`)  
 
@@ -18,20 +18,20 @@
       * create database and user and set permission:
         ```sh
         # Database
-        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE DATABASE ${MYSQL_DATABASE};"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "CREATE DATABASE ${MARIADB_DATABASE};"'
         # User with Password and Permission for Database
-        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \"${MYSQL_USER}\"@\"%\";"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "CREATE USER \"${MARIADB_USER}\"@\"%\" IDENTIFIED BY \"${MARIADB_PASSWORD}\"; GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO \"${MARIADB_USER}\"@\"%\";"'
         ```
       * create exporter user with password and set  permission:
         ```sh
-        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -uroot -e "CREATE USER \"${MYSQL_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MYSQL_EXPORTER_USER}\"@\"%\";"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "CREATE USER \"${MARIADB_EXPORTER_USER}\"@\"%\" IDENTIFIED BY \"${MARIADB_EXPORTER_PASSWORD}\"; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO \"${MARIADB_EXPORTER_USER}\"@\"%\";"'
         ```
       * check:
         ```sh
-        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT user, host, max_user_connections FROM mysql.user;"'
-        kubectl -n wsc exec -it deployment/wsc-db -c mysql -- sh -c 'mysql -h localhost -uroot -e "SELECT host, user, db FROM mysql.db;"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -h localhost -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "SELECT user, host, max_user_connections FROM mysql.user;"'
+        kubectl -n wsc exec -it deployment/wsc-db -c mariadb -- sh -c 'mariadb -h localhost -uroot --password="${MARIADB_ROOT_PASSWORD}" -e "SELECT host, user, db FROM mysql.db;"'
         ```
-    * Now you can edit `wsc-db.yaml` and use `MYSQL_EXPORTER_USER` and `MYSQLD_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
+    * Now you can edit `wsc-db.yaml` and use `MARIADB_EXPORTER_USER` and `MARIADB_EXPORTER_PASSWORD` for exporter and optional use other user instead root for healtcheck. Then redeploy.
 6. ```kubectl apply -f wsc-web.yaml```
 7. check:
    ```sh

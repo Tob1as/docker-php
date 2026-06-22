@@ -16,7 +16,7 @@
 #
 ARG PHP_VERSION=8.4
 ARG BUILD_PHP_VERSION=${PHP_VERSION}
-ARG BUILD_OS=alpine3.22
+ARG BUILD_OS=alpine3.24
 # =========================
 # Stage 0: Build Base Image
 # =========================
