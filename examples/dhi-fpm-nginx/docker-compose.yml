@@ -21,7 +21,7 @@ services:
 
   # https://dhi.io/catalog/nginx
   wsc-nginx:
-    image: dhi.io/nginx:1.28-debian13
+    image: dhi.io/nginx:1.31-debian13
     container_name: wsc-nginx
     restart: unless-stopped
     #ports:
@@ -105,7 +105,7 @@ services:
 #  # https://dhi.io/catalog/mysqld-exporter
 #  # (Docs: https://github.com/prometheus/mysqld_exporter)
 #  wsc-db-exporter:
-#    image: dhi.io/mysqld-exporter:0.18-debian13
+#    image: dhi.io/mysqld-exporter:0.19-debian13
 #    container_name: wsc-db-exporter
 #    restart: unless-stopped
 #    command:
