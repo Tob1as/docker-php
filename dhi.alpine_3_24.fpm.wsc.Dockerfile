@@ -14,6 +14,8 @@
 #       ctype curl dom intl libxml mbstring openssl opcache PDO zlib
 # These are still needed: exif gd gmp imagick ldap pdo_mysql redis
 #
+# https://github.com/docker-hardened-images/catalog/issues/378
+# https://github.com/docker-hardened-images/catalog/issues/681#issuecomment-6566587332
 # /usr/local/etc/php/conf.d is symlinked to /etc/php-${BUILD_PHP_VERSION}/conf.d
 # /etc/php-${BUILD_PHP_VERSION}/php-fpm.d
 #
